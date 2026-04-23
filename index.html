@@ -174,6 +174,27 @@ input[type=password]::placeholder{color:var(--muted)}
         </div>
       </div>
     </div>
+    <div class="side-block">
+      <span class="lbl">Commander Expression</span>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px" id="exprPicker">
+        <div class="expr-opt sel" id="ex0" onclick="selectExpr(0,'Stern and authoritative — hard jaw set, cold eyes locked on camera, the look of a man who has sent men to die and would do it again')" style="border:1px solid var(--red);border-radius:4px;padding:7px 9px;cursor:pointer;background:var(--red-dim);text-align:center;transition:all 0.15s">
+          <div style="font-family:var(--display);font-size:12px;letter-spacing:1px">STERN</div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--muted)">Commanding</div>
+        </div>
+        <div class="expr-opt" id="ex1" onclick="selectExpr(1,'Calm and composed — relaxed jaw, steady measured gaze, quiet confidence of a man in total control')" style="border:1px solid var(--border2);border-radius:4px;padding:7px 9px;cursor:pointer;background:var(--bg2);text-align:center;transition:all 0.15s">
+          <div style="font-family:var(--display);font-size:12px;letter-spacing:1px">CALM</div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--muted)">Composed</div>
+        </div>
+        <div class="expr-opt" id="ex2" onclick="selectExpr(2,'Slight knowing smirk — one corner of mouth barely raised, eyes narrowed with quiet satisfaction, the look of someone who already knows they won')" style="border:1px solid var(--border2);border-radius:4px;padding:7px 9px;cursor:pointer;background:var(--bg2);text-align:center;transition:all 0.15s">
+          <div style="font-family:var(--display);font-size:12px;letter-spacing:1px">SMIRKY</div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--muted)">Confident</div>
+        </div>
+        <div class="expr-opt" id="ex3" onclick="selectExpr(3,'Intense and furious — brow furrowed, jaw clenched, eyes burning with barely contained rage and determination')" style="border:1px solid var(--border2);border-radius:4px;padding:7px 9px;cursor:pointer;background:var(--bg2);text-align:center;transition:all 0.15s">
+          <div style="font-family:var(--display);font-size:12px;letter-spacing:1px">INTENSE</div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--muted)">Furious</div>
+        </div>
+      </div>
+    </div>
     <button class="analyze-btn" id="analyzeBtn" onclick="analyzeScript()"><span id="analyzeTxt">ANALYZE SCRIPT</span></button>
     <div class="steps">
       <div class="stp" id="stp1"><div class="stp-n">1</div><div class="stp-t">Script analysis</div></div>
@@ -454,6 +475,22 @@ function handleRefs(e) {
   setStep(5, 'done'); setStep(6, 'active');
 }
 
+var selectedExpression = 'Stern and authoritative — hard jaw set, cold eyes locked on camera, the look of a man who has sent men to die and would do it again';
+
+function selectExpr(i, expr) {
+  selectedExpression = expr;
+  document.querySelectorAll('.expr-opt').forEach(function(el, idx) {
+    if (idx === i) {
+      el.style.border = '1px solid var(--red)';
+      el.style.background = 'var(--red-dim)';
+    } else {
+      el.style.border = '1px solid var(--border2)';
+      el.style.background = 'var(--bg2)';
+    }
+  });
+  buildPrompt();
+}
+
 var MODEL_IDS = [
   'gemini-2.5-flash-preview-04-17',
   'gemini-2.5-flash-preview-04-17',
@@ -485,30 +522,38 @@ function getBgDesc(bg) {
   return descs[bg.type] || bg.specific;
 }
 
+function getBannerSize(word) {
+  var words = word.trim().split(/\s+/).length;
+  if (words === 1) return 'enormous — the text should be very large, filling almost the full width of the banner, approximately 25-30% of the total image height';
+  if (words === 2) return 'large — filling most of the banner width, approximately 18-22% of the total image height';
+  return 'medium — filling the banner comfortably, approximately 14-18% of the total image height';
+}
+
 function buildPrompt() {
   if (!selBg || !selBanner || !appData) return;
   var g = appData.general;
   var refNote = refImgs.length > 0 ? 'Using the provided reference photos — maintain exact facial likeness of ' + g.name + '. ' : '';
-  var exprMap = {
-    cold_betrayal: 'Cold stoic unflinching',
-    furious_injustice: 'Intense commanding barely contained fury',
-    tragic_irony: 'Weary resigned stoic',
-    dark_mystery: 'Piercing unsettling direct',
-    triumphant_irony: 'Stern quietly determined'
-  };
-  var expr = exprMap[appData.tone] || 'Stern determined';
+  var bannerSize = getBannerSize(selBanner.word);
 
   var prompt = 'YouTube thumbnail, 16:9 format, 1280x720.\n\n' +
 
-    'SUBJECT: ' + refNote + 'Hyper-photorealistic photograph-quality portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. ' + expr + ' expression, unflinching gaze directly into camera. Positioned left of center, bust to upper chest visible, large and dominant filling the left 45% of the frame. The general is composited DIRECTLY ON TOP OF the background map/document — no empty space, curtains, or studio backdrop behind him. He stands in front of the background as if physically present at that location.\n\n' +
+    'COMPOSITION RULES — STRICTLY FOLLOW:\n' +
+    '1. The background map/document fills the ENTIRE 16:9 frame edge to edge — no dark areas, no vignette on sides, no studio space anywhere.\n' +
+    '2. The general figure is placed ON TOP of the map in the left 40-45% of the frame — he is part of the scene, not in a separate dark zone. There is NO dark backdrop or shadow zone behind him — the map is visible behind him everywhere.\n' +
+    '3. The general head and helmet must be fully inside the frame with at least 30px clearance from the top edge — never cropped.\n' +
+    '4. The red banner must start and end WITHIN the image boundaries — it does not go off screen on either side. It has a margin of at least 40px from left and right edges, or spans exactly edge to edge but is contained.\n\n' +
 
-    'LIGHTING & POP EFFECT: ' + appData.lighting + '. Additionally: powerful warm rim light along both edges of the figure creating a strong glowing outline that separates him from the background — this makes him pop dramatically forward. The face receives a hero spotlight from slightly above, making skin texture, eyes, and uniform details hyper-sharp and bright against the darker background. A subtle luminous outline glow traces the silhouette of his body — color: soft warm amber or cold blue depending on scene tone. Strong vignette darkening all four corners.\n\n' +
+    'CRITICAL FRAMING RULE: The general figure must be fully contained within the image frame — head, helmet or hat included — with at least 20px clearance from the top edge. Do not crop or cut off the head under any circumstances.\n\n' +
 
-    'BACKGROUND: ' + getBgDesc(selBg) + '. The background fills the entire frame. The general is overlaid on it seamlessly — background bleeds around his figure naturally, no artificial borders. Background is slightly desaturated and softly blurred (depth of field effect) so the general remains the sharpest element.\n\n' +
+    'SUBJECT: ' + refNote + 'Hyper-photorealistic photograph-quality portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + selectedExpression + '. Unflinching gaze directly into camera. Positioned left of center, bust to upper chest visible, figure large and dominant filling the left 40-45% of the frame. The general is composited DIRECTLY ON TOP OF the background — no curtains, no studio backdrop, no empty dark space behind him. He stands in front of the background as if physically present there.\n\n' +
 
-    'LOWER THIRD BANNER: An irregular hand-painted style red banner (#CC2200) — not a perfect rectangle, slightly uneven edges, one side slightly higher than the other, rough textured ribbon feel like a military dispatch ribbon or torn paper edge — stretching across most of the lower width of the image. Inside the banner: bold white military stencil-style sans-serif text reading "' + selBanner.word + '" with a strong dark drop shadow below each letter (shadow offset 3-4px down and right, dark charcoal color). Text is perfectly legible. Banner sits 10-18% up from the bottom edge.\n\n' +
+    'FACE LIGHTING: Strong hero spotlight hitting the face directly — face is the brightest element in the entire image, skin texture, eyes, and facial features are hyper-sharp and high contrast. ' + appData.lighting + '. Subtle warm amber rim light on the edges of the face and shoulders only — not the whole body — just enough to create a slight separation from the background behind him.\n\n' +
 
-    'STYLE: Ultra photorealistic, not illustrated or painted. Professional YouTube thumbnail. Cinematic color grading — slightly desaturated background, vivid sharp subject. The general face and uniform are the brightest sharpest highest-contrast element in the entire composition.';
+    'BACKGROUND: ' + getBgDesc(selBg) + '. CRITICAL BACKGROUND RULES: (1) The background fills the entire 1280x720 frame — every pixel from edge to edge is map/document, no dark corners, no vignette, no empty zones. (2) The background is SHARP and CLEAR across the full frame — absolutely no blur or depth of field effect. (3) Apply a subtle uniform dark overlay (25-35% opacity dark layer) across the entire background to slightly desaturate and darken it, making the general pop through brightness difference — NOT through blurring. (4) All map labels, location names, arrows, and cartographic details remain clearly readable.\n\n' +
+
+    'LOWER THIRD BANNER: A bold irregular brush-stroke style red (#CC2200) banner — paint-splatter or rough brush stroke edges, not a clean rectangle, slightly uneven top edge like it was slapped on with a wide brush — stretching across the lower portion of the image. The banner text "' + selBanner.word + '" uses Montserrat Bold font — clean, geometric, very thick strokes, perfectly rectangular letterforms with no serifs, no distressing, no roughness on the letters themselves — pure clean bold sans-serif. White fill, with a strong dark drop shadow (4-5px down and right, dark charcoal #222). The text size is ' + bannerSize + '. The banner and text together fill the empty lower portion of the image so no dead space remains below the general. Banner positioned 8-20% from bottom edge.\n\n' +
+
+    'STYLE: Ultra photorealistic photograph quality — not illustrated, not painted, not animated. Cinematic color grading — background slightly darkened and desaturated, the general face bright and vivid. Professional YouTube thumbnail composition.';
 
   var box = document.getElementById('promptOut');
   box.textContent = prompt;
