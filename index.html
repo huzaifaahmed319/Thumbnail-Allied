@@ -605,6 +605,14 @@ function generateImage() {
   var btn = document.getElementById('genBtn');
   btn.disabled = true; btn.textContent = 'GENERATING...';
   showOverlay(true, 'GENERATING', 'Sending to Nano Banana Pro...');
+  var elapsed = 0;
+  var progressTimer = setInterval(function() {
+    elapsed += 5;
+    var subEl = document.getElementById('ovSub');
+    if (subEl) subEl.textContent = 'Processing... ' + elapsed + 's (usually 20-60s)';
+    if (elapsed >= 90) clearInterval(progressTimer);
+  }, 5000);
+  window._progressTimer = progressTimer;
 
   var prompt = document.getElementById('promptOut').textContent;
   var parts = [{ text: prompt }];
@@ -613,14 +621,21 @@ function generateImage() {
   });
 
 
+  var controller = new AbortController();
+  var timeout = setTimeout(function() {
+    controller.abort();
+  }, 90000);
+
   fetch('https://generativelanguage.googleapis.com/v1beta/models/' + MODEL_IDS[selectedModelIdx] + ':generateContent?key=' + gKey, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       contents: [{ role: 'user', parts: parts }],
       generationConfig: { responseModalities: ['IMAGE', 'TEXT'] }
-    })
+    }),
+    signal: controller.signal
   }).then(function(res) {
+    clearTimeout(timeout);
     return res.json().then(function(json) {
       if (!res.ok) throw new Error(json.error && json.error.message ? json.error.message : 'Google API error ' + res.status);
       return json;
@@ -662,10 +677,16 @@ function generateImage() {
       throw new Error('No image in response. ' + txt);
     }
   }).catch(function(err) {
+    clearTimeout(timeout);
     showOverlay(false);
-    showToast('Error: ' + err.message, true, 7000);
+    if (err.name === 'AbortError') {
+      showToast('Request timed out after 90 seconds. Try regenerating or use a faster model.', true, 7000);
+    } else {
+      showToast('Error: ' + err.message, true, 7000);
+    }
     console.error(err);
   }).finally(function() {
+    clearInterval(window._progressTimer);
     btn.disabled = false;
     btn.textContent = 'GENERATE THUMBNAIL';
   });
