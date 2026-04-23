@@ -559,34 +559,30 @@ function buildPrompt() {
   if (!selBg || !appData) return;
   var g = appData.general;
   var refNote = generalImgs.length > 0 ? 'Using the provided reference photos of ' + g.name + ' — maintain exact facial likeness, skin tone, face shape, and uniform details from these photos. ' : '';
-  var bannerSize = getBannerSize(selBanner.word);
 
-  var prompt = 'YouTube thumbnail, 16:9 format, 1280x720.\n\n' +
+  var prompt = 'YouTube thumbnail, 16:9 format, 1280x720. NO TEXT, NO BANNERS, NO LABELS, NO WORDS anywhere in the image — completely clean image only.\n\n' +
 
-    'COMPOSITION RULES — STRICTLY FOLLOW:\n' +
-    '1. The background map/document fills the ENTIRE 16:9 frame edge to edge — no dark areas, no vignette on sides, no studio space anywhere.\n' +
-    '2. The general figure is placed ON TOP of the map in the left 40-45% of the frame — he is part of the scene, not in a separate dark zone. There is NO dark backdrop or shadow zone behind him — the map is visible behind him everywhere.\n' +
-    '3. The general head and helmet must be fully inside the frame with at least 30px clearance from the top edge — never cropped.\n' +
-    '4. The red banner must start and end WITHIN the image boundaries — it does not go off screen on either side. It has a margin of at least 40px from left and right edges, or spans exactly edge to edge but is contained.\n\n' +
+    'CRITICAL FRAMING: The general figure must be fully contained within the frame — head and helmet included — with at least 30px clearance from the top edge. Never crop the head.\n\n' +
 
-    'CRITICAL FRAMING RULE: The general figure must be fully contained within the image frame — head, helmet or hat included — with at least 20px clearance from the top edge. Do not crop or cut off the head under any circumstances.\n\n' +
+    'SUBJECT: ' + refNote + 'Hyper-photorealistic photograph-quality portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + selectedExpression + '. Unflinching gaze directly into camera. Positioned left of center, bust to upper chest visible, figure large and dominant filling the left 40-45% of the frame. The general is composited DIRECTLY ON TOP OF the background — no curtains, no studio backdrop, no empty dark space behind him. Map is visible behind him everywhere.\n\n' +
 
-    'SUBJECT: ' + refNote + 'Hyper-photorealistic photograph-quality portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + selectedExpression + '. Unflinching gaze directly into camera. Positioned left of center, bust to upper chest visible, figure large and dominant filling the left 40-45% of the frame. The general is composited DIRECTLY ON TOP OF the background — no curtains, no studio backdrop, no empty dark space behind him. He stands in front of the background as if physically present there.\n\n' +
+    'FACE LIGHTING: Strong hero spotlight on the face — face is the brightest element in the image, skin texture and eyes hyper-sharp. ' + appData.lighting + '. Subtle warm rim light on face edges and shoulders only to separate him from background. No vignette on sides — keep background fully visible edge to edge.\n\n' +
 
-    'FACE LIGHTING: Strong hero spotlight hitting the face directly — face is the brightest element in the entire image, skin texture, eyes, and facial features are hyper-sharp and high contrast. ' + appData.lighting + '. Subtle warm amber rim light on the edges of the face and shoulders only — not the whole body — just enough to create a slight separation from the background behind him.\n\n' +
+    'BACKGROUND: ' + getBgDesc(selBg) + ' CRITICAL: Background fills the ENTIRE 1280x720 frame edge to edge — no dark areas, no empty zones. Background is sharp and clear across the full frame — no blur. Apply a subtle dark overlay (25-35% opacity) across the background to desaturate it slightly so the general pops through brightness contrast. All map labels and details remain readable.\n\n' +
 
-    'BACKGROUND: ' + getBgDesc(selBg) + '. CRITICAL BACKGROUND RULES: (1) The background fills the entire 1280x720 frame — every pixel from edge to edge is map/document, no dark corners, no vignette, no empty zones. (2) The background is SHARP and CLEAR across the full frame — absolutely no blur or depth of field effect. (3) Apply a subtle uniform dark overlay (25-35% opacity dark layer) across the entire background to slightly desaturate and darken it, making the general pop through brightness difference — NOT through blurring. (4) All map labels, location names, arrows, and cartographic details remain clearly readable.\n\n' +
+    'UNIFORM: Bright vivid olive green uniform — saturated warm green, clearly visible and one of the brighter elements in the image. Not dark, not muddy.\n\n' +
 
-    'LOWER THIRD BANNER: A bold irregular brush-stroke style banner — rough paint-stroke edges, slightly uneven top edge, like a wide brush was dragged across — stretching across the lower portion of the image. BANNER COLOR: extremely bright vivid red, RGB(232, 0, 10), highly saturated, almost glowing — NOT dark red, NOT maroon, NOT crimson — pure bright fire-engine red that pops off the screen. The banner text "' + selBanner.word + '" uses Montserrat Bold or Anton font — perfectly clean geometric letterforms, no italic, no distressing, no texture on the letters — pure clean solid white (#FFFFFF). Text has a strong black drop shadow (4px down, 4px right, 0 blur, solid black #000000). The text size is ' + bannerSize + '. The banner and text together fill the empty lower portion of the image completely — no dead space below the general. Banner positioned 8-20% from bottom edge.\n\n' +
-
-    'UNIFORM & SUBJECT BRIGHTNESS: The general uniform must be bright vivid olive green (#6B8E23 to #808000 range) — saturated, warm, clearly visible against the background — NOT dark, NOT muddy, NOT brown. The uniform should be one of the brighter elements in the image. The face receives strong warm directional light making skin tones vivid and bright.\n\n' +
-    'STYLE: Ultra photorealistic photograph quality — not illustrated, not painted, not animated. Cinematic color grading — background slightly darkened and desaturated, the general figure (face + uniform) bright vivid and high contrast. The overall feel should be punchy and high-impact, not moody or dark. Professional YouTube thumbnail composition.';
+    'STYLE: Ultra photorealistic photograph quality — not illustrated, not painted, not animated. Professional YouTube thumbnail. The general face is the brightest sharpest element in the entire composition. Leave the bottom 20% of the image clear with no major elements — this space will be used for a text banner added in post.';
 
   var box = document.getElementById('promptOut');
-  box.textContent = prompt;
-  box.classList.remove('awaiting');
-  document.getElementById('genBtn').disabled = false;
+  if (box) {
+    box.textContent = prompt;
+    box.classList.remove('awaiting');
+  }
+  var genBtn = document.getElementById('genBtn');
+  if (genBtn) genBtn.disabled = false;
 }
+
 
 function copyPrompt() {
   var txt = document.getElementById('promptOut').textContent;
