@@ -200,7 +200,7 @@ input[type=password]::placeholder{color:var(--muted)}
       <div class="stp" id="stp1"><div class="stp-n">1</div><div class="stp-t">Script analysis</div></div>
       <div class="stp" id="stp2"><div class="stp-n">2</div><div class="stp-t">Select title</div></div>
       <div class="stp" id="stp3"><div class="stp-n">3</div><div class="stp-t">Select background</div></div>
-      <div class="stp" id="stp4"><div class="stp-n">4</div><div class="stp-t">Select banner word</div></div>
+      <div class="stp" id="stp4"><div class="stp-n">4</div><div class="stp-t">Banner words for Canva</div></div>
       <div class="stp" id="stp5"><div class="stp-n">5</div><div class="stp-t">Upload reference images</div></div>
       <div class="stp" id="stp6"><div class="stp-n">6</div><div class="stp-t">Generate thumbnail</div></div>
     </div>
@@ -416,32 +416,14 @@ function renderAll() {
   banHtml += '</div>';
   body.appendChild(makeCard('Step 4 — Banner Word for Canva', 'Pick one to use manually in Canva', banHtml));
 
-  body.appendChild(makeCard('Step 5 — Reference Images', 'General + Banner style',
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">' +
-
-    '<div>' +
-    '<div style="font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--accent);margin-bottom:6px">GENERAL PHOTOS</div>' +
-    '<div style="font-family:var(--mono);font-size:9px;color:var(--muted2);margin-bottom:8px;line-height:1.6">' + appData.general.name + '</div>' +
+  body.appendChild(makeCard('Step 5 — General Reference Photos', '1-3 photos for face & uniform likeness',
+    '<div style="font-family:var(--mono);font-size:9px;color:var(--muted2);margin-bottom:8px;line-height:1.6">Portrait reference for <strong style="color:var(--text)">' + appData.general.name + '</strong><br>' + appData.general.physical + '</div>' +
     '<div class="ref-drop" onclick="document.getElementById(\'refGeneral\').click()">' +
     '<input type="file" id="refGeneral" accept="image/*" multiple onchange="handleGeneralRefs(event)">' +
     '<div class="ref-thumbs" id="generalThumbs"><div class="ref-plus">+</div></div>' +
-    '<div class="ref-hint">FACE · UNIFORM</div>' +
+    '<div class="ref-hint">FACE · UNIFORM · 1-3 PHOTOS</div>' +
     '</div>' +
-    '<div class="ref-note" style="margin-top:6px">archives.gov · Wikipedia Commons</div>' +
-    '</div>' +
-
-    '<div>' +
-    '<div style="font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--accent);margin-bottom:6px">BANNER STYLE</div>' +
-    '<div style="font-family:var(--mono);font-size:9px;color:var(--muted2);margin-bottom:8px;line-height:1.6">Upload 1 example with your ideal banner</div>' +
-    '<div class="ref-drop" onclick="document.getElementById(\'refBanner\').click()">' +
-    '<input type="file" id="refBanner" accept="image/*" onchange="handleBannerRef(event)">' +
-    '<div class="ref-thumbs" id="bannerThumbs"><div class="ref-plus">+</div></div>' +
-    '<div class="ref-hint">BANNER EXAMPLE</div>' +
-    '</div>' +
-    '<div class="ref-note" style="margin-top:6px">Clean red banner · correct font style</div>' +
-    '</div>' +
-
-    '</div>'
+    '<div class="ref-note" style="margin-top:8px">Best: 1 front-facing portrait + 1 in uniform · Sources: archives.gov · Wikipedia Commons</div>'
   ));
 
   body.appendChild(makeCard('Step 6 — Final Prompt & Generate', 'Nano Banana Pro · Google AI Studio',
@@ -483,15 +465,16 @@ function selectBg(i) {
   buildPrompt();
 }
 
-function selectBanner(i) {
-  document.querySelectorAll('.ban-opt').forEach(function(e) { e.classList.remove('sel'); });
-  document.getElementById('ban_' + i).classList.add('sel');
-  selBanner = appData.banners[i];
+function copyBannerWord(el, word) {
+  navigator.clipboard.writeText(word).then(function() {
+    var orig = el.querySelector('.ban-word').textContent;
+    el.querySelector('.ban-word').textContent = 'COPIED!';
+    setTimeout(function() { el.querySelector('.ban-word').textContent = orig; }, 1200);
+  });
   setStep(4, 'done'); setStep(5, 'active');
 }
 
 var generalImgs = [];
-var bannerImg = null;
 
 function handleGeneralRefs(e) {
   var files = Array.from(e.target.files);
@@ -515,22 +498,7 @@ function handleGeneralRefs(e) {
   checkRefsComplete();
 }
 
-function handleBannerRef(e) {
-  var file = e.target.files[0];
-  if (!file) return;
-  bannerImg = null;
-  var row = document.getElementById('bannerThumbs');
-  row.innerHTML = '';
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    bannerImg = { data: ev.target.result.split(',')[1], type: file.type };
-    var img = document.createElement('img');
-    img.src = ev.target.result; img.className = 'ref-img';
-    row.appendChild(img);
-  };
-  reader.readAsDataURL(file);
-  checkRefsComplete();
-}
+
 
 function checkRefsComplete() {
   if (generalImgs.length > 0 || bannerImg) {
@@ -601,7 +569,6 @@ function buildPrompt() {
     '3. The general head and helmet must be fully inside the frame with at least 30px clearance from the top edge — never cropped.\n' +
     '4. The red banner must start and end WITHIN the image boundaries — it does not go off screen on either side. It has a margin of at least 40px from left and right edges, or spans exactly edge to edge but is contained.\n\n' +
 
-    bannerNote +
     'CRITICAL FRAMING RULE: The general figure must be fully contained within the image frame — head, helmet or hat included — with at least 20px clearance from the top edge. Do not crop or cut off the head under any circumstances.\n\n' +
 
     'SUBJECT: ' + refNote + 'Hyper-photorealistic photograph-quality portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + selectedExpression + '. Unflinching gaze directly into camera. Positioned left of center, bust to upper chest visible, figure large and dominant filling the left 40-45% of the frame. The general is composited DIRECTLY ON TOP OF the background — no curtains, no studio backdrop, no empty dark space behind him. He stands in front of the background as if physically present there.\n\n' +
@@ -641,9 +608,7 @@ function generateImage() {
   generalImgs.slice(0, 2).forEach(function(img) {
     parts.push({ inlineData: { mimeType: img.type, data: img.data } });
   });
-  if (bannerImg) {
-    parts.push({ inlineData: { mimeType: bannerImg.type, data: bannerImg.data } });
-  }
+
 
   fetch('https://generativelanguage.googleapis.com/v1beta/models/' + MODEL_IDS[selectedModelIdx] + ':generateContent?key=' + gKey, {
     method: 'POST',
