@@ -335,8 +335,21 @@ function analyzeScript() {
       return json;
     });
   }).then(function(json) {
-    var raw = json.content[0].text.trim().replace(/```json|```/g, '').trim();
-    appData = JSON.parse(raw);
+    var raw = json.content[0].text.trim();
+    // Extract JSON from response - find first { to last }
+    var jsonStart = raw.indexOf('{');
+    var jsonEnd = raw.lastIndexOf('}');
+    if (jsonStart >= 0 && jsonEnd >= 0) {
+      raw = raw.substring(jsonStart, jsonEnd + 1);
+    }
+    raw = raw.replace(/```json|```/g, '').trim();
+    try {
+      appData = JSON.parse(raw);
+    } catch(parseErr) {
+      // Try to fix common JSON issues - trailing commas, unescaped chars
+      raw = raw.replace(/,(\s*[}\]])/g, '$1');
+      appData = JSON.parse(raw);
+    }
     showOverlay(false);
     setStep(1, 'done');
     setStep(2, 'active');
