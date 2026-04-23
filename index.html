@@ -4,1293 +4,560 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Allied Thumbnails — Pipeline</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg: #0e0d0b;
-  --bg2: #161512;
-  --bg3: #1f1e1a;
-  --bg4: #252420;
-  --border: rgba(255,255,255,0.06);
-  --border2: rgba(255,255,255,0.12);
-  --border3: rgba(255,255,255,0.2);
-  --red: #c41a00;
-  --red-glow: rgba(196,26,0,0.15);
-  --text: #e6e1d3;
-  --muted: #6b6658;
-  --muted2: #908c80;
-  --accent: #c8a96e;
-  --accent2: rgba(200,169,110,0.15);
-  --green: #3a7a4a;
-  --green-light: #4a9a5c;
-  --mono: 'IBM Plex Mono', monospace;
-  --sans: 'IBM Plex Sans', sans-serif;
-  --display: 'Bebas Neue', sans-serif;
-}
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  min-height: 100vh;
-  font-size: 13px;
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
-/* HEADER */
-.header {
-  border-bottom: 1px solid var(--border);
-  padding: 0 28px;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  background: var(--bg);
-  z-index: 200;
-}
-.logo {
-  font-family: var(--display);
-  font-size: 20px;
-  letter-spacing: 3px;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.logo-stripe {
-  width: 3px; height: 18px;
-  background: var(--red);
-}
-.header-meta {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 1px;
-}
-
-/* MAIN LAYOUT */
-.main {
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  height: calc(100vh - 52px);
-}
-
-/* LEFT SIDEBAR */
-.sidebar {
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.sidebar-top {
-  padding: 20px 20px 16px;
-  border-bottom: 1px solid var(--border);
-}
-.section-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 2.5px;
-  color: var(--muted);
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-textarea {
-  width: 100%;
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: 4px;
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.75;
-  padding: 12px;
-  resize: none;
-  height: 200px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-textarea:focus { border-color: rgba(255,255,255,0.22); }
-textarea::placeholder { color: var(--muted); }
-
-.sidebar-keys {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.key-row {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.key-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: var(--muted);
-  text-transform: uppercase;
-}
-input[type="password"], input[type="text"] {
-  width: 100%;
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: 4px;
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 11px;
-  padding: 8px 11px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-input:focus { border-color: rgba(255,255,255,0.22); }
-input::placeholder { color: var(--muted); }
-
-.analyze-btn {
-  margin: 16px 20px;
-  background: var(--red);
-  border: none;
-  border-radius: 4px;
-  color: #fff;
-  font-family: var(--display);
-  font-size: 16px;
-  letter-spacing: 2px;
-  padding: 11px 20px;
-  cursor: pointer;
-  width: calc(100% - 40px);
-  transition: background 0.2s, transform 0.1s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-.analyze-btn:hover { background: #d41e00; }
-.analyze-btn:active { transform: scale(0.98); }
-.analyze-btn:disabled { background: var(--bg3); color: var(--muted); cursor: not-allowed; transform: none; }
-
-.sidebar-bottom {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px 20px;
-}
-
-/* STATUS / STEPS */
-.steps-track {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.step-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-  transition: all 0.3s;
-}
-.step-item.active {
-  border-color: rgba(200,169,110,0.3);
-  background: var(--accent2);
-}
-.step-item.done {
-  border-color: rgba(58,122,74,0.4);
-  background: rgba(58,122,74,0.1);
-}
-.step-num {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--muted);
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 1px solid var(--border2);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.3s;
-}
-.step-item.active .step-num { border-color: var(--accent); color: var(--accent); }
-.step-item.done .step-num { border-color: var(--green-light); color: var(--green-light); }
-.step-text {
-  font-size: 12px;
-  color: var(--muted2);
-}
-.step-item.active .step-text { color: var(--text); }
-.step-item.done .step-text { color: var(--muted2); }
-
-/* RIGHT PANEL */
-.right {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.right-header {
-  border-bottom: 1px solid var(--border);
-  padding: 14px 28px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-}
-.right-title {
-  font-family: var(--display);
-  font-size: 18px;
-  letter-spacing: 1.5px;
-  color: var(--text);
-}
-.right-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 28px;
-}
-
-/* EMPTY STATE */
-.empty-state {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  color: var(--muted);
-  text-align: center;
-}
-.empty-icon {
-  font-size: 48px;
-  opacity: 0.3;
-}
-.empty-title {
-  font-family: var(--display);
-  font-size: 24px;
-  letter-spacing: 2px;
-  color: var(--muted2);
-}
-.empty-sub {
-  font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.8;
-  max-width: 320px;
-}
-
-/* ANALYSIS SECTION */
-.analysis-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
-
-/* INTEL BOX */
-.intel-box {
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: 6px;
-  overflow: hidden;
-}
-.intel-box-header {
-  padding: 10px 16px;
-  background: var(--bg3);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.intel-box-title {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--accent);
-  text-transform: uppercase;
-}
-.intel-box-body {
-  padding: 16px;
-}
-
-/* HOOK */
-.hook-text {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--text);
-  line-height: 1.8;
-  font-style: italic;
-}
-
-/* BACKGROUND OPTIONS */
-.bg-options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-.bg-card {
-  border: 1px solid var(--border2);
-  border-radius: 5px;
-  padding: 12px 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: var(--bg3);
-  position: relative;
-}
-.bg-card:hover { border-color: var(--border3); background: var(--bg4); }
-.bg-card.selected {
-  border-color: var(--accent);
-  background: var(--accent2);
-}
-.bg-card-type {
-  font-family: var(--display);
-  font-size: 15px;
-  letter-spacing: 1px;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-.bg-card-sub {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--muted2);
-  line-height: 1.6;
-}
-.bg-card-badge {
-  position: absolute;
-  top: 8px; right: 8px;
-  font-family: var(--mono);
-  font-size: 9px;
-  background: var(--red);
-  color: #fff;
-  padding: 2px 6px;
-  border-radius: 3px;
-  letter-spacing: 1px;
-}
-.bg-card-check {
-  position: absolute;
-  top: 8px; right: 8px;
-  width: 16px; height: 16px;
-  border-radius: 50%;
-  background: var(--accent);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  font-size: 9px;
-  color: #000;
-}
-.bg-card.selected .bg-card-check { display: flex; }
-.bg-card.selected .bg-card-badge { display: none; }
-
-/* BANNER OPTIONS */
-.banner-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.banner-chip {
-  border: 1px solid var(--border2);
-  border-radius: 4px;
-  padding: 10px 18px;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: var(--bg3);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 120px;
-}
-.banner-chip:hover { border-color: var(--border3); }
-.banner-chip.selected {
-  border-color: var(--red);
-  background: var(--red-glow);
-}
-.banner-word {
-  font-family: var(--display);
-  font-size: 22px;
-  letter-spacing: 2px;
-  color: var(--text);
-}
-.banner-chip.selected .banner-word { color: #fff; }
-.banner-why {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--muted2);
-  line-height: 1.5;
-}
-
-/* REF IMAGES */
-.ref-zone {
-  border: 1px dashed var(--border2);
-  border-radius: 5px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-.ref-zone:hover { border-color: var(--border3); }
-.ref-zone-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--muted);
-  text-align: center;
-  letter-spacing: 1.5px;
-}
-.ref-images-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.ref-thumb {
-  width: 64px; height: 64px;
-  border-radius: 4px;
-  object-fit: cover;
-  border: 1px solid var(--border2);
-}
-.ref-add {
-  width: 64px; height: 64px;
-  border-radius: 4px;
-  border: 1px dashed var(--border2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  color: var(--muted);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.ref-add:hover { border-color: var(--border3); color: var(--muted2); }
-input[type="file"] { display: none; }
-
-/* FINAL PROMPT */
-.prompt-output {
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: 5px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text);
-  line-height: 1.8;
-  padding: 16px;
-  white-space: pre-wrap;
-  word-break: break-word;
-  min-height: 100px;
-}
-
-/* GENERATE SECTION */
-.generate-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.gen-btn {
-  flex: 1;
-  min-width: 160px;
-  background: var(--red);
-  border: none;
-  border-radius: 4px;
-  color: #fff;
-  font-family: var(--display);
-  font-size: 16px;
-  letter-spacing: 2px;
-  padding: 12px 20px;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-}
-.gen-btn:hover { background: #d41e00; }
-.gen-btn:active { transform: scale(0.98); }
-.gen-btn:disabled { background: var(--bg3); color: var(--muted); cursor: not-allowed; }
-.copy-btn {
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  border-radius: 4px;
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 11px;
-  padding: 12px 18px;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-.copy-btn:hover { border-color: var(--border3); }
-
-/* RESULT IMAGE */
-.result-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.result-img {
-  width: 100%;
-  border-radius: 6px;
-  border: 1px solid var(--border2);
-  display: block;
-}
-.result-actions {
-  display: flex;
-  gap: 10px;
-}
-.dl-btn {
-  background: var(--green);
-  border: none;
-  border-radius: 4px;
-  color: #fff;
-  font-family: var(--mono);
-  font-size: 11px;
-  padding: 10px 18px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.dl-btn:hover { background: var(--green-light); }
-.regen-btn {
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  border-radius: 4px;
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 11px;
-  padding: 10px 18px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.regen-btn:hover { border-color: var(--border3); }
-
-/* DIVIDER */
-.section-divider {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--muted);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 4px 0;
-}
-.section-divider::before, .section-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-/* LOADING SPINNER */
-.spinner {
-  width: 14px; height: 14px;
-  border: 2px solid rgba(255,255,255,0.2);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* TOAST */
-.toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: var(--bg4);
-  border: 1px solid var(--border2);
-  border-radius: 5px;
-  padding: 10px 16px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text);
-  z-index: 999;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: all 0.3s;
-  pointer-events: none;
-}
-.toast.show { opacity: 1; transform: translateY(0); }
-
-/* SCROLLBAR */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 2px; }
-
-/* LOADING OVERLAY */
-.loading-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(14,13,11,0.85);
-  z-index: 300;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 16px;
-}
-.loading-overlay.show { display: flex; }
-.loading-spinner-big {
-  width: 36px; height: 36px;
-  border: 3px solid rgba(255,255,255,0.1);
-  border-top-color: var(--red);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-.loading-text {
-  font-family: var(--display);
-  font-size: 20px;
-  letter-spacing: 3px;
-  color: var(--muted2);
-}
-.loading-sub {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 1px;
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e0d0b;--bg2:#161512;--bg3:#1f1e1a;--bg4:#272520;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);--border3:rgba(255,255,255,0.22);
+  --red:#c41a00;--red2:#d42000;--red-dim:rgba(196,26,0,0.1);
+  --accent:#c8a96e;--accent-dim:rgba(200,169,110,0.1);
+  --text:#e4dfd0;--muted:#6a6558;--muted2:#9c9788;
+  --green:#2a5e36;--green2:#357a45;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--display:'Bebas Neue',sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;font-size:13px;overflow-x:hidden}
+.hdr{height:50px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;background:var(--bg);z-index:300}
+.logo{font-family:var(--display);font-size:19px;letter-spacing:3px;display:flex;align-items:center;gap:8px}
+.logo-bar{width:3px;height:16px;background:var(--red)}
+.hdr-right{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1.5px;display:flex;align-items:center;gap:12px}
+.pill{background:var(--bg3);border:1px solid var(--border2);padding:3px 8px;border-radius:3px}
+.layout{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - 50px)}
+.side{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.side-block{padding:14px 16px;border-bottom:1px solid var(--border)}
+.lbl{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;display:block}
+textarea{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:11px;line-height:1.75;padding:10px 11px;resize:none;height:170px;outline:none;transition:border-color 0.2s}
+textarea:focus{border-color:var(--border3)}
+textarea::placeholder{color:var(--muted)}
+.pdf-btn{margin-top:6px;width:100%;background:transparent;border:1px dashed var(--border2);border-radius:4px;color:var(--muted);font-family:var(--mono);font-size:9px;letter-spacing:1.5px;padding:8px;cursor:pointer;transition:all 0.2s;text-align:center}
+.pdf-btn:hover{border-color:var(--border3);color:var(--muted2)}
+input[type=file]{display:none}
+.key-stack{display:flex;flex-direction:column;gap:8px}
+.key-row{display:flex;flex-direction:column;gap:5px}
+input[type=password]{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:11px;padding:8px 10px;outline:none;transition:border-color 0.2s}
+input[type=password]:focus{border-color:var(--border3)}
+input[type=password]::placeholder{color:var(--muted)}
+.analyze-btn{margin:12px 16px;background:var(--red);border:none;border-radius:4px;color:#fff;font-family:var(--display);font-size:16px;letter-spacing:2px;padding:10px;cursor:pointer;width:calc(100% - 32px);display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.15s,transform 0.1s}
+.analyze-btn:hover{background:var(--red2)}
+.analyze-btn:active{transform:scale(0.98)}
+.analyze-btn:disabled{background:var(--bg3);color:var(--muted);cursor:not-allowed;transform:none}
+.steps{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:5px}
+.stp{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:4px;border:1px solid transparent;transition:all 0.25s}
+.stp.active{border-color:rgba(200,169,110,0.2);background:var(--accent-dim)}
+.stp.done{border-color:rgba(42,94,54,0.3);background:rgba(42,94,54,0.08)}
+.stp-n{font-family:var(--mono);font-size:9px;width:16px;height:16px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--muted);transition:all 0.25s}
+.stp.active .stp-n{border-color:var(--accent);color:var(--accent)}
+.stp.done .stp-n{border-color:var(--green2);color:var(--green2)}
+.stp-t{font-size:11px;color:var(--muted)}
+.stp.active .stp-t{color:var(--text)}
+.stp.done .stp-t{color:var(--muted2)}
+.main{display:flex;flex-direction:column;overflow:hidden}
+.main-hdr{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.main-title{font-family:var(--display);font-size:17px;letter-spacing:1.5px}
+.main-meta{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px}
+.main-body{flex:1;overflow-y:auto;padding:22px 24px;display:flex;flex-direction:column;gap:18px}
+.empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center}
+.empty-logo{font-family:var(--display);font-size:56px;letter-spacing:6px;color:var(--bg3)}
+.empty-title{font-family:var(--display);font-size:20px;letter-spacing:2px;color:var(--muted)}
+.empty-desc{font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.9;max-width:280px}
+.card{background:var(--bg2);border:1px solid var(--border2);border-radius:5px;overflow:hidden}
+.card-hdr{padding:8px 13px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-lbl{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
+.card-sub{font-family:var(--mono);font-size:9px;color:var(--muted)}
+.card-body{padding:13px}
+.intel-text{font-family:var(--mono);font-size:11px;color:var(--muted2);line-height:1.85;font-style:italic}
+.intel-row{margin-top:9px;padding-top:9px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.7}
+.intel-row b{color:var(--text);font-weight:500}
+.opt-list{display:flex;flex-direction:column;gap:7px}
+.opt-item{border:1px solid var(--border2);border-radius:4px;padding:10px 12px;cursor:pointer;transition:all 0.18s;background:var(--bg3);position:relative}
+.opt-item:hover{border-color:var(--border3)}
+.opt-item.sel{border-color:var(--accent);background:var(--accent-dim)}
+.opt-formula{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:4px}
+.opt-text{font-size:13px;font-weight:500;color:var(--text);line-height:1.45}
+.opt-item.sel .opt-text{color:var(--accent)}
+.opt-why{font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:4px;line-height:1.5}
+.opt-check{position:absolute;top:9px;right:9px;width:14px;height:14px;border-radius:50%;background:var(--accent);display:none;align-items:center;justify-content:center;font-size:8px;color:#000;font-weight:bold}
+.opt-item.sel .opt-check{display:flex}
+.bg-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.bg-opt{border:1px solid var(--border2);border-radius:4px;padding:10px 12px;cursor:pointer;transition:all 0.18s;background:var(--bg3);position:relative}
+.bg-opt:hover{border-color:var(--border3)}
+.bg-opt.sel{border-color:var(--accent);background:var(--accent-dim)}
+.bg-type{font-family:var(--display);font-size:13px;letter-spacing:1px;margin-bottom:3px}
+.bg-why{font-family:var(--mono);font-size:9px;color:var(--muted2);line-height:1.6}
+.bg-rec{position:absolute;top:7px;right:7px;font-family:var(--mono);font-size:8px;background:var(--red);color:#fff;padding:1px 5px;border-radius:2px;letter-spacing:1px}
+.bg-check{position:absolute;top:7px;right:7px;width:13px;height:13px;border-radius:50%;background:var(--accent);display:none;align-items:center;justify-content:center;font-size:8px;color:#000;font-weight:bold}
+.bg-opt.sel .bg-check{display:flex}
+.bg-opt.sel .bg-rec{display:none}
+.banner-wrap{display:flex;flex-wrap:wrap;gap:7px}
+.ban-opt{border:1px solid var(--border2);border-radius:4px;padding:8px 13px;cursor:pointer;transition:all 0.18s;background:var(--bg3);min-width:100px}
+.ban-opt:hover{border-color:var(--border3)}
+.ban-opt.sel{border-color:var(--red);background:var(--red-dim)}
+.ban-word{font-family:var(--display);font-size:19px;letter-spacing:2px}
+.ban-opt.sel .ban-word{color:#ff6644}
+.ban-cat{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-top:1px}
+.ban-why{font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.5;margin-top:3px}
+.ref-drop{border:1px dashed var(--border2);border-radius:4px;padding:11px;cursor:pointer;transition:border-color 0.2s}
+.ref-drop:hover{border-color:var(--border3)}
+.ref-thumbs{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.ref-img{width:54px;height:54px;border-radius:3px;object-fit:cover;border:1px solid var(--border2)}
+.ref-plus{width:54px;height:54px;border-radius:3px;border:1px dashed var(--border2);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--muted)}
+.ref-hint{font-family:var(--mono);font-size:9px;color:var(--muted);text-align:center;letter-spacing:1px}
+.ref-note{font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.65;margin-top:8px}
+.prompt-out{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;font-family:var(--mono);font-size:11px;line-height:1.8;padding:13px;white-space:pre-wrap;word-break:break-word;min-height:80px;color:var(--text)}
+.prompt-out.awaiting{color:var(--muted);font-style:italic}
+.act-row{display:flex;gap:7px;flex-wrap:wrap}
+.gen-btn{flex:1;min-width:140px;background:var(--red);border:none;border-radius:4px;color:#fff;font-family:var(--display);font-size:15px;letter-spacing:2px;padding:11px;cursor:pointer;transition:background 0.15s,transform 0.1s}
+.gen-btn:hover{background:var(--red2)}
+.gen-btn:active{transform:scale(0.98)}
+.gen-btn:disabled{background:var(--bg3);color:var(--muted);cursor:not-allowed;transform:none}
+.copy-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--muted2);font-family:var(--mono);font-size:10px;padding:11px 14px;cursor:pointer;transition:all 0.18s}
+.copy-btn:hover{border-color:var(--border3);color:var(--text)}
+.result-img{width:100%;border-radius:4px;border:1px solid var(--border2);display:block}
+.dl-btn{background:var(--green);border:none;border-radius:4px;color:#fff;font-family:var(--mono);font-size:10px;padding:9px 16px;cursor:pointer;transition:background 0.15s}
+.dl-btn:hover{background:var(--green2)}
+.regen-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--muted2);font-family:var(--mono);font-size:10px;padding:9px 14px;cursor:pointer;transition:all 0.18s}
+.regen-btn:hover{border-color:var(--border3);color:var(--text)}
+.div-line{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;display:flex;align-items:center;gap:10px;margin:4px 0}
+.div-line::before,.div-line::after{content:'';flex:1;height:1px;background:var(--border)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(14,13,11,0.9);z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.overlay.show{display:flex}
+.spin{width:30px;height:30px;border:2px solid rgba(255,255,255,0.06);border-top-color:var(--red);border-radius:50%;animation:sp 0.75s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ov-title{font-family:var(--display);font-size:18px;letter-spacing:3px;color:var(--muted2)}
+.ov-sub{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--bg4);border:1px solid var(--border2);border-radius:4px;padding:8px 13px;font-family:var(--mono);font-size:11px;color:var(--text);z-index:900;opacity:0;transform:translateY(6px);transition:all 0.22s;pointer-events:none;max-width:340px;line-height:1.5}
+.toast.on{opacity:1;transform:translateY(0)}
+.toast.err{color:#ff7755;border-color:rgba(196,26,0,0.35)}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
 </style>
 </head>
 <body>
-
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-spinner-big"></div>
-  <div class="loading-text">ANALYZING</div>
-  <div class="loading-sub" id="loadingSubText">Reading script intelligence...</div>
+<div class="overlay" id="overlay">
+  <div class="spin"></div>
+  <div class="ov-title" id="ovTitle">ANALYZING</div>
+  <div class="ov-sub" id="ovSub">Reading script...</div>
 </div>
-
 <div class="toast" id="toast"></div>
-
-<header class="header">
-  <div class="logo">
-    <div class="logo-stripe"></div>
-    HIGH COMMAND
-  </div>
-  <div class="header-meta">PIPELINE v2.0</div>
+<header class="hdr">
+  <div class="logo"><div class="logo-bar"></div>ALLIED THUMBNAILS</div>
+  <div class="hdr-right"><span class="pill">PIPELINE v2.0</span><span>THUMBNAIL + TITLE SYSTEM</span></div>
 </header>
-
-<div class="main">
-  <!-- LEFT SIDEBAR -->
-  <div class="sidebar">
-    <div class="sidebar-top">
-      <div class="section-label">Script Input</div>
-      <div id="pdfUploadBtn" onclick="document.getElementById('pdfFile').click()" style="margin-bottom:8px;border:1px dashed var(--border2);border-radius:4px;padding:7px;text-align:center;cursor:pointer;font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1.5px;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--border3)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--muted)'">📄 UPLOAD PDF SCRIPT</div>
-      <input type="file" id="pdfFile" accept=".pdf" style="display:none" onchange="handlePDFUpload(event)">
-      <textarea id="scriptInput" placeholder="Paste your script here...&#10;&#10;The system will extract:&#10;— Emotional core&#10;— Background type&#10;— Banner words&#10;— General details"></textarea>
+<div class="layout">
+  <div class="side">
+    <div class="side-block">
+      <span class="lbl">Script Input</span>
+      <div class="pdf-btn" id="pdfBtn" onclick="document.getElementById('pdfFile').click()">📄 UPLOAD PDF SCRIPT</div>
+      <input type="file" id="pdfFile" accept=".pdf" onchange="loadPDF(event)">
+      <textarea id="scriptInput" placeholder="Or paste script text here..."></textarea>
     </div>
-
-    <div class="sidebar-keys">
-      <div class="key-row">
-        <div class="key-label">Anthropic API Key</div>
-        <input type="password" id="anthropicKey" placeholder="sk-ant-..." />
-      </div>
-      <div class="key-row">
-        <div class="key-label">Google AI Studio API Key</div>
-        <input type="password" id="replicateKey" placeholder="AIza..." />
+    <div class="side-block">
+      <div class="key-stack">
+        <div class="key-row"><span class="lbl">Anthropic API Key</span><input type="password" id="anthropicKey" placeholder="sk-ant-..."></div>
+        <div class="key-row"><span class="lbl">Google AI Studio Key</span><input type="password" id="googleKey" placeholder="AIza..."></div>
       </div>
     </div>
-
-    <button class="analyze-btn" id="analyzeBtn" onclick="analyzeScript()">
-      <span id="analyzeBtnText">ANALYZE SCRIPT</span>
-    </button>
-
-    <div class="sidebar-bottom">
-      <div class="steps-track">
-        <div class="step-item" id="step1">
-          <div class="step-num">1</div>
-          <div class="step-text">Script analysis & hook extraction</div>
-        </div>
-        <div class="step-item" id="step2">
-          <div class="step-num">2</div>
-          <div class="step-text">Title selection</div>
-        </div>
-        <div class="step-item" id="step2b">
-          <div class="step-num">3</div>
-          <div class="step-text">Background type selection</div>
-        </div>
-        <div class="step-item" id="step3">
-          <div class="step-num">3</div>
-          <div class="step-text">Banner word selection</div>
-        </div>
-        <div class="step-item" id="step4">
-          <div class="step-num">4</div>
-          <div class="step-text">Reference images upload</div>
-        </div>
-        <div class="step-item" id="step5">
-          <div class="step-num">5</div>
-          <div class="step-text">Generate thumbnail</div>
-        </div>
-      </div>
+    <button class="analyze-btn" id="analyzeBtn" onclick="analyzeScript()"><span id="analyzeTxt">ANALYZE SCRIPT</span></button>
+    <div class="steps">
+      <div class="stp" id="stp1"><div class="stp-n">1</div><div class="stp-t">Script analysis</div></div>
+      <div class="stp" id="stp2"><div class="stp-n">2</div><div class="stp-t">Select title</div></div>
+      <div class="stp" id="stp3"><div class="stp-n">3</div><div class="stp-t">Select background</div></div>
+      <div class="stp" id="stp4"><div class="stp-n">4</div><div class="stp-t">Select banner word</div></div>
+      <div class="stp" id="stp5"><div class="stp-n">5</div><div class="stp-t">Upload reference images</div></div>
+      <div class="stp" id="stp6"><div class="stp-n">6</div><div class="stp-t">Generate thumbnail</div></div>
     </div>
   </div>
-
-  <!-- RIGHT PANEL -->
-  <div class="right">
-    <div class="right-header">
-      <div class="right-title" id="rightTitle">AWAITING SCRIPT</div>
-      <div style="font-family:var(--mono);font-size:10px;color:var(--muted)" id="rightMeta">Paste script and hit analyze</div>
+  <div class="main">
+    <div class="main-hdr">
+      <div class="main-title" id="mainTitle">AWAITING SCRIPT</div>
+      <div class="main-meta" id="mainMeta">Paste or upload script then hit analyze</div>
     </div>
-    <div class="right-content" id="rightContent">
-      <div class="empty-state">
-        <div class="empty-icon">⬛</div>
+    <div class="main-body" id="mainBody">
+      <div class="empty">
+        <div class="empty-logo">AT</div>
         <div class="empty-title">NO INTEL YET</div>
-        <div class="empty-sub">Paste your script on the left and hit ANALYZE SCRIPT. The system will extract the emotional core, recommend backgrounds, banner words, and build your final prompt.</div>
+        <div class="empty-desc">Paste your script on the left and hit ANALYZE SCRIPT. The system extracts the emotional core, generates title options, recommends backgrounds and banner words, then builds your Nano Banana Pro prompt.</div>
       </div>
     </div>
   </div>
 </div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
-let analysisData = null;
-let selectedBg = null;
-let selectedBanner = null;
-let refImages = [];
-let refImageData = [];
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-function showToast(msg, dur=2500) {
-  const t = document.getElementById('toast');
+var appData = null;
+var selTitle = null, selBg = null, selBanner = null;
+var refImgs = [];
+
+function showToast(msg, isErr, ms) {
+  var t = document.getElementById('toast');
   t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), dur);
+  t.className = 'toast on' + (isErr ? ' err' : '');
+  clearTimeout(t._t);
+  t._t = setTimeout(function() { t.classList.remove('on'); }, ms || 3500);
+}
+
+function showOverlay(on, title, sub) {
+  document.getElementById('overlay').classList.toggle('show', on);
+  if (on) {
+    document.getElementById('ovTitle').textContent = title || 'ANALYZING';
+    document.getElementById('ovSub').textContent = sub || '';
+  }
 }
 
 function setStep(n, state) {
-  const el = document.getElementById('step'+n);
-  el.classList.remove('active','done');
-  if(state) el.classList.add(state);
+  var el = document.getElementById('stp' + n);
+  el.classList.remove('active', 'done');
+  if (state) el.classList.add(state);
 }
 
-function showLoading(show, sub='') {
-  const ol = document.getElementById('loadingOverlay');
-  if(show) {
-    ol.classList.add('show');
-    if(sub) document.getElementById('loadingSubText').textContent = sub;
-  } else {
-    ol.classList.remove('show');
-  }
-}
-
-async function handlePDFUpload(e) {
-  const file = e.target.files[0]; if(!file) return;
-  document.getElementById('pdfUploadBtn').textContent = '📄 ' + file.name;
-  showLoading(true, 'Reading PDF...');
-  try {
-    if(typeof pdfjsLib === 'undefined') throw new Error('PDF.js not loaded yet, please wait a moment and try again');
-    const buf = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({data: buf}).promise;
-    let txt = '';
-    for(let i=1; i<=pdf.numPages; i++) {
-      const pg = await pdf.getPage(i);
-      const ct = await pg.getTextContent();
-      txt += ct.items.map(s=>s.str).join(' ') + '
-';
-    }
-    document.getElementById('scriptInput').value = txt.trim();
-    showLoading(false);
-    showToast('PDF loaded — ' + pdf.numPages + ' pages extracted');
-  } catch(err) {
-    showLoading(false);
-    showToast('PDF error: ' + err.message, 4000);
-  }
-}
-
-async function analyzeScript() {
-  const script = document.getElementById('scriptInput').value.trim();
-  const anthropicKey = document.getElementById('anthropicKey').value.trim();
-
-  if(!script) return showToast('Paste a script first');
-  if(!anthropicKey) return showToast('Enter your Anthropic API key');
-
-  const btn = document.getElementById('analyzeBtn');
-  btn.disabled = true;
-  document.getElementById('analyzeBtnText').textContent = 'ANALYZING...';
-  showLoading(true, 'Extracting script intelligence...');
-  setStep(1,'active');
-
-  const systemPrompt = `You are a YouTube thumbnail strategist specializing in WWII military history content. You analyze scripts and return structured JSON for thumbnail creation.
-
-Your job:
-1. Extract the emotional core and central dramatic moment
-2. Identify the general(s) featured (name, rank, era, physical description if mentioned)
-3. Recommend background types from these options, scored by fit:
-   - COLLISION_MAP: tactical map showing two forces colliding with arrows pointing at each other (use for battles, confrontations, command conflicts)
-   - LOCATION_MAP: map showing a specific location, route, or geographic context (use for campaigns, raids, long marches, strategic decisions)
-   - NEWSPAPER: aged newspaper front page with headline (use for public events, court martials, political decisions, cover-ups)
-   - DOCUMENT: military orders, memos, rejected stamps, filed documents (use for betrayals, ignored orders, suppressed decisions, bureaucratic injustice)
-   - BATTLE_ACTION: dramatic battle scene, explosions, troops (use for direct combat narratives)
-4. Recommend 3-4 banner words (1-3 words max each) optimized for CTR - these should create curiosity, injustice, or intrigue. Pick words that make viewers need to know why.
-5. Identify the general's visual description for the portrait
-
-Return ONLY valid JSON, no markdown, no explanation:
-{
-  "general": {
-    "name": "Full name and rank",
-    "description": "Physical description for AI portrait - age, build, face, uniform details",
-    "era": "WWII Pacific/European/etc"
-  },
-  "generals_count": 1,
-  "hook": "2-3 sentence emotional core that is the heart of the thumbnail story",
-  "dramatic_moment": "The single most cinematic/controversial moment in the script",
-  "backgrounds": [
-    {
-      "type": "COLLISION_MAP|LOCATION_MAP|NEWSPAPER|DOCUMENT|BATTLE_ACTION",
-      "label": "Short display name",
-      "description": "Specific details for this background - what exactly should be on the map/newspaper/document",
-      "recommended": true/false,
-      "reason": "Why this background fits"
-    }
-  ],
-  "titles": [
-    {
-      "text": "Full title text following the formula",
-      "formula": "Achievement+Injustice / Emotional Portrait / Unknown Hero / Clash / Dark Implication",
-      "why": "Why this title creates clicks"
-    }
-  ],
-  "banners": [
-    {
-      "word": "BANNER TEXT",
-      "category": "Injustice|Dark Implication|Nickname|Versus|Achievement",
-      "ctr_reason": "Why this word creates clicks"
-    }
-  ],
-  "tone": "cold_betrayal/furious_injustice/tragic_irony/dark_mystery/triumphant_irony",
-  "lighting": "specific lighting description for portrait"
-}
-
-Generate exactly: 4 titles, 4 banners. Study these real examples:
-- Banner: JUMPING GENERAL | Title: The Only WWII General to Carry an M1 and Jump With His Men
-- Banner: THE MYTH | Title: The GI General Myth. What Bradley Own Officers Said About Him.
-- Banner: ERASED | Title: The General Who Won Every Campaign MacArthur Claimed as His Own.
-- Banner: WRONG CALL | Title: Bradley Fired His Best Corps Commander at Normandy. He Was...
-- Banner: STOLEN GLORY | Title: Lucian Truscott Saved Anzio. Mark Clark Flew In for the Photos.
-Rules: Banner = emotional verdict 1-3 words. Title = specific story earning that verdict, never repeating banner word. Title structure: [What happened]. [The twist/consequence.]`;
-
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': anthropicKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 2500,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: `Analyze this script:\n\n${script}` }]
-      })
+function loadPDF(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  document.getElementById('pdfBtn').textContent = '📄 ' + file.name;
+  showOverlay(true, 'READING PDF', 'Extracting text...');
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var buf = ev.target.result;
+    pdfjsLib.getDocument({ data: buf }).promise.then(function(pdf) {
+      var pages = [];
+      for (var i = 1; i <= pdf.numPages; i++) pages.push(i);
+      var texts = [];
+      function getPage(idx) {
+        if (idx >= pages.length) {
+          document.getElementById('scriptInput').value = texts.join('\n');
+          showOverlay(false);
+          showToast('PDF loaded — ' + pdf.numPages + ' pages');
+          return;
+        }
+        pdf.getPage(pages[idx]).then(function(pg) {
+          pg.getTextContent().then(function(ct) {
+            texts.push(ct.items.map(function(s) { return s.str; }).join(' '));
+            getPage(idx + 1);
+          });
+        });
+      }
+      getPage(0);
+    }).catch(function(err) {
+      showOverlay(false);
+      showToast('PDF error: ' + err.message, true);
     });
-
-    const data = await response.json();
-    if(!response.ok) throw new Error(data.error?.message || 'API error');
-
-    let raw = data.content[0].text.trim();
-    raw = raw.replace(/```json|```/g,'').trim();
-    analysisData = JSON.parse(raw);
-
-    showLoading(false);
-    setStep(1,'done');
-    setStep(2,'active');
-    renderAnalysis();
-
-  } catch(err) {
-    showLoading(false);
-    setStep(1,'');
-    showToast('Error: ' + err.message, 4000);
-    btn.disabled = false;
-    document.getElementById('analyzeBtnText').textContent = 'ANALYZE SCRIPT';
-  }
-}
-
-function renderAnalysis() {
-  const btn = document.getElementById('analyzeBtn');
-  btn.disabled = false;
-  document.getElementById('analyzeBtnText').textContent = 'RE-ANALYZE';
-
-  document.getElementById('rightTitle').textContent = analysisData.general.name.toUpperCase();
-  document.getElementById('rightMeta').textContent = analysisData.era || 'WWII';
-
-  const content = document.getElementById('rightContent');
-  content.innerHTML = '';
-
-  const grid = document.createElement('div');
-  grid.className = 'analysis-grid';
-
-  // HOOK
-  grid.innerHTML += `
-    <div class="intel-box">
-      <div class="intel-box-header">
-        <span class="intel-box-title">Emotional Core</span>
-        <span style="font-family:var(--mono);font-size:9px;color:var(--muted)">${analysisData.tone?.toUpperCase() || ''}</span>
-      </div>
-      <div class="intel-box-body">
-        <div class="hook-text">${analysisData.hook}</div>
-        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
-          <span style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;">Dramatic Moment — </span>
-          <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">${analysisData.dramatic_moment}</span>
-        </div>
-      </div>
-    </div>`;
-
-  // STEP 2 - BACKGROUND
-  const bgSection = document.createElement('div');
-  bgSection.className = 'intel-box';
-  bgSection.innerHTML = `
-    <div class="intel-box-header">
-      <span class="intel-box-title">Step 2 — Background Type</span>
-      <span style="font-family:var(--mono);font-size:9px;color:var(--muted)">Select one</span>
-    </div>
-    <div class="intel-box-body">
-      <div class="bg-options" id="bgOptions"></div>
-    </div>`;
-  grid.appendChild(bgSection);
-
-  // STEP 2 - TITLES
-  if(analysisData.titles) {
-    const titleSection = document.createElement('div');
-    titleSection.className = 'intel-box';
-    titleSection.innerHTML = `
-      <div class="intel-box-header">
-        <span class="intel-box-title">Step 2 — Video Title</span>
-        <span style="font-family:var(--mono);font-size:9px;color:var(--muted)">Select one</span>
-      </div>
-      <div class="intel-box-body">
-        <div style="display:flex;flex-direction:column;gap:8px" id="titleOptions"></div>
-      </div>`;
-    grid.appendChild(titleSection);
-  }
-
-  // STEP 3 - BANNER
-  const bannerSection = document.createElement('div');
-  bannerSection.className = 'intel-box';
-  bannerSection.innerHTML = `
-    <div class="intel-box-header">
-      <span class="intel-box-title">Step 3 — Banner Word</span>
-      <span style="font-family:var(--mono);font-size:9px;color:var(--muted)">Select one</span>
-    </div>
-    <div class="intel-box-body">
-      <div class="banner-options" id="bannerOptions"></div>
-    </div>`;
-  grid.appendChild(bannerSection);
-
-  // STEP 4 - REFERENCE IMAGES
-  const refSection = document.createElement('div');
-  refSection.className = 'intel-box';
-  refSection.innerHTML = `
-    <div class="intel-box-header">
-      <span class="intel-box-title">Step 4 — Reference Images</span>
-      <span style="font-family:var(--mono);font-size:9px;color:var(--muted)">Upload 2–3 photos of the general</span>
-    </div>
-    <div class="intel-box-body">
-      <div style="font-family:var(--mono);font-size:10px;color:var(--muted2);margin-bottom:12px;line-height:1.7">
-        Portrait of <strong style="color:var(--text)">${analysisData.general.name}</strong> — ${analysisData.general.description}
-      </div>
-      <div class="ref-zone" onclick="document.getElementById('refInput').click()">
-        <input type="file" id="refInput" accept="image/*" multiple onchange="handleRefImages(event)">
-        <div class="ref-images-row" id="refImagesRow">
-          <div class="ref-add">+</div>
-        </div>
-        <div class="ref-zone-label">DROP PHOTOS OR CLICK TO BROWSE</div>
-      </div>
-      <div style="font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:8px;line-height:1.7">
-        Best: 1 front-facing portrait + 1 in uniform · Public domain sources: archives.gov, USMC History Division
-      </div>
-    </div>`;
-  grid.appendChild(refSection);
-
-  // STEP 5 - PROMPT & GENERATE
-  const promptSection = document.createElement('div');
-  promptSection.className = 'intel-box';
-  promptSection.id = 'promptSection';
-  promptSection.innerHTML = `
-    <div class="intel-box-header">
-      <span class="intel-box-title">Step 5 — Final Prompt & Generate</span>
-    </div>
-    <div class="intel-box-body" style="display:flex;flex-direction:column;gap:12px">
-      <div class="prompt-output" id="promptOutput" style="color:var(--muted);font-style:italic">Select background and banner word to build prompt...</div>
-      <div class="generate-row">
-        <button class="gen-btn" id="generateBtn" onclick="generateImage()" disabled>GENERATE THUMBNAIL</button>
-        <button class="copy-btn" onclick="copyPrompt()">Copy Prompt</button>
-      </div>
-      <div id="resultSection" style="display:none" class="result-section">
-        <div class="section-divider">Generated Result</div>
-        <img id="resultImg" class="result-img" src="" alt="Generated thumbnail">
-        <div class="result-actions">
-          <button class="dl-btn" onclick="downloadResult()">Download PNG</button>
-          <button class="regen-btn" onclick="generateImage()">Regenerate</button>
-        </div>
-      </div>
-    </div>`;
-  grid.appendChild(promptSection);
-
-  content.appendChild(grid);
-
-  // Render bg options
-  renderTitleOptions();
-  renderBgOptions();
-  renderBannerOptions();
-}
-
-function renderTitleOptions() {
-  const container = document.getElementById('titleOptions');
-  if(!container || !analysisData.titles) return;
-  container.innerHTML = '';
-  analysisData.titles.forEach((t, i) => {
-    const card = document.createElement('div');
-    card.style.cssText = 'border:1px solid var(--border2);border-radius:4px;padding:11px 13px;cursor:pointer;transition:all 0.18s;background:var(--bg3);position:relative;';
-    card.innerHTML = `
-      <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:4px">${t.formula ? t.formula.toUpperCase() : ''}</div>
-      <div style="font-size:13px;font-weight:500;color:var(--text);line-height:1.45" class="title-text-el">${t.text}</div>
-      <div style="font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:4px;line-height:1.5">${t.why || ''}</div>`;
-    card.onclick = () => {
-      container.querySelectorAll('div[data-title]').forEach(el => {
-        el.style.borderColor = 'var(--border2)';
-        el.style.background = 'var(--bg3)';
-        el.querySelector('.title-text-el').style.color = 'var(--text)';
-      });
-      card.style.borderColor = 'var(--accent)';
-      card.style.background = 'var(--accent-dim)';
-      card.querySelector('.title-text-el').style.color = 'var(--accent)';
-      window.selectedTitle = t;
-      setStep(2,'done'); setStep(3,'active');
-    };
-    card.dataset.title = i;
-    container.appendChild(card);
-  });
-}
-
-function renderBgOptions() {
-  const container = document.getElementById('bgOptions');
-  if(!container) return;
-  container.innerHTML = '';
-
-  const bgIcons = {
-    COLLISION_MAP: '⚔',
-    LOCATION_MAP: '🗺',
-    NEWSPAPER: '📰',
-    DOCUMENT: '📋',
-    BATTLE_ACTION: '💥'
   };
+  reader.readAsArrayBuffer(file);
+}
 
-  analysisData.backgrounds.forEach((bg, i) => {
-    const card = document.createElement('div');
-    card.className = 'bg-card' + (bg.recommended ? '' : '');
-    card.innerHTML = `
-      ${bg.recommended ? '<div class="bg-card-badge">RECOMMENDED</div>' : ''}
-      <div class="bg-card-check">✓</div>
-      <div class="bg-card-type">${bgIcons[bg.type] || ''} ${bg.label}</div>
-      <div class="bg-card-sub">${bg.reason}</div>`;
-    card.onclick = () => selectBg(bg, card);
-    container.appendChild(card);
+function analyzeScript() {
+  var script = document.getElementById('scriptInput').value.trim();
+  var aKey = document.getElementById('anthropicKey').value.trim();
+  if (!script) return showToast('Paste a script or upload a PDF first', true);
+  if (!aKey) return showToast('Enter your Anthropic API key', true);
 
-    if(bg.recommended && !selectedBg) {
-      setTimeout(() => selectBg(bg, card), 50);
-    }
+  document.getElementById('analyzeBtn').disabled = true;
+  document.getElementById('analyzeTxt').textContent = 'ANALYZING...';
+  showOverlay(true, 'ANALYZING', 'Extracting script intelligence...');
+  setStep(1, 'active');
+
+  var systemPrompt = 'You are a YouTube thumbnail and title strategist for a WWII/Korean War military history channel called Allied Thumbnails. Analyze scripts and return structured JSON only — no markdown, no explanation.\n\nCHANNEL FORMULA — study these real working examples:\n- Banner: JUMPING GENERAL | Title: The Only WWII General to Carry an M1 and Jump With His Men\n- Banner: THE MYTH | Title: The GI General Myth. What Bradley Own Officers Said About Him.\n- Banner: ERASED | Title: The General Who Won Every Campaign MacArthur Claimed as His Own.\n- Banner: WRONG CALL | Title: Bradley Fired His Best Corps Commander at Normandy. He Was...\n- Banner: STOLEN GLORY | Title: Lucian Truscott Saved Anzio. Mark Clark Flew In for the Photos.\n- Banner: SACRIFICED | Title: The Allen and Roosevelt Firing. Eisenhower Most Political Decision.\n- Banner: NO FUEL | Title: Eisenhower Let Patton STARVE for Fuel While Montgomery Got Everything.\n- Banner: SMITH vs SMITH | Title: A Marine General Fired an Army General on Saipan. It Nearly Split the Military.\n\nRULES:\n1. Banner = emotional VERDICT 1-3 words max, feels like a stamp or judgment\n2. Title = SPECIFIC STORY that earns the verdict, never repeats the banner word\n3. Title structure: [What specifically happened]. [The consequence or twist.]\n4. Background should show the SPECIFIC moment not generic war imagery\n\nBACKGROUND TYPES:\n- COLLISION_MAP: tactical map with two arrow forces colliding (battles, command conflicts)\n- LOCATION_MAP: map showing specific place or route (raids, campaigns, geographic stories)\n- NEWSPAPER: aged 1940s newspaper with dramatic headline (cover-ups, political decisions)\n- DOCUMENT: military orders with REJECTED or FILED stamps (ignored orders, betrayal)\n- BATTLE_ACTION: combat scene with smoke and fire (direct combat narratives)\n\nReturn ONLY this exact JSON structure:\n{\n  "general": {\n    "name": "Full rank and name",\n    "physical": "Detailed physical description for AI portrait: age, build, face shape, eyes, hair, uniform specifics, any signature items",\n    "era": "WWII European / WWII Pacific / Korean War / etc"\n  },\n  "hook": "2-3 sentences capturing the central irony or injustice",\n  "dramatic_moment": "The single most cinematic moment at the peak of the story",\n  "tone": "cold_betrayal or furious_injustice or tragic_irony or dark_mystery or triumphant_irony",\n  "lighting": "Specific portrait lighting matching tone",\n  "titles": [\n    {"text": "Full title text", "formula": "Formula name", "why": "Why this drives clicks"}\n  ],\n  "backgrounds": [\n    {"type": "TYPE", "label": "Short name", "specific": "Exact details for this background", "recommended": true}\n  ],\n  "banners": [\n    {"word": "BANNER TEXT", "category": "Category name", "why": "Why this drives CTR"}\n  ]\n}\n\nGenerate exactly: 4 titles, 3-4 backgrounds with one recommended true, 4 banners.';
+
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': aKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 2500,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: 'Analyze this script:\n\n' + script }]
+    })
+  }).then(function(res) {
+    return res.json().then(function(json) {
+      if (!res.ok) throw new Error(json.error && json.error.message ? json.error.message : 'API error ' + res.status);
+      return json;
+    });
+  }).then(function(json) {
+    var raw = json.content[0].text.trim().replace(/```json|```/g, '').trim();
+    appData = JSON.parse(raw);
+    showOverlay(false);
+    setStep(1, 'done');
+    setStep(2, 'active');
+    renderAll();
+  }).catch(function(err) {
+    showOverlay(false);
+    setStep(1, '');
+    showToast('Error: ' + err.message, true, 7000);
+    document.getElementById('analyzeBtn').disabled = false;
+    document.getElementById('analyzeTxt').textContent = 'ANALYZE SCRIPT';
   });
 }
 
-function renderBannerOptions() {
-  const container = document.getElementById('bannerOptions');
-  if(!container) return;
-  container.innerHTML = '';
-
-  analysisData.banners.forEach((b, i) => {
-    const chip = document.createElement('div');
-    chip.className = 'banner-chip';
-    chip.innerHTML = `
-      <div class="banner-word">${b.word}</div>
-      <div class="banner-why">${b.ctr_reason}</div>`;
-    chip.onclick = () => selectBanner(b, chip);
-    container.appendChild(chip);
-  });
+function makeCard(label, meta, inner) {
+  var c = document.createElement('div');
+  c.className = 'card';
+  c.innerHTML = '<div class="card-hdr"><span class="card-lbl">' + label + '</span><span class="card-sub">' + meta + '</span></div><div class="card-body">' + inner + '</div>';
+  return c;
 }
 
-function selectBg(bg, el) {
-  document.querySelectorAll('.bg-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedBg = bg;
-  setStep(2,'done');
-  setStep(3,'active');
-  updatePrompt();
+function bgIcon(type) {
+  var icons = { COLLISION_MAP: '⚔', LOCATION_MAP: '🗺', NEWSPAPER: '📰', DOCUMENT: '📋', BATTLE_ACTION: '💥' };
+  return icons[type] || '';
 }
 
-function selectBanner(b, el) {
-  document.querySelectorAll('.banner-chip').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedBanner = b;
-  setStep(3,'done');
-  setStep(4,'active');
-  updatePrompt();
+function renderAll() {
+  document.getElementById('analyzeBtn').disabled = false;
+  document.getElementById('analyzeTxt').textContent = 'RE-ANALYZE';
+  document.getElementById('mainTitle').textContent = appData.general.name.toUpperCase();
+  document.getElementById('mainMeta').textContent = appData.general.era.toUpperCase();
+
+  var body = document.getElementById('mainBody');
+  body.innerHTML = '';
+
+  body.appendChild(makeCard('Intel — Emotional Core', appData.general.era,
+    '<div class="intel-text">' + appData.hook + '</div>' +
+    '<div class="intel-row"><b>Dramatic moment —</b> ' + appData.dramatic_moment + '</div>' +
+    '<div class="intel-row"><b>Tone —</b> ' + appData.tone.replace(/_/g, ' ') + ' &nbsp;·&nbsp; <b>Lighting —</b> ' + appData.lighting + '</div>'
+  ));
+
+  var titleHtml = '<div class="opt-list">';
+  for (var i = 0; i < appData.titles.length; i++) {
+    var t = appData.titles[i];
+    titleHtml += '<div class="opt-item" id="title_' + i + '" onclick="selectTitle(' + i + ')">' +
+      '<div class="opt-check">✓</div>' +
+      '<div class="opt-formula">' + t.formula.toUpperCase() + '</div>' +
+      '<div class="opt-text">' + t.text + '</div>' +
+      '<div class="opt-why">' + t.why + '</div>' +
+      '</div>';
+  }
+  titleHtml += '</div>';
+  body.appendChild(makeCard('Step 2 — Video Title', 'Select one', titleHtml));
+
+  var bgHtml = '<div class="bg-grid">';
+  for (var j = 0; j < appData.backgrounds.length; j++) {
+    var b = appData.backgrounds[j];
+    bgHtml += '<div class="bg-opt" id="bg_' + j + '" onclick="selectBg(' + j + ')">' +
+      (b.recommended ? '<div class="bg-rec">REC</div>' : '') +
+      '<div class="bg-check">✓</div>' +
+      '<div class="bg-type">' + bgIcon(b.type) + ' ' + b.label + '</div>' +
+      '<div class="bg-why">' + b.specific + '</div>' +
+      '</div>';
+  }
+  bgHtml += '</div>';
+  body.appendChild(makeCard('Step 3 — Background Type', 'Select one', bgHtml));
+
+  var banHtml = '<div class="banner-wrap">';
+  for (var k = 0; k < appData.banners.length; k++) {
+    var bn = appData.banners[k];
+    banHtml += '<div class="ban-opt" id="ban_' + k + '" onclick="selectBanner(' + k + ')">' +
+      '<div class="ban-word">' + bn.word + '</div>' +
+      '<div class="ban-cat">' + bn.category.toUpperCase() + '</div>' +
+      '<div class="ban-why">' + bn.why + '</div>' +
+      '</div>';
+  }
+  banHtml += '</div>';
+  body.appendChild(makeCard('Step 4 — Banner Word', 'Select one', banHtml));
+
+  body.appendChild(makeCard('Step 5 — Reference Images', '2-3 photos of the general',
+    '<div style="font-family:var(--mono);font-size:10px;color:var(--muted2);margin-bottom:10px;line-height:1.7">Portrait of <strong style="color:var(--text)">' + appData.general.name + '</strong><br>' + appData.general.physical + '</div>' +
+    '<div class="ref-drop" onclick="document.getElementById(\'refInput\').click()">' +
+    '<input type="file" id="refInput" accept="image/*" multiple onchange="handleRefs(event)">' +
+    '<div class="ref-thumbs" id="refThumbs"><div class="ref-plus">+</div></div>' +
+    '<div class="ref-hint">DROP PHOTOS OR CLICK TO BROWSE</div>' +
+    '</div>' +
+    '<div class="ref-note">Best: 1 front-facing portrait + 1 in uniform · Sources: archives.gov · Wikipedia Commons</div>'
+  ));
+
+  body.appendChild(makeCard('Step 6 — Final Prompt & Generate', 'Nano Banana Pro · Google AI Studio',
+    '<div class="prompt-out awaiting" id="promptOut">Select title, background, and banner word above to build your prompt...</div>' +
+    '<div class="act-row" style="margin-top:10px">' +
+    '<button class="gen-btn" id="genBtn" onclick="generateImage()" disabled>GENERATE THUMBNAIL</button>' +
+    '<button class="copy-btn" onclick="copyPrompt()">Copy Prompt</button>' +
+    '</div>' +
+    '<div id="resultWrap" style="display:none;flex-direction:column;gap:10px;margin-top:14px">' +
+    '<div class="div-line">Generated Thumbnail</div>' +
+    '<img id="resultImg" class="result-img" src="" alt="Generated thumbnail">' +
+    '<div class="act-row">' +
+    '<button class="dl-btn" onclick="dlImage()">Download PNG</button>' +
+    '<button class="regen-btn" onclick="generateImage()">Regenerate</button>' +
+    '</div></div>'
+  ));
+
+  var recIdx = -1;
+  for (var r = 0; r < appData.backgrounds.length; r++) {
+    if (appData.backgrounds[r].recommended) { recIdx = r; break; }
+  }
+  if (recIdx >= 0) setTimeout(function() { selectBg(recIdx); }, 100);
 }
 
-function handleRefImages(e) {
-  const files = Array.from(e.target.files);
-  refImages = files;
-  refImageData = [];
+function selectTitle(i) {
+  document.querySelectorAll('.opt-item').forEach(function(e) { e.classList.remove('sel'); });
+  document.getElementById('title_' + i).classList.add('sel');
+  selTitle = appData.titles[i];
+  setStep(2, 'done'); setStep(3, 'active');
+  buildPrompt();
+}
 
-  const row = document.getElementById('refImagesRow');
+function selectBg(i) {
+  document.querySelectorAll('.bg-opt').forEach(function(e) { e.classList.remove('sel'); });
+  document.getElementById('bg_' + i).classList.add('sel');
+  selBg = appData.backgrounds[i];
+  setStep(3, 'done'); setStep(4, 'active');
+  buildPrompt();
+}
+
+function selectBanner(i) {
+  document.querySelectorAll('.ban-opt').forEach(function(e) { e.classList.remove('sel'); });
+  document.getElementById('ban_' + i).classList.add('sel');
+  selBanner = appData.banners[i];
+  setStep(4, 'done'); setStep(5, 'active');
+  buildPrompt();
+}
+
+function handleRefs(e) {
+  var files = Array.from(e.target.files);
+  refImgs = [];
+  var row = document.getElementById('refThumbs');
   row.innerHTML = '';
-
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = ev => {
-      refImageData.push({ data: ev.target.result.split(',')[1], type: file.type });
-      const img = document.createElement('img');
-      img.src = ev.target.result;
-      img.className = 'ref-thumb';
+  files.slice(0, 4).forEach(function(file) {
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      refImgs.push({ data: ev.target.result.split(',')[1], type: file.type });
+      var img = document.createElement('img');
+      img.src = ev.target.result; img.className = 'ref-img';
       row.appendChild(img);
     };
     reader.readAsDataURL(file);
   });
-
-  const addBtn = document.createElement('div');
-  addBtn.className = 'ref-add';
-  addBtn.textContent = '+';
-  addBtn.onclick = () => document.getElementById('refInput').click();
-  row.appendChild(addBtn);
-
-  setStep(4,'done');
-  setStep(5,'active');
-  updatePrompt();
+  var plus = document.createElement('div');
+  plus.className = 'ref-plus'; plus.textContent = '+';
+  plus.onclick = function() { document.getElementById('refInput').click(); };
+  row.appendChild(plus);
+  setStep(5, 'done'); setStep(6, 'active');
 }
 
-function buildBgDescription(bg) {
-  const descriptions = {
-    COLLISION_MAP: `a vintage WWII tactical military map with two opposing forces shown by thick arrows colliding at a central point — one Allied force in blue/black arrows, one enemy force in red arrows, front lines marked, terrain features visible, aged parchment texture, desaturated brown-gray tones`,
-    LOCATION_MAP: `a detailed vintage WWII military map showing ${bg.description} — geographic features labeled, compass rose, unit positions marked, aged parchment texture, muted browns and grays, tactical markings and annotations`,
-    NEWSPAPER: `an aged yellowed newspaper front page with bold headline reading "${bg.description}" — authentic 1940s newspaper typography, column text visible but blurred, faded and worn edges, dramatic headline font, black and white`,
-    DOCUMENT: `aged military document or orders paper with official stamps — REJECTED or FILED stamps in red ink, handwritten annotations, official letterhead partially visible, yellowed paper texture, classified markings, ${bg.description}`,
-    BATTLE_ACTION: `a dramatic WWII battle scene — ${bg.description} — smoke, fire, soldiers, dramatic sky, muted desaturated tones, painterly`
+function getBgDesc(bg) {
+  var descs = {
+    COLLISION_MAP: 'a vintage WWII-era tactical military map — ' + bg.specific + ' — two opposing forces shown by thick arrows colliding at a central point, Allied force in blue/black arrows, enemy in red arrows, front lines marked, aged parchment texture, desaturated brown-gray tones',
+    LOCATION_MAP: 'a detailed vintage military map — ' + bg.specific + ' — geographic features labeled, unit positions and movement arrows marked, tactical annotations, aged parchment texture, muted browns and grays',
+    NEWSPAPER: 'an aged yellowed 1940s newspaper front page — bold headline: "' + bg.specific + '" — authentic period typography, column text visible but blurred, worn yellowed edges, black and white print',
+    DOCUMENT: 'an aged official military document — ' + bg.specific + ' — large REJECTED stamp in red ink prominently visible, handwritten annotations, yellowed paper texture, official letterhead',
+    BATTLE_ACTION: 'a dramatic WWII battle scene — ' + bg.specific + ' — billowing smoke, distant fire, soldiers silhouetted, dramatic overcast sky, desaturated painterly tones'
   };
-  return descriptions[bg.type] || bg.description;
+  return descs[bg.type] || bg.specific;
 }
 
-function updatePrompt() {
-  if(!selectedBg || !selectedBanner || !analysisData) return;
+function buildPrompt() {
+  if (!selBg || !selBanner || !appData) return;
+  var g = appData.general;
+  var refNote = refImgs.length > 0 ? 'Using the provided reference photos — maintain exact facial likeness of ' + g.name + '. ' : '';
+  var exprMap = {
+    cold_betrayal: 'Cold stoic unflinching',
+    furious_injustice: 'Intense commanding barely contained fury',
+    tragic_irony: 'Weary resigned stoic',
+    dark_mystery: 'Piercing unsettling direct',
+    triumphant_irony: 'Stern quietly determined'
+  };
+  var expr = exprMap[appData.tone] || 'Stern determined';
 
-  const g = analysisData.general;
-  const bgDesc = buildBgDescription(selectedBg);
-  const lighting = analysisData.lighting || 'dramatic cinematic lighting with strong shadows, high contrast';
-  const refNote = refImageData.length > 0 ? 'Using the provided reference photos for the general\'s face — maintain exact facial likeness. ' : '';
+  var prompt = 'YouTube thumbnail, 16:9 format, 1280x720.\n\n' +
+    refNote + 'Hyperrealistic oil painting portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. ' + expr + ' expression, unflinching gaze directly into camera. Positioned left of center, bust to upper chest visible, large and dominant filling the left 45% of the frame.\n\n' +
+    'Background fills the right side and bleeds behind the general: ' + getBgDesc(selBg) + '. Background is desaturated, muted, aged — slightly blurred to keep the general sharp and dominant. The general face has dramatically HIGH contrast and sharp detail against the soft background so it pops forward.\n\n' +
+    appData.lighting + '. Strong vignette darkening all four corners pulling focus to center. The general and background are seamlessly composited — no hard cutout edges, natural shadow integration at the figure edges.\n\n' +
+    'Lower third: a solid bold RED (#CC2200) rectangular banner stretching the full width of the image, containing thick white bold condensed sans-serif text reading "' + selBanner.word + '" — perfectly sharp, fully legible, text completely contained within the banner height. Banner sits 12-15% up from the bottom edge.\n\n' +
+    'Ultra detailed, cinematic, professional YouTube thumbnail quality. Archival muted color palette overall — the general face is the brightest and sharpest element in the entire composition.';
 
-  const prompt = `YouTube thumbnail, 16:9 format, 1280x720.
-
-${refNote}Hyperrealistic oil painting portrait of ${g.name} in full ${g.era || 'WWII'} military uniform, ${g.description}. ${analysisData.tone === 'cold' ? 'Cold stoic' : analysisData.tone === 'furious' ? 'Intense commanding' : 'Stern determined'} expression. Positioned left of center, bust to upper torso visible, large and dominant filling the left half of the frame.
-
-Background fills the right side and bleeds behind the general: ${bgDesc}. The background is desaturated, muted, slightly blurred to push the general forward. The general's face has HIGH contrast and sharp detail compared to the background so it pops dramatically.
-
-${lighting}. Strong vignette toward corners darkening the edges. The general and background are seamlessly composited — no hard cutout edges, natural shadow integration.
-
-Lower third: a solid bold RED rectangular banner (#CC2200) stretching across the full width of the image, containing thick white bold condensed sans-serif text reading "${selectedBanner.word}" — text is sharp, fully legible, perfectly contained. The banner sits approximately 15% from the bottom edge.
-
-Ultra detailed, cinematic, professional YouTube thumbnail quality. Archival muted color palette overall with the general's face as the brightest element.`;
-
-  document.getElementById('promptOutput').style.color = 'var(--text)';
-  document.getElementById('promptOutput').style.fontStyle = 'normal';
-  document.getElementById('promptOutput').textContent = prompt;
-  document.getElementById('generateBtn').disabled = false;
+  var box = document.getElementById('promptOut');
+  box.textContent = prompt;
+  box.classList.remove('awaiting');
+  document.getElementById('genBtn').disabled = false;
 }
 
 function copyPrompt() {
-  const text = document.getElementById('promptOutput').textContent;
-  if(text.includes('Select background')) return showToast('Build prompt first by selecting background and banner');
-  navigator.clipboard.writeText(text).then(() => showToast('Prompt copied to clipboard'));
+  var txt = document.getElementById('promptOut').textContent;
+  if (txt.indexOf('Select title') >= 0) return showToast('Make your selections first', true);
+  navigator.clipboard.writeText(txt).then(function() { showToast('Prompt copied to clipboard'); });
 }
 
-async function generateImage() {
-  const googleKey = document.getElementById('replicateKey').value.trim();
-  if(!googleKey) return showToast('Enter your Google AI Studio API key');
-  if(!selectedBg || !selectedBanner) return showToast('Select background and banner first');
+function generateImage() {
+  var gKey = document.getElementById('googleKey').value.trim();
+  if (!gKey) return showToast('Enter your Google AI Studio API key', true);
+  if (!selBg || !selBanner) return showToast('Select background and banner first', true);
 
-  const btn = document.getElementById('generateBtn');
-  btn.disabled = true;
-  btn.textContent = 'GENERATING...';
-  showLoading(true, 'Sending to Nano Banana Pro...');
+  var btn = document.getElementById('genBtn');
+  btn.disabled = true; btn.textContent = 'GENERATING...';
+  showOverlay(true, 'GENERATING', 'Sending to Nano Banana Pro...');
 
-  const prompt = document.getElementById('promptOutput').textContent;
+  var prompt = document.getElementById('promptOut').textContent;
+  var parts = [{ text: prompt }];
+  refImgs.slice(0, 3).forEach(function(img) {
+    parts.push({ inlineData: { mimeType: img.type, data: img.data } });
+  });
 
-  try {
-    // Build parts array - text prompt always included
-    const parts = [{ text: prompt }];
-
-    // Add reference images if available (up to 3)
-    refImageData.slice(0, 3).forEach(img => {
-      parts.push({
-        inlineData: {
-          mimeType: img.type,
-          data: img.data
-        }
-      });
+  fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent?key=' + gKey, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ role: 'user', parts: parts }],
+      generationConfig: { responseModalities: ['IMAGE', 'TEXT'] }
+    })
+  }).then(function(res) {
+    return res.json().then(function(json) {
+      if (!res.ok) throw new Error(json.error && json.error.message ? json.error.message : 'Google API error ' + res.status);
+      return json;
     });
-
-    const body = {
-      contents: [{ role: 'user', parts }],
-      generationConfig: {
-        responseModalities: ['IMAGE', 'TEXT']
-      }
-    };
-
-    document.getElementById('loadingSubText').textContent = 'Waiting for Nano Banana Pro...';
-
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent?key=${googleKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      }
-    );
-
-    const data = await response.json();
-
-    if(!response.ok) {
-      throw new Error(data.error?.message || 'Google API error: ' + response.status);
-    }
-
-    // Extract image from response
-    let imgBase64 = null;
-    let imgMime = 'image/png';
-
-    const candidates = data.candidates || [];
-    for(const candidate of candidates) {
-      const parts = candidate.content?.parts || [];
-      for(const part of parts) {
-        if(part.inlineData?.mimeType?.startsWith('image/')) {
-          imgBase64 = part.inlineData.data;
-          imgMime = part.inlineData.mimeType;
+  }).then(function(json) {
+    var imgB64 = null, imgMime = 'image/png';
+    var candidates = json.candidates || [];
+    for (var i = 0; i < candidates.length; i++) {
+      var pts = candidates[i].content && candidates[i].content.parts ? candidates[i].content.parts : [];
+      for (var j = 0; j < pts.length; j++) {
+        if (pts[j].inlineData && pts[j].inlineData.mimeType && pts[j].inlineData.mimeType.indexOf('image/') === 0) {
+          imgB64 = pts[j].inlineData.data;
+          imgMime = pts[j].inlineData.mimeType;
           break;
         }
       }
-      if(imgBase64) break;
+      if (imgB64) break;
     }
-
-    showLoading(false);
-
-    if(imgBase64) {
-      const imgSrc = `data:${imgMime};base64,${imgBase64}`;
-      document.getElementById('resultImg').src = imgSrc;
-      // Store for download
-      window._lastGeneratedImg = imgSrc;
-      document.getElementById('resultSection').style.display = 'flex';
-      document.getElementById('resultSection').style.flexDirection = 'column';
-      setStep(5,'done');
+    showOverlay(false);
+    if (imgB64) {
+      var src = 'data:' + imgMime + ';base64,' + imgB64;
+      window._lastImg = src;
+      document.getElementById('resultImg').src = src;
+      var wrap = document.getElementById('resultWrap');
+      wrap.style.display = 'flex';
+      wrap.style.flexDirection = 'column';
+      setStep(6, 'done');
       showToast('Thumbnail generated!');
-      document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+      wrap.scrollIntoView({ behavior: 'smooth' });
     } else {
-      const textPart = candidates[0]?.content?.parts?.find(p => p.text);
-      throw new Error('No image returned. ' + (textPart?.text || 'Check your API key and billing.'));
+      var txt = '';
+      if (candidates[0] && candidates[0].content && candidates[0].content.parts) {
+        var p = candidates[0].content.parts.find(function(x) { return x.text; });
+        if (p) txt = p.text.slice(0, 140);
+      }
+      throw new Error('No image in response. ' + txt);
     }
-
-  } catch(err) {
-    showLoading(false);
-    showToast('Error: ' + err.message, 6000);
+  }).catch(function(err) {
+    showOverlay(false);
+    showToast('Error: ' + err.message, true, 7000);
     console.error(err);
-  }
-
-  btn.disabled = false;
-  btn.textContent = 'GENERATE THUMBNAIL';
+  }).finally(function() {
+    btn.disabled = false;
+    btn.textContent = 'GENERATE THUMBNAIL';
+  });
 }
 
-function downloadResult() {
-  const src = window._lastGeneratedImg || document.getElementById('resultImg').src;
-  if(!src || src === window.location.href) return;
-  const a = document.createElement('a');
+function dlImage() {
+  var src = window._lastImg;
+  if (!src) return;
+  var a = document.createElement('a');
   a.href = src;
-  a.download = `thumbnail-${selectedBanner?.word || 'export'}.png`;
+  a.download = (selBanner ? selBanner.word : 'thumbnail') + '-' + (appData && appData.general ? appData.general.name.split(' ').pop() : 'export') + '.png';
   a.click();
 }
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script>if(typeof pdfjsLib !== "undefined") pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";</script>
 </body>
 </html>
