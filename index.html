@@ -156,6 +156,23 @@ input[type=password]::placeholder{color:var(--muted)}
         <div class="key-row"><span class="lbl">Anthropic API Key</span><input type="password" id="anthropicKey" placeholder="sk-ant-..."></div>
         <div class="key-row"><span class="lbl">Google AI Studio Key</span><input type="password" id="googleKey" placeholder="AIza..."></div>
       </div>
+      <div style="margin-top:10px">
+        <span class="lbl">Generation Model</span>
+        <div style="display:flex;flex-direction:column;gap:5px" id="modelPicker">
+          <div class="model-opt" id="m0" onclick="selectModel(0)" style="border:1px solid var(--border2);border-radius:4px;padding:8px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--bg2);transition:all 0.15s">
+            <div><div style="font-family:var(--display);font-size:12px;letter-spacing:1px">NANO BANANA</div><div style="font-family:var(--mono);font-size:9px;color:var(--muted)">2.5 Flash · Fast</div></div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--muted)">$0.039</div>
+          </div>
+          <div class="model-opt" id="m1" onclick="selectModel(1)" style="border:1px solid var(--border2);border-radius:4px;padding:8px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--bg2);transition:all 0.15s">
+            <div><div style="font-family:var(--display);font-size:12px;letter-spacing:1px">NANO BANANA 2</div><div style="font-family:var(--mono);font-size:9px;color:var(--muted)">3.1 Flash · Balanced</div></div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--muted)">$0.067</div>
+          </div>
+          <div class="model-opt sel" id="m2" onclick="selectModel(2)" style="border:1px solid var(--red);border-radius:4px;padding:8px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--red-dim);transition:all 0.15s">
+            <div><div style="font-family:var(--display);font-size:12px;letter-spacing:1px;color:var(--text)">NANO BANANA PRO</div><div style="font-family:var(--mono);font-size:9px;color:var(--muted)">Pro · Best quality</div></div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--red)">$0.134</div>
+          </div>
+        </div>
+      </div>
     </div>
     <button class="analyze-btn" id="analyzeBtn" onclick="analyzeScript()"><span id="analyzeTxt">ANALYZE SCRIPT</span></button>
     <div class="steps">
@@ -437,13 +454,33 @@ function handleRefs(e) {
   setStep(5, 'done'); setStep(6, 'active');
 }
 
+var MODEL_IDS = [
+  'gemini-2.5-flash-preview-04-17',
+  'gemini-2.5-flash-preview-04-17',
+  'gemini-3-pro-image-preview'
+];
+var selectedModelIdx = 2;
+
+function selectModel(i) {
+  selectedModelIdx = i;
+  document.querySelectorAll('.model-opt').forEach(function(el, idx) {
+    if (idx === i) {
+      el.style.border = '1px solid var(--red)';
+      el.style.background = 'var(--red-dim)';
+    } else {
+      el.style.border = '1px solid var(--border2)';
+      el.style.background = 'var(--bg2)';
+    }
+  });
+}
+
 function getBgDesc(bg) {
   var descs = {
-    COLLISION_MAP: 'a vintage WWII-era tactical military map — ' + bg.specific + ' — two opposing forces shown by thick arrows colliding at a central point, Allied force in blue/black arrows, enemy in red arrows, front lines marked, aged parchment texture, desaturated brown-gray tones',
-    LOCATION_MAP: 'a detailed vintage military map — ' + bg.specific + ' — geographic features labeled, unit positions and movement arrows marked, tactical annotations, aged parchment texture, muted browns and grays',
-    NEWSPAPER: 'an aged yellowed 1940s newspaper front page — bold headline: "' + bg.specific + '" — authentic period typography, column text visible but blurred, worn yellowed edges, black and white print',
-    DOCUMENT: 'an aged official military document — ' + bg.specific + ' — large REJECTED stamp in red ink prominently visible, handwritten annotations, yellowed paper texture, official letterhead',
-    BATTLE_ACTION: 'a dramatic WWII battle scene — ' + bg.specific + ' — billowing smoke, distant fire, soldiers silhouetted, dramatic overcast sky, desaturated painterly tones'
+    COLLISION_MAP: 'a crisp historically accurate WWII-era tactical military map filling the entire background — ' + bg.specific + ' — geographically correct locations labeled, two opposing forces shown by thick bold arrows colliding, Allied forces in blue arrows, enemy in red arrows, front lines and terrain features marked with period-accurate cartography style, aged cream/parchment paper texture, muted brown-gray-blue tones, authentic military map typography',
+    LOCATION_MAP: 'a crisp historically accurate WWII military map filling the entire background — ' + bg.specific + ' — correct geographic locations and place names labeled, unit movement arrows, tactical annotations, compass rose, period-accurate cartography, aged parchment texture, muted browns and grays',
+    NEWSPAPER: 'an aged yellowed 1940s newspaper front page filling the background — bold headline: "' + bg.specific + '" — authentic period newspaper typography and layout, multiple columns of body text visible but slightly blurred, masthead at top, worn yellowed edges, black and white period print aesthetic',
+    DOCUMENT: 'an aged official US military document filling the background — ' + bg.specific + ' — large bold REJECTED stamp in red ink prominently visible, handwritten margin annotations, yellowed paper texture with age spots, official military letterhead, classified markings, typewritten body text',
+    BATTLE_ACTION: 'a dramatic WWII battlefield scene filling the background — ' + bg.specific + ' — thick billowing smoke, distant orange fire glow, soldiers silhouetted in foreground, dramatic overcast sky with light breaking through, muted desaturated color palette'
   };
   return descs[bg.type] || bg.specific;
 }
@@ -462,11 +499,16 @@ function buildPrompt() {
   var expr = exprMap[appData.tone] || 'Stern determined';
 
   var prompt = 'YouTube thumbnail, 16:9 format, 1280x720.\n\n' +
-    refNote + 'Hyperrealistic oil painting portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. ' + expr + ' expression, unflinching gaze directly into camera. Positioned left of center, bust to upper chest visible, large and dominant filling the left 45% of the frame.\n\n' +
-    'Background fills the right side and bleeds behind the general: ' + getBgDesc(selBg) + '. Background is desaturated, muted, aged — slightly blurred to keep the general sharp and dominant. The general face has dramatically HIGH contrast and sharp detail against the soft background so it pops forward.\n\n' +
-    appData.lighting + '. Strong vignette darkening all four corners pulling focus to center. The general and background are seamlessly composited — no hard cutout edges, natural shadow integration at the figure edges.\n\n' +
-    'Lower third: a solid bold RED (#CC2200) rectangular banner stretching the full width of the image, containing thick white bold condensed sans-serif text reading "' + selBanner.word + '" — perfectly sharp, fully legible, text completely contained within the banner height. Banner sits 12-15% up from the bottom edge.\n\n' +
-    'Ultra detailed, cinematic, professional YouTube thumbnail quality. Archival muted color palette overall — the general face is the brightest and sharpest element in the entire composition.';
+
+    'SUBJECT: ' + refNote + 'Hyper-photorealistic photograph-quality portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. ' + expr + ' expression, unflinching gaze directly into camera. Positioned left of center, bust to upper chest visible, large and dominant filling the left 45% of the frame. The general is composited DIRECTLY ON TOP OF the background map/document — no empty space, curtains, or studio backdrop behind him. He stands in front of the background as if physically present at that location.\n\n' +
+
+    'LIGHTING & POP EFFECT: ' + appData.lighting + '. Additionally: powerful warm rim light along both edges of the figure creating a strong glowing outline that separates him from the background — this makes him pop dramatically forward. The face receives a hero spotlight from slightly above, making skin texture, eyes, and uniform details hyper-sharp and bright against the darker background. A subtle luminous outline glow traces the silhouette of his body — color: soft warm amber or cold blue depending on scene tone. Strong vignette darkening all four corners.\n\n' +
+
+    'BACKGROUND: ' + getBgDesc(selBg) + '. The background fills the entire frame. The general is overlaid on it seamlessly — background bleeds around his figure naturally, no artificial borders. Background is slightly desaturated and softly blurred (depth of field effect) so the general remains the sharpest element.\n\n' +
+
+    'LOWER THIRD BANNER: An irregular hand-painted style red banner (#CC2200) — not a perfect rectangle, slightly uneven edges, one side slightly higher than the other, rough textured ribbon feel like a military dispatch ribbon or torn paper edge — stretching across most of the lower width of the image. Inside the banner: bold white military stencil-style sans-serif text reading "' + selBanner.word + '" with a strong dark drop shadow below each letter (shadow offset 3-4px down and right, dark charcoal color). Text is perfectly legible. Banner sits 10-18% up from the bottom edge.\n\n' +
+
+    'STYLE: Ultra photorealistic, not illustrated or painted. Professional YouTube thumbnail. Cinematic color grading — slightly desaturated background, vivid sharp subject. The general face and uniform are the brightest sharpest highest-contrast element in the entire composition.';
 
   var box = document.getElementById('promptOut');
   box.textContent = prompt;
@@ -495,7 +537,7 @@ function generateImage() {
     parts.push({ inlineData: { mimeType: img.type, data: img.data } });
   });
 
-  fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent?key=' + gKey, {
+  fetch('https://generativelanguage.googleapis.com/v1beta/models/' + MODEL_IDS[selectedModelIdx] + ':generateContent?key=' + gKey, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
