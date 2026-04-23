@@ -377,6 +377,28 @@ function renderAll() {
     '<div class="intel-row"><b>Tone —</b> ' + appData.tone.replace(/_/g, ' ') + ' &nbsp;·&nbsp; <b>Lighting —</b> ' + appData.lighting + '</div>'
   ));
 
+  // Description card
+  if (appData.description) {
+    window._desc = appData.description;
+    var descCard = makeCard('Video Description', 'Copy for YouTube',
+      '<div id="descText" style="font-family:var(--mono);font-size:11px;color:var(--muted2);line-height:1.8;margin-bottom:10px"></div>' +
+      '<button class="copy-btn" onclick="navigator.clipboard.writeText(window._desc).then(function(){showToast(\'Description copied!\')})">Copy Description</button>'
+    );
+    body.appendChild(descCard);
+    document.getElementById('descText').textContent = appData.description;
+  }
+
+  // Tags card
+  if (appData.tags) {
+    window._tags = appData.tags;
+    var tagsCard = makeCard('Video Tags', 'Copy for YouTube',
+      '<div id="tagsText" style="font-family:var(--mono);font-size:11px;color:var(--muted2);line-height:1.8;margin-bottom:10px"></div>' +
+      '<button class="copy-btn" onclick="navigator.clipboard.writeText(window._tags).then(function(){showToast(\'Tags copied!\')})">Copy Tags</button>'
+    );
+    body.appendChild(tagsCard);
+    document.getElementById('tagsText').textContent = appData.tags;
+  }
+
   var titleHtml = '<div class="opt-list">';
   for (var i = 0; i < appData.titles.length; i++) {
     var t = appData.titles[i];
@@ -384,7 +406,7 @@ function renderAll() {
       '<div class="opt-check">✓</div>' +
       '<div class="opt-formula">' + t.formula.toUpperCase() + '</div>' +
       '<div class="opt-text">' + t.text + '</div>' +
-      '<div style="font-family:var(--mono);font-size:9px;margin-top:3px;padding:2px 6px;border-radius:2px;display:inline-block;background:' + (t.text.length >= 75 && t.text.length <= 90 ? 'rgba(42,94,54,0.3);color:#4a9a5c' : 'rgba(196,26,0,0.2);color:#ff6644') + '">' + t.text.length + ' chars ' + (t.text.length >= 75 && t.text.length <= 90 ? '✓' : t.text.length < 75 ? '(too short)' : '(too long)') + '</div>' +
+      '<div style="font-family:var(--mono);font-size:9px;margin-top:3px;padding:2px 6px;border-radius:2px;display:inline-block;background:' + (t.text.length >= 75 && t.text.length <= 100 ? 'rgba(42,94,54,0.3);color:#4a9a5c' : 'rgba(196,26,0,0.2);color:#ff6644') + '">' + t.text.length + ' chars ' + (t.text.length >= 75 && t.text.length <= 100 ? '✓' : t.text.length < 75 ? '(too short)' : '(too long)') + '</div>' +
       '<div class="opt-why">' + t.why + '</div>' +
       '</div>';
   }
@@ -407,7 +429,7 @@ function renderAll() {
   var banHtml = '<div class="banner-wrap">';
   for (var k = 0; k < appData.banners.length; k++) {
     var bn = appData.banners[k];
-    banHtml += '<div class="ban-opt" id="ban_' + k + '" onclick="selectBanner(' + k + ')">' +
+    banHtml += '<div class="ban-opt" style="cursor:default" onclick="copyBannerWord(this,\''+bn.word+'\')">' +
       '<div class="ban-word">' + bn.word + '</div>' +
       '<div class="ban-cat">' + bn.category.toUpperCase() + '</div>' +
       '<div class="ban-why">' + bn.why + '</div>' +
@@ -448,13 +470,12 @@ function renderAll() {
   }
   if (recIdx >= 0) {
     setTimeout(function() {
-      var el = document.getElementById('bg_' + recIdx);
-      if (el) {
-        selectBg(recIdx);
-      } else {
-        setTimeout(function() { selectBg(recIdx); }, 500);
-      }
-    }, 200);
+      selectBg(recIdx);
+    }, 300);
+  } else if (appData.backgrounds.length > 0) {
+    setTimeout(function() {
+      selectBg(0);
+    }, 300);
   }
 }
 
@@ -514,7 +535,7 @@ function handleGeneralRefs(e) {
 
 
 function checkRefsComplete() {
-  if (generalImgs.length > 0 || bannerImg) {
+  if (generalImgs.length > 0) {
     setStep(5, 'done'); setStep(6, 'active');
   }
 }
