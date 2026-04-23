@@ -397,14 +397,32 @@ function renderAll() {
   banHtml += '</div>';
   body.appendChild(makeCard('Step 4 — Banner Word', 'Select one', banHtml));
 
-  body.appendChild(makeCard('Step 5 — Reference Images', '2-3 photos of the general',
-    '<div style="font-family:var(--mono);font-size:10px;color:var(--muted2);margin-bottom:10px;line-height:1.7">Portrait of <strong style="color:var(--text)">' + appData.general.name + '</strong><br>' + appData.general.physical + '</div>' +
-    '<div class="ref-drop" onclick="document.getElementById(\'refInput\').click()">' +
-    '<input type="file" id="refInput" accept="image/*" multiple onchange="handleRefs(event)">' +
-    '<div class="ref-thumbs" id="refThumbs"><div class="ref-plus">+</div></div>' +
-    '<div class="ref-hint">DROP PHOTOS OR CLICK TO BROWSE</div>' +
+  body.appendChild(makeCard('Step 5 — Reference Images', 'General + Banner style',
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">' +
+
+    '<div>' +
+    '<div style="font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--accent);margin-bottom:6px">GENERAL PHOTOS</div>' +
+    '<div style="font-family:var(--mono);font-size:9px;color:var(--muted2);margin-bottom:8px;line-height:1.6">' + appData.general.name + '</div>' +
+    '<div class="ref-drop" onclick="document.getElementById(\'refGeneral\').click()">' +
+    '<input type="file" id="refGeneral" accept="image/*" multiple onchange="handleGeneralRefs(event)">' +
+    '<div class="ref-thumbs" id="generalThumbs"><div class="ref-plus">+</div></div>' +
+    '<div class="ref-hint">FACE · UNIFORM</div>' +
     '</div>' +
-    '<div class="ref-note">Best: 1 front-facing portrait + 1 in uniform · Sources: archives.gov · Wikipedia Commons</div>'
+    '<div class="ref-note" style="margin-top:6px">archives.gov · Wikipedia Commons</div>' +
+    '</div>' +
+
+    '<div>' +
+    '<div style="font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--accent);margin-bottom:6px">BANNER STYLE</div>' +
+    '<div style="font-family:var(--mono);font-size:9px;color:var(--muted2);margin-bottom:8px;line-height:1.6">Upload 1 example with your ideal banner</div>' +
+    '<div class="ref-drop" onclick="document.getElementById(\'refBanner\').click()">' +
+    '<input type="file" id="refBanner" accept="image/*" onchange="handleBannerRef(event)">' +
+    '<div class="ref-thumbs" id="bannerThumbs"><div class="ref-plus">+</div></div>' +
+    '<div class="ref-hint">BANNER EXAMPLE</div>' +
+    '</div>' +
+    '<div class="ref-note" style="margin-top:6px">Clean red banner · correct font style</div>' +
+    '</div>' +
+
+    '</div>'
   ));
 
   body.appendChild(makeCard('Step 6 — Final Prompt & Generate', 'Nano Banana Pro · Google AI Studio',
@@ -453,15 +471,18 @@ function selectBanner(i) {
   buildPrompt();
 }
 
-function handleRefs(e) {
+var generalImgs = [];
+var bannerImg = null;
+
+function handleGeneralRefs(e) {
   var files = Array.from(e.target.files);
-  refImgs = [];
-  var row = document.getElementById('refThumbs');
+  generalImgs = [];
+  var row = document.getElementById('generalThumbs');
   row.innerHTML = '';
-  files.slice(0, 4).forEach(function(file) {
+  files.slice(0, 3).forEach(function(file) {
     var reader = new FileReader();
     reader.onload = function(ev) {
-      refImgs.push({ data: ev.target.result.split(',')[1], type: file.type });
+      generalImgs.push({ data: ev.target.result.split(',')[1], type: file.type });
       var img = document.createElement('img');
       img.src = ev.target.result; img.className = 'ref-img';
       row.appendChild(img);
@@ -470,10 +491,35 @@ function handleRefs(e) {
   });
   var plus = document.createElement('div');
   plus.className = 'ref-plus'; plus.textContent = '+';
-  plus.onclick = function() { document.getElementById('refInput').click(); };
+  plus.onclick = function() { document.getElementById('refGeneral').click(); };
   row.appendChild(plus);
-  setStep(5, 'done'); setStep(6, 'active');
+  checkRefsComplete();
 }
+
+function handleBannerRef(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  bannerImg = null;
+  var row = document.getElementById('bannerThumbs');
+  row.innerHTML = '';
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    bannerImg = { data: ev.target.result.split(',')[1], type: file.type };
+    var img = document.createElement('img');
+    img.src = ev.target.result; img.className = 'ref-img';
+    row.appendChild(img);
+  };
+  reader.readAsDataURL(file);
+  checkRefsComplete();
+}
+
+function checkRefsComplete() {
+  if (generalImgs.length > 0 || bannerImg) {
+    setStep(5, 'done'); setStep(6, 'active');
+  }
+}
+
+function handleRefs(e) { handleGeneralRefs(e); }
 
 var selectedExpression = 'Stern and authoritative — hard jaw set, cold eyes locked on camera, the look of a man who has sent men to die and would do it again';
 
@@ -532,7 +578,8 @@ function getBannerSize(word) {
 function buildPrompt() {
   if (!selBg || !selBanner || !appData) return;
   var g = appData.general;
-  var refNote = refImgs.length > 0 ? 'Using the provided reference photos — maintain exact facial likeness of ' + g.name + '. ' : '';
+  var refNote = generalImgs.length > 0 ? 'Using the provided reference photos of ' + g.name + ' — maintain exact facial likeness, skin tone, face shape, and uniform details from these photos. ' : '';
+  var bannerNote = bannerImg ? 'Using the provided banner style reference image — replicate the exact same banner style, font weight, text clarity, and red color from that reference. The text should be just as clean, sharp, and well-rendered as shown in the reference. ' : '';
   var bannerSize = getBannerSize(selBanner.word);
 
   var prompt = 'YouTube thumbnail, 16:9 format, 1280x720.\n\n' +
@@ -543,6 +590,7 @@ function buildPrompt() {
     '3. The general head and helmet must be fully inside the frame with at least 30px clearance from the top edge — never cropped.\n' +
     '4. The red banner must start and end WITHIN the image boundaries — it does not go off screen on either side. It has a margin of at least 40px from left and right edges, or spans exactly edge to edge but is contained.\n\n' +
 
+    bannerNote +
     'CRITICAL FRAMING RULE: The general figure must be fully contained within the image frame — head, helmet or hat included — with at least 20px clearance from the top edge. Do not crop or cut off the head under any circumstances.\n\n' +
 
     'SUBJECT: ' + refNote + 'Hyper-photorealistic photograph-quality portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + selectedExpression + '. Unflinching gaze directly into camera. Positioned left of center, bust to upper chest visible, figure large and dominant filling the left 40-45% of the frame. The general is composited DIRECTLY ON TOP OF the background — no curtains, no studio backdrop, no empty dark space behind him. He stands in front of the background as if physically present there.\n\n' +
@@ -579,9 +627,12 @@ function generateImage() {
 
   var prompt = document.getElementById('promptOut').textContent;
   var parts = [{ text: prompt }];
-  refImgs.slice(0, 3).forEach(function(img) {
+  generalImgs.slice(0, 2).forEach(function(img) {
     parts.push({ inlineData: { mimeType: img.type, data: img.data } });
   });
+  if (bannerImg) {
+    parts.push({ inlineData: { mimeType: bannerImg.type, data: bannerImg.data } });
+  }
 
   fetch('https://generativelanguage.googleapis.com/v1beta/models/' + MODEL_IDS[selectedModelIdx] + ':generateContent?key=' + gKey, {
     method: 'POST',
