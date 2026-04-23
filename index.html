@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Allied Thumbnails — Pipeline</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -433,7 +433,8 @@ function renderAll() {
     '</div>' +
     '<div id="resultWrap" style="display:none;flex-direction:column;gap:10px;margin-top:14px">' +
     '<div class="div-line">Generated Thumbnail</div>' +
-    '<img id="resultImg" class="result-img" src="" alt="Generated thumbnail">' +
+    '<canvas id="resultCanvas" style="width:100%;border-radius:4px;border:1px solid var(--border2);display:block"></canvas>' +
+    '<img id="resultImg" style="display:none">' +
     '<div class="act-row">' +
     '<button class="dl-btn" onclick="dlImage()">Download PNG</button>' +
     '<button class="regen-btn" onclick="generateImage()">Regenerate</button>' +
@@ -663,14 +664,17 @@ function generateImage() {
     showOverlay(false);
     if (imgB64) {
       var src = 'data:' + imgMime + ';base64,' + imgB64;
-      window._lastImg = src;
-      document.getElementById('resultImg').src = src;
-      var wrap = document.getElementById('resultWrap');
-      wrap.style.display = 'flex';
-      wrap.style.flexDirection = 'column';
-      setStep(6, 'done');
-      showToast('Thumbnail generated!');
-      wrap.scrollIntoView({ behavior: 'smooth' });
+      var baseImg = new Image();
+      baseImg.onload = function() {
+        compositeWithText(baseImg);
+        var wrap = document.getElementById('resultWrap');
+        wrap.style.display = 'flex';
+        wrap.style.flexDirection = 'column';
+        setStep(6, 'done');
+        showToast('Thumbnail generated!');
+        wrap.scrollIntoView({ behavior: 'smooth' });
+      };
+      baseImg.src = src;
     } else {
       var txt = '';
       if (candidates[0] && candidates[0].content && candidates[0].content.parts) {
@@ -689,12 +693,57 @@ function generateImage() {
   });
 }
 
+function compositeWithText(baseImg) {
+  var canvas = document.getElementById('resultCanvas');
+  var W = baseImg.naturalWidth || 2048;
+  var H = baseImg.naturalHeight || 1152;
+  canvas.width = W;
+  canvas.height = H;
+  var ctx = canvas.getContext('2d');
+
+  // Draw base image
+  ctx.drawImage(baseImg, 0, 0, W, H);
+
+  // Banner zone: center at 87% from top (13% from bottom), height = 22% of H
+  var bannerH = Math.round(H * 0.22);
+  var bannerCenterY = Math.round(H * 0.87);
+  var bannerTop = bannerCenterY - Math.round(bannerH / 2);
+
+  // Get banner word
+  var word = selBanner ? selBanner.word : 'UNTITLED';
+
+  // Calculate font size to fill banner width (max 88% of width)
+  var maxW = W * 0.88;
+  var fontSize = Math.round(bannerH * 0.62);
+  ctx.font = 'bold ' + fontSize + 'px "Montserrat", "Arial Black", sans-serif';
+  while (ctx.measureText(word).width > maxW && fontSize > 40) {
+    fontSize -= 4;
+    ctx.font = 'bold ' + fontSize + 'px "Montserrat", "Arial Black", sans-serif';
+  }
+
+  // Text vertical center in banner
+  var textY = bannerTop + Math.round(bannerH * 0.72);
+
+  // Draw shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.85)';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+  var shadowOffset = Math.round(fontSize * 0.06);
+  ctx.fillText(word, W / 2 + shadowOffset, textY + shadowOffset);
+
+  // Draw white text
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillText(word, W / 2, textY);
+
+  window._lastCanvas = canvas;
+}
+
 function dlImage() {
-  var src = window._lastImg;
-  if (!src) return;
+  var canvas = window._lastCanvas;
+  if (!canvas) return;
   var a = document.createElement('a');
-  a.href = src;
-  a.download = (selBanner ? selBanner.word : 'thumbnail') + '-' + (appData && appData.general ? appData.general.name.split(' ').pop() : 'export') + '.png';
+  a.href = canvas.toDataURL('image/png');
+  a.download = (selBanner ? selBanner.word : 'thumbnail') + '-' + (appData && appData.general ? appData.general.name.split(' ').pop() : 'export') + '-2K.png';
   a.click();
 }
 </script>
