@@ -153,8 +153,8 @@ input[type=password]::placeholder{color:var(--muted)}
     </div>
     <div class="side-block">
       <div class="key-stack">
-        <div class="key-row"><span class="lbl">Anthropic API Key</span><input type="password" id="anthropicKey" placeholder="sk-ant-..."></div>
-        <div class="key-row"><span class="lbl">Google AI Studio Key</span><input type="password" id="googleKey" placeholder="AIza..."></div>
+        <div class="key-row"><span class="lbl">Anthropic API Key</span><input type="password" id="anthropicKey" placeholder="sk-ant-..." oninput="saveKeys()"></div>
+        <div class="key-row"><span class="lbl">Google AI Studio Key</span><input type="password" id="googleKey" placeholder="AIza..." oninput="saveKeys()"></div>
       </div>
       <div style="margin-top:10px">
         <span class="lbl">Generation Model</span>
@@ -222,6 +222,24 @@ input[type=password]::placeholder{color:var(--muted)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+function saveKeys() {
+  try {
+    localStorage.setItem('at_anthropic_key', document.getElementById('anthropicKey').value);
+    localStorage.setItem('at_google_key', document.getElementById('googleKey').value);
+  } catch(e) {}
+}
+
+function loadKeys() {
+  try {
+    var ak = localStorage.getItem('at_anthropic_key');
+    var gk = localStorage.getItem('at_google_key');
+    if (ak) document.getElementById('anthropicKey').value = ak;
+    if (gk) document.getElementById('googleKey').value = gk;
+  } catch(e) {}
+}
+
+window.addEventListener('load', loadKeys);
 
 var appData = null;
 var selTitle = null, selBg = null, selBanner = null;
@@ -366,6 +384,7 @@ function renderAll() {
       '<div class="opt-check">✓</div>' +
       '<div class="opt-formula">' + t.formula.toUpperCase() + '</div>' +
       '<div class="opt-text">' + t.text + '</div>' +
+      '<div style="font-family:var(--mono);font-size:9px;margin-top:3px;padding:2px 6px;border-radius:2px;display:inline-block;background:' + (t.text.length >= 75 && t.text.length <= 90 ? 'rgba(42,94,54,0.3);color:#4a9a5c' : 'rgba(196,26,0,0.2);color:#ff6644') + '">' + t.text.length + ' chars ' + (t.text.length >= 75 && t.text.length <= 90 ? '✓' : t.text.length < 75 ? '(too short)' : '(too long)') + '</div>' +
       '<div class="opt-why">' + t.why + '</div>' +
       '</div>';
   }
@@ -395,7 +414,7 @@ function renderAll() {
       '</div>';
   }
   banHtml += '</div>';
-  body.appendChild(makeCard('Step 4 — Banner Word', 'Select one', banHtml));
+  body.appendChild(makeCard('Step 4 — Banner Word for Canva', 'Pick one to use manually in Canva', banHtml));
 
   body.appendChild(makeCard('Step 5 — Reference Images', 'General + Banner style',
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">' +
@@ -469,7 +488,6 @@ function selectBanner(i) {
   document.getElementById('ban_' + i).classList.add('sel');
   selBanner = appData.banners[i];
   setStep(4, 'done'); setStep(5, 'active');
-  buildPrompt();
 }
 
 var generalImgs = [];
@@ -569,18 +587,10 @@ function getBgDesc(bg) {
   return descs[bg.type] || bg.specific;
 }
 
-function getBannerSize(word) {
-  var words = word.trim().split(/\s+/).length;
-  if (words === 1) return 'enormous — the text should be very large, filling almost the full width of the banner, approximately 25-30% of the total image height';
-  if (words === 2) return 'large — filling most of the banner width, approximately 18-22% of the total image height';
-  return 'medium — filling the banner comfortably, approximately 14-18% of the total image height';
-}
-
 function buildPrompt() {
-  if (!selBg || !selBanner || !appData) return;
+  if (!selBg || !appData) return;
   var g = appData.general;
   var refNote = generalImgs.length > 0 ? 'Using the provided reference photos of ' + g.name + ' — maintain exact facial likeness, skin tone, face shape, and uniform details from these photos. ' : '';
-  var bannerNote = bannerImg ? 'Using the provided banner style reference image — replicate the exact same banner style, font weight, text clarity, and red color from that reference. The text should be just as clean, sharp, and well-rendered as shown in the reference. ' : '';
   var bannerSize = getBannerSize(selBanner.word);
 
   var prompt = 'YouTube thumbnail, 16:9 format, 1280x720.\n\n' +
@@ -620,7 +630,7 @@ function copyPrompt() {
 function generateImage() {
   var gKey = document.getElementById('googleKey').value.trim();
   if (!gKey) return showToast('Enter your Google AI Studio API key', true);
-  if (!selBg || !selBanner) return showToast('Select background and banner first', true);
+  if (!selBg) return showToast('Select a background first', true);
 
   var btn = document.getElementById('genBtn');
   btn.disabled = true; btn.textContent = 'GENERATING...';
