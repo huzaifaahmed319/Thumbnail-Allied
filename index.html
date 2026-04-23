@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Allied Thumbnails — Pipeline</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<title>Allied Thumbnails — Pipeline v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=Montserrat:wght@700;800;900&family=Anton&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -26,10 +26,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .side{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
 .side-block{padding:14px 16px;border-bottom:1px solid var(--border)}
 .lbl{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;display:block}
-textarea{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:11px;line-height:1.75;padding:10px 11px;resize:none;height:170px;outline:none;transition:border-color 0.2s}
+textarea{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:11px;line-height:1.75;padding:10px 11px;resize:none;height:150px;outline:none;transition:border-color 0.2s}
 textarea:focus{border-color:var(--border3)}
 textarea::placeholder{color:var(--muted)}
-.pdf-btn{margin-top:6px;width:100%;background:transparent;border:1px dashed var(--border2);border-radius:4px;color:var(--muted);font-family:var(--mono);font-size:9px;letter-spacing:1.5px;padding:8px;cursor:pointer;transition:all 0.2s;text-align:center}
+.pdf-btn{margin-top:6px;width:100%;background:transparent;border:1px dashed var(--border2);border-radius:4px;color:var(--muted);font-family:var(--mono);font-size:9px;letter-spacing:1.5px;padding:8px;cursor:pointer;transition:all 0.2s;text-align:center;display:block}
 .pdf-btn:hover{border-color:var(--border3);color:var(--muted2)}
 input[type=file]{display:none}
 .key-stack{display:flex;flex-direction:column;gap:8px}
@@ -89,21 +89,24 @@ input[type=password]::placeholder{color:var(--muted)}
 .bg-opt.sel .bg-check{display:flex}
 .bg-opt.sel .bg-rec{display:none}
 .banner-wrap{display:flex;flex-wrap:wrap;gap:7px}
-.ban-opt{border:1px solid var(--border2);border-radius:4px;padding:8px 13px;cursor:pointer;transition:all 0.18s;background:var(--bg3);min-width:100px}
+.ban-opt{border:1px solid var(--border2);border-radius:4px;padding:8px 13px;cursor:pointer;transition:all 0.18s;background:var(--bg3);min-width:100px;position:relative}
 .ban-opt:hover{border-color:var(--border3)}
 .ban-opt.sel{border-color:var(--red);background:var(--red-dim)}
 .ban-word{font-family:var(--display);font-size:19px;letter-spacing:2px}
 .ban-opt.sel .ban-word{color:#ff6644}
 .ban-cat{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-top:1px}
-.ban-why{font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.5;margin-top:3px}
-.ref-drop{border:1px dashed var(--border2);border-radius:4px;padding:11px;cursor:pointer;transition:border-color 0.2s}
+.ban-why{font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.5;margin-top:3px;max-width:220px}
+.ban-check{position:absolute;top:6px;right:6px;width:13px;height:13px;border-radius:50%;background:var(--red);display:none;align-items:center;justify-content:center;font-size:8px;color:#fff;font-weight:bold}
+.ban-opt.sel .ban-check{display:flex}
+.ref-drop{border:1px dashed var(--border2);border-radius:4px;padding:11px;transition:border-color 0.2s}
 .ref-drop:hover{border-color:var(--border3)}
 .ref-thumbs{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
 .ref-img{width:54px;height:54px;border-radius:3px;object-fit:cover;border:1px solid var(--border2)}
-.ref-plus{width:54px;height:54px;border-radius:3px;border:1px dashed var(--border2);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--muted)}
+.ref-plus{width:54px;height:54px;border-radius:3px;border:1px dashed var(--border2);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--muted);cursor:pointer}
+.ref-plus:hover{border-color:var(--border3);color:var(--muted2)}
 .ref-hint{font-family:var(--mono);font-size:9px;color:var(--muted);text-align:center;letter-spacing:1px}
 .ref-note{font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.65;margin-top:8px}
-.prompt-out{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;font-family:var(--mono);font-size:11px;line-height:1.8;padding:13px;white-space:pre-wrap;word-break:break-word;min-height:80px;color:var(--text)}
+.prompt-out{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;font-family:var(--mono);font-size:11px;line-height:1.8;padding:13px;white-space:pre-wrap;word-break:break-word;min-height:80px;color:var(--text);max-height:400px;overflow-y:auto}
 .prompt-out.awaiting{color:var(--muted);font-style:italic}
 .act-row{display:flex;gap:7px;flex-wrap:wrap}
 .gen-btn{flex:1;min-width:140px;background:var(--red);border:none;border-radius:4px;color:#fff;font-family:var(--display);font-size:15px;letter-spacing:2px;padding:11px;cursor:pointer;transition:background 0.15s,transform 0.1s}
@@ -130,6 +133,37 @@ input[type=password]::placeholder{color:var(--muted)}
 .toast.err{color:#ff7755;border-color:rgba(196,26,0,0.35)}
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
+
+/* model picker */
+.model-opt{border:1px solid var(--border2);border-radius:4px;padding:8px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--bg2);transition:all 0.15s}
+.model-opt.sel{border-color:var(--red);background:var(--red-dim)}
+.model-name{font-family:var(--display);font-size:12px;letter-spacing:1px;color:var(--text)}
+.model-meta{font-family:var(--mono);font-size:9px;color:var(--muted)}
+.model-cost{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.model-opt.sel .model-cost{color:var(--red)}
+
+/* expression picker */
+.expr-opt{border:1px solid var(--border2);border-radius:4px;padding:7px 9px;cursor:pointer;background:var(--bg2);text-align:center;transition:all 0.15s}
+.expr-opt.sel{border-color:var(--red);background:var(--red-dim)}
+.expr-name{font-family:var(--display);font-size:12px;letter-spacing:1px}
+.expr-tag{font-family:var(--mono);font-size:8px;color:var(--muted)}
+
+/* banner style + position pickers (in step 6) */
+.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.pos-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px}
+.mini-opt{border:1px solid var(--border2);border-radius:4px;padding:6px 8px;cursor:pointer;background:var(--bg3);text-align:center;transition:all 0.15s;font-family:var(--mono);font-size:10px;color:var(--muted2)}
+.mini-opt:hover{border-color:var(--border3);color:var(--text)}
+.mini-opt.sel{border-color:var(--red);background:var(--red-dim);color:#ff6644}
+
+/* cost bar */
+.cost-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;margin:0 16px 8px;font-family:var(--mono);font-size:10px}
+.cost-bar-lbl{color:var(--muted);letter-spacing:1px}
+.cost-bar-val{color:var(--accent)}
+
+/* title char pill */
+.char-pill{font-family:var(--mono);font-size:9px;margin-top:3px;padding:2px 6px;border-radius:2px;display:inline-block}
+.char-ok{background:rgba(42,94,54,0.3);color:#4a9a5c}
+.char-bad{background:rgba(196,26,0,0.2);color:#ff6644}
 </style>
 </head>
 <body>
@@ -141,35 +175,48 @@ input[type=password]::placeholder{color:var(--muted)}
 <div class="toast" id="toast"></div>
 <header class="hdr">
   <div class="logo"><div class="logo-bar"></div>ALLIED THUMBNAILS</div>
-  <div class="hdr-right"><span class="pill">PIPELINE v2.0</span><span>THUMBNAIL + TITLE SYSTEM</span></div>
+  <div class="hdr-right"><span class="pill">PIPELINE v3.0</span><span>OPUS 4.7 · NANO BANANA PRO</span></div>
 </header>
 <div class="layout">
   <div class="side">
     <div class="side-block">
       <span class="lbl">Script Input</span>
-      <div class="pdf-btn" id="pdfBtn" onclick="document.getElementById('pdfFile').click()">📄 UPLOAD PDF SCRIPT</div>
-      <input type="file" id="pdfFile" accept=".pdf" onchange="loadPDF(event)">
+      <label class="pdf-btn" for="pdfFile">📄 UPLOAD PDF SCRIPT</label>
+      <input type="file" id="pdfFile" accept=".pdf">
       <textarea id="scriptInput" placeholder="Or paste script text here..."></textarea>
     </div>
     <div class="side-block">
       <div class="key-stack">
-        <div class="key-row"><span class="lbl">Anthropic API Key</span><input type="password" id="anthropicKey" placeholder="sk-ant-..." oninput="saveKeys()"></div>
-        <div class="key-row"><span class="lbl">Google AI Studio Key</span><input type="password" id="googleKey" placeholder="AIza..." oninput="saveKeys()"></div>
+        <div class="key-row"><span class="lbl">Anthropic API Key</span><input type="password" id="anthropicKey" placeholder="sk-ant-..."></div>
+        <div class="key-row"><span class="lbl">Google AI Studio Key</span><input type="password" id="googleKey" placeholder="AIza..."></div>
       </div>
       <div style="margin-top:10px">
-        <span class="lbl">Generation Model</span>
-        <div style="display:flex;flex-direction:column;gap:5px" id="modelPicker">
-          <div class="model-opt" id="m0" onclick="selectModel(0)" style="border:1px solid var(--border2);border-radius:4px;padding:8px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--bg2);transition:all 0.15s">
-            <div><div style="font-family:var(--display);font-size:12px;letter-spacing:1px">NANO BANANA</div><div style="font-family:var(--mono);font-size:9px;color:var(--muted)">2.5 Flash · Fast</div></div>
-            <div style="font-family:var(--mono);font-size:10px;color:var(--muted)">$0.039</div>
+        <span class="lbl">Analysis Model (Claude)</span>
+        <div style="display:flex;flex-direction:column;gap:5px" id="claudePicker">
+          <div class="model-opt" data-claude="0">
+            <div><div class="model-name">HAIKU 4.5</div><div class="model-meta">Fast draft</div></div>
+            <div class="model-cost">~$0.014</div>
           </div>
-          <div class="model-opt" id="m1" onclick="selectModel(1)" style="border:1px solid var(--border2);border-radius:4px;padding:8px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--bg2);transition:all 0.15s">
-            <div><div style="font-family:var(--display);font-size:12px;letter-spacing:1px">NANO BANANA 2</div><div style="font-family:var(--mono);font-size:9px;color:var(--muted)">3.1 Flash · Balanced</div></div>
-            <div style="font-family:var(--mono);font-size:10px;color:var(--muted)">$0.067</div>
+          <div class="model-opt" data-claude="1">
+            <div><div class="model-name">SONNET 4.6</div><div class="model-meta">Balanced</div></div>
+            <div class="model-cost">~$0.040</div>
           </div>
-          <div class="model-opt sel" id="m2" onclick="selectModel(2)" style="border:1px solid var(--red);border-radius:4px;padding:8px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--red-dim);transition:all 0.15s">
-            <div><div style="font-family:var(--display);font-size:12px;letter-spacing:1px;color:var(--text)">NANO BANANA PRO</div><div style="font-family:var(--mono);font-size:9px;color:var(--muted)">Pro · Best quality</div></div>
-            <div style="font-family:var(--mono);font-size:10px;color:var(--red)">$0.134</div>
+          <div class="model-opt sel" data-claude="2">
+            <div><div class="model-name">OPUS 4.7</div><div class="model-meta">Best quality</div></div>
+            <div class="model-cost">~$0.092</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <span class="lbl">Image Model (Google)</span>
+        <div style="display:flex;flex-direction:column;gap:5px" id="imgPicker">
+          <div class="model-opt" data-img="0">
+            <div><div class="model-name">NANO BANANA</div><div class="model-meta">2.5 Flash Image · Fast</div></div>
+            <div class="model-cost">~$0.039</div>
+          </div>
+          <div class="model-opt sel" data-img="1">
+            <div><div class="model-name">NANO BANANA PRO</div><div class="model-meta">3 Pro Image · Best</div></div>
+            <div class="model-cost">~$0.134</div>
           </div>
         </div>
       </div>
@@ -177,30 +224,19 @@ input[type=password]::placeholder{color:var(--muted)}
     <div class="side-block">
       <span class="lbl">Commander Expression</span>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px" id="exprPicker">
-        <div class="expr-opt sel" id="ex0" onclick="selectExpr(0,'Stern and authoritative — hard jaw set, cold eyes locked on camera, the look of a man who has sent men to die and would do it again')" style="border:1px solid var(--red);border-radius:4px;padding:7px 9px;cursor:pointer;background:var(--red-dim);text-align:center;transition:all 0.15s">
-          <div style="font-family:var(--display);font-size:12px;letter-spacing:1px">STERN</div>
-          <div style="font-family:var(--mono);font-size:8px;color:var(--muted)">Commanding</div>
-        </div>
-        <div class="expr-opt" id="ex1" onclick="selectExpr(1,'Calm and composed — relaxed jaw, steady measured gaze, quiet confidence of a man in total control')" style="border:1px solid var(--border2);border-radius:4px;padding:7px 9px;cursor:pointer;background:var(--bg2);text-align:center;transition:all 0.15s">
-          <div style="font-family:var(--display);font-size:12px;letter-spacing:1px">CALM</div>
-          <div style="font-family:var(--mono);font-size:8px;color:var(--muted)">Composed</div>
-        </div>
-        <div class="expr-opt" id="ex2" onclick="selectExpr(2,'Slight knowing smirk — one corner of mouth barely raised, eyes narrowed with quiet satisfaction, the look of someone who already knows they won')" style="border:1px solid var(--border2);border-radius:4px;padding:7px 9px;cursor:pointer;background:var(--bg2);text-align:center;transition:all 0.15s">
-          <div style="font-family:var(--display);font-size:12px;letter-spacing:1px">SMIRKY</div>
-          <div style="font-family:var(--mono);font-size:8px;color:var(--muted)">Confident</div>
-        </div>
-        <div class="expr-opt" id="ex3" onclick="selectExpr(3,'Intense and furious — brow furrowed, jaw clenched, eyes burning with barely contained rage and determination')" style="border:1px solid var(--border2);border-radius:4px;padding:7px 9px;cursor:pointer;background:var(--bg2);text-align:center;transition:all 0.15s">
-          <div style="font-family:var(--display);font-size:12px;letter-spacing:1px">INTENSE</div>
-          <div style="font-family:var(--mono);font-size:8px;color:var(--muted)">Furious</div>
-        </div>
+        <div class="expr-opt sel" data-expr="0"><div class="expr-name">STERN</div><div class="expr-tag">Commanding</div></div>
+        <div class="expr-opt" data-expr="1"><div class="expr-name">CALM</div><div class="expr-tag">Composed</div></div>
+        <div class="expr-opt" data-expr="2"><div class="expr-name">SMIRKY</div><div class="expr-tag">Confident</div></div>
+        <div class="expr-opt" data-expr="3"><div class="expr-name">INTENSE</div><div class="expr-tag">Furious</div></div>
       </div>
     </div>
-    <button class="analyze-btn" id="analyzeBtn" onclick="analyzeScript()"><span id="analyzeTxt">ANALYZE SCRIPT</span></button>
+    <button class="analyze-btn" id="analyzeBtn"><span id="analyzeTxt">ANALYZE SCRIPT</span></button>
+    <div class="cost-bar"><span class="cost-bar-lbl">SESSION SPEND</span><span class="cost-bar-val" id="costBar">$0.000</span></div>
     <div class="steps">
       <div class="stp" id="stp1"><div class="stp-n">1</div><div class="stp-t">Script analysis</div></div>
       <div class="stp" id="stp2"><div class="stp-n">2</div><div class="stp-t">Select title</div></div>
       <div class="stp" id="stp3"><div class="stp-n">3</div><div class="stp-t">Select background</div></div>
-      <div class="stp" id="stp4"><div class="stp-n">4</div><div class="stp-t">Banner words for Canva</div></div>
+      <div class="stp" id="stp4"><div class="stp-n">4</div><div class="stp-t">Select banner word</div></div>
       <div class="stp" id="stp5"><div class="stp-n">5</div><div class="stp-t">Upload reference images</div></div>
       <div class="stp" id="stp6"><div class="stp-n">6</div><div class="stp-t">Generate thumbnail</div></div>
     </div>
@@ -214,7 +250,7 @@ input[type=password]::placeholder{color:var(--muted)}
       <div class="empty">
         <div class="empty-logo">AT</div>
         <div class="empty-title">NO INTEL YET</div>
-        <div class="empty-desc">Paste your script on the left and hit ANALYZE SCRIPT. The system extracts the emotional core, generates title options, recommends backgrounds and banner words, then builds your Nano Banana Pro prompt.</div>
+        <div class="empty-desc">Paste your script on the left and hit ANALYZE SCRIPT. The system extracts the emotional core, generates title options, recommends backgrounds and banner words, then builds your Nano Banana prompt and bakes the red banner onto the final image.</div>
       </div>
     </div>
   </div>
@@ -223,6 +259,81 @@ input[type=password]::placeholder{color:var(--muted)}
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
+// ============================================================================
+// CONSTANTS
+// ============================================================================
+var CLAUDE_MODELS = [
+  { id: 'claude-haiku-4-5-20251001', name: 'Haiku 4.5',  inPrice: 1, outPrice: 5  },
+  { id: 'claude-sonnet-4-6',          name: 'Sonnet 4.6', inPrice: 3, outPrice: 15 },
+  { id: 'claude-opus-4-7',            name: 'Opus 4.7',   inPrice: 5, outPrice: 25 }
+];
+
+var GEMINI_MODELS = [
+  { id: 'gemini-2.5-flash-image-preview', name: 'Nano Banana',     cost: 0.039 },
+  { id: 'gemini-3-pro-image-preview',     name: 'Nano Banana Pro', cost: 0.134 }
+];
+
+var EXPRESSIONS = [
+  'Stern and authoritative — hard jaw set, cold eyes locked on camera, the look of a man who has sent men to die and would do it again',
+  'Calm and composed — relaxed jaw, steady measured gaze, quiet confidence of a man in total control',
+  'Slight knowing smirk — one corner of mouth barely raised, eyes narrowed with quiet satisfaction, the look of someone who already knows they won',
+  'Intense and furious — brow furrowed, jaw clenched, eyes burning with barely contained rage and determination'
+];
+
+var BANNER_STYLES = [
+  { id: 'torn',    name: 'TORN EDGES',    desc: 'Rough jagged edges, high-energy' },
+  { id: 'clean',   name: 'CLEAN BLOCK',   desc: 'Sharp rectangle, minimal tilt' },
+  { id: 'tilted',  name: 'TILTED SLAB',   desc: 'Clean rectangle at 3° angle' },
+  { id: 'banner',  name: 'RIBBON TAILS',  desc: 'Small triangles cut from both ends' }
+];
+
+var BANNER_POSITIONS = [
+  { id: 'bl', name: 'BOTTOM LEFT' },
+  { id: 'bc', name: 'BOTTOM CENTER' },
+  { id: 'br', name: 'BOTTOM RIGHT' }
+];
+
+// ============================================================================
+// STATE
+// ============================================================================
+var appData = null;
+var selTitle = null, selBg = null, selBanner = null;
+var generalImgs = [];
+var selectedClaudeIdx = 2;   // Opus 4.7 default
+var selectedImgIdx = 1;      // Nano Banana Pro default
+var selectedExprIdx = 0;     // Stern default
+var selectedBannerStyle = 'torn';
+var selectedBannerPos = 'bl';
+var sessionCost = 0;
+
+// ============================================================================
+// INIT
+// ============================================================================
+window.addEventListener('load', function() {
+  loadKeys();
+  bindUI();
+});
+
+function bindUI() {
+  document.getElementById('anthropicKey').addEventListener('input', saveKeys);
+  document.getElementById('googleKey').addEventListener('input', saveKeys);
+  document.getElementById('pdfFile').addEventListener('change', loadPDF);
+  document.getElementById('analyzeBtn').addEventListener('click', analyzeScript);
+
+  document.querySelectorAll('[data-claude]').forEach(function(el) {
+    el.addEventListener('click', function() { selectClaude(+el.dataset.claude); });
+  });
+  document.querySelectorAll('[data-img]').forEach(function(el) {
+    el.addEventListener('click', function() { selectImg(+el.dataset.img); });
+  });
+  document.querySelectorAll('[data-expr]').forEach(function(el) {
+    el.addEventListener('click', function() { selectExpr(+el.dataset.expr); });
+  });
+}
+
+// ============================================================================
+// KEYS
+// ============================================================================
 function saveKeys() {
   try {
     localStorage.setItem('at_anthropic_key', document.getElementById('anthropicKey').value);
@@ -239,12 +350,9 @@ function loadKeys() {
   } catch(e) {}
 }
 
-window.addEventListener('load', loadKeys);
-
-var appData = null;
-var selTitle = null, selBg = null, selBanner = null;
-var refImgs = [];
-
+// ============================================================================
+// UI HELPERS
+// ============================================================================
 function showToast(msg, isErr, ms) {
   var t = document.getElementById('toast');
   t.textContent = msg;
@@ -263,37 +371,69 @@ function showOverlay(on, title, sub) {
 
 function setStep(n, state) {
   var el = document.getElementById('stp' + n);
+  if (!el) return;
   el.classList.remove('active', 'done');
   if (state) el.classList.add(state);
 }
 
+function updateCost(amount) {
+  sessionCost += amount;
+  document.getElementById('costBar').textContent = '$' + sessionCost.toFixed(3);
+}
+
+// ============================================================================
+// MODEL PICKERS
+// ============================================================================
+function selectClaude(i) {
+  selectedClaudeIdx = i;
+  document.querySelectorAll('[data-claude]').forEach(function(el) {
+    el.classList.toggle('sel', +el.dataset.claude === i);
+  });
+}
+
+function selectImg(i) {
+  selectedImgIdx = i;
+  document.querySelectorAll('[data-img]').forEach(function(el) {
+    el.classList.toggle('sel', +el.dataset.img === i);
+  });
+}
+
+function selectExpr(i) {
+  selectedExprIdx = i;
+  document.querySelectorAll('[data-expr]').forEach(function(el) {
+    el.classList.toggle('sel', +el.dataset.expr === i);
+  });
+  buildPrompt();
+}
+
+// ============================================================================
+// PDF LOADING
+// ============================================================================
 function loadPDF(e) {
   var file = e.target.files[0];
   if (!file) return;
-  document.getElementById('pdfBtn').textContent = '📄 ' + file.name;
+  var btn = document.querySelector('label[for="pdfFile"]');
+  btn.textContent = '📄 ' + file.name;
   showOverlay(true, 'READING PDF', 'Extracting text...');
   var reader = new FileReader();
   reader.onload = function(ev) {
-    var buf = ev.target.result;
-    pdfjsLib.getDocument({ data: buf }).promise.then(function(pdf) {
-      var pages = [];
-      for (var i = 1; i <= pdf.numPages; i++) pages.push(i);
+    pdfjsLib.getDocument({ data: ev.target.result }).promise.then(function(pdf) {
       var texts = [];
       function getPage(idx) {
-        if (idx >= pages.length) {
+        if (idx > pdf.numPages) {
           document.getElementById('scriptInput').value = texts.join('\n');
           showOverlay(false);
           showToast('PDF loaded — ' + pdf.numPages + ' pages');
           return;
         }
-        pdf.getPage(pages[idx]).then(function(pg) {
+        pdf.getPage(idx).then(function(pg) {
           pg.getTextContent().then(function(ct) {
             texts.push(ct.items.map(function(s) { return s.str; }).join(' '));
             getPage(idx + 1);
           });
         });
       }
-      getPage(0);
+      getPage(1);
     }).catch(function(err) {
       showOverlay(false);
       showToast('PDF error: ' + err.message, true);
@@ -302,6 +442,74 @@ function loadPDF(e) {
   reader.readAsArrayBuffer(file);
 }
 
+// ============================================================================
+// CLAUDE SYSTEM PROMPT
+// ============================================================================
+function buildSystemPrompt() {
+  return [
+    'You are a YouTube title and thumbnail strategist for a WWII/Korean War military history channel that gets 50k–170k views per video. Analyze scripts and return structured JSON only.',
+    '',
+    'TITLE FORMULA — study these REAL titles from successful channels in the niche:',
+    '- He Founded American Special Operations. The Marine Corps Buried His Name for Fifty Years.',
+    '- The General Who Won Every Campaign MacArthur Claimed as His Own.',
+    '- Marshall Built the Army That Won the War. Roosevelt Would Not Let Him Lead It.',
+    '- Eisenhower Let Patton STARVE for Fuel While Montgomery Got Everything.',
+    '- Two Generals the Army Could Not Tolerate Together. They Won North Africa Anyway.',
+    '- Bradley Fired His Best Corps Commander at Normandy. He Was Right to Do It.',
+    '- The Only WWII General to Carry an M1 and Jump With His Men.',
+    '- A Marine General Fired an Army General on Saipan. It Nearly Split the Military.',
+    '- The Best Panzer Commander of WW2 Wasn\'t Rommel or Guderian.',
+    '- Why Did the Allies Let War Criminals Rebuild the German Army?',
+    '- Manstein Wrote a \'Bestseller\' About WW2. Almost None of It Was True.',
+    '- Rommel Was \'Never\' a Military Genius. His Own Officers Said That.',
+    '- Why Germany\'s \'Greatest General\' Lost Every Campaign That Mattered.',
+    '- They Sent Rommel to Hold a Defensive Line. He Launched an Offensive That Failed.',
+    '',
+    'TITLE RULES — READ CAREFULLY:',
+    '1. Plain declarative past-tense sentences OR a direct question. No colons. No em dashes.',
+    '2. Structure A: [Specific thing that happened]. [Consequence or twist.] — two sentences joined.',
+    '3. Structure B: [Person] [did specific dramatic thing] [while/when/because X].',
+    '4. Structure C: Question format — "Why Did X..." / "How Did Y..." — for contrarian takes.',
+    '5. Structure D: Negation hook — "X Wasn\'t Y" / "Y Was \'Never\' Z" — quotes around disputed words.',
+    '6. NEVER use vague filler: story, tale, incredible, amazing, remarkable, forgotten, untold, secret.',
+    '7. Use SPECIFIC names, numbers, places, exact actions.',
+    '8. Every title MUST be between 70 and 90 characters. Count every character including spaces and punctuation. This is a HARD REQUIREMENT — titles outside this window will be rejected.',
+    '',
+    'BANNER WORDS — 2-3 word punches baked onto red banners in thumbnails. Study these examples:',
+    '- ERASED, BETRAYED, IGNORED, UNBREAKABLE, DIAMONDS, THE MYTH, ALL LIES, GENIUS?, FINALLY',
+    '- WRONG CALL, STOLEN GLORY, NO FUEL, SACRIFICED, MASTERMIND, HE WALKED 140 MILES',
+    '- TIGER JACK, JUMPING GENERAL, SMITH vs SMITH, WORST ENEMIES, HE ATTACKED',
+    'Banner categories: NICKNAME (Tiger Jack, Iron Tits), BETRAYAL (Betrayed, Erased), RESILIENCE (Unbreakable, Survived), ACTION (He Attacked, Walked 140 Miles), CONTRARIAN (All Lies, The Myth, Genius?), REVERSAL (Wrong Call, Finally).',
+    '',
+    'BACKGROUND TYPES:',
+    '- COLLISION_MAP: tactical map with two forces colliding (best for battles)',
+    '- LOCATION_MAP: geographic map showing campaign area',
+    '- NEWSPAPER: 1940s newspaper front page',
+    '- DOCUMENT: aged military orders or memos on yellowed paper',
+    '- BATTLE_ACTION: combat scene with smoke and fire',
+    '- ARCHIVE_STACK: stacked period documents, letters, photographs',
+    '',
+    'Return ONLY valid JSON with this exact schema:',
+    '{',
+    '  "general": {"name": "Full rank and name", "physical": "Age, build, face, hair, uniform details, any signature items", "era": "WWII European/Pacific/Korean War/etc"},',
+    '  "hook": "3-4 sentences on the central injustice or irony — build tension",',
+    '  "dramatic_moment": "The most cinematic peak moment with specific date and place",',
+    '  "tone": "cold_betrayal/furious_injustice/tragic_irony/dark_mystery/triumphant_irony/contrarian_reveal",',
+    '  "lighting": "Specific cinematic lighting description",',
+    '  "titles": [{"text": "Title between 70-90 chars", "formula": "Structure A/B/C/D", "why": "Why this drives clicks", "chars": 78}],',
+    '  "backgrounds": [{"type": "TYPE", "label": "Name", "specific": "Exact visual details — geographic features, arrows, terrain only. NO stamps, NO readable text, NO labels with words, NO watermarks.", "recommended": true}],',
+    '  "banners": [{"word": "WORD", "category": "NICKNAME/BETRAYAL/RESILIENCE/ACTION/CONTRARIAN/REVERSAL", "why": "CTR reason"}],',
+    '  "description": "4-5 sentence YouTube description, 400-500 characters. Open with a hook sentence that teases the central irony or injustice. Add historical context in 1-2 sentences. Tease the resolution without giving it away. End with a soft CTA or question.",',
+    '  "tags": "tag1, tag2, tag3, tag4, tag5, tag6, tag7, tag8, tag9, tag10, tag11, tag12, tag13, tag14, tag15"',
+    '}',
+    '',
+    'Generate: 4 titles (STRICT 70-90 chars each — verify count before returning), 3-4 backgrounds, 5 banner words, 4-5 sentence description (400-500 chars), 15 tags. IMPORTANT: In background "specific" fields, never include stamps, seals, text overlays, watermarks, or anything that forces the image AI to render readable text — the AI struggles with text, so describe only shapes, terrain, arrows, and colors.'
+  ].join('\n');
+}
+
+// ============================================================================
+// ANALYZE SCRIPT
+// ============================================================================
 function analyzeScript() {
   var script = document.getElementById('scriptInput').value.trim();
   var aKey = document.getElementById('anthropicKey').value.trim();
@@ -310,10 +518,9 @@ function analyzeScript() {
 
   document.getElementById('analyzeBtn').disabled = true;
   document.getElementById('analyzeTxt').textContent = 'ANALYZING...';
-  showOverlay(true, 'ANALYZING', 'Extracting script intelligence...');
+  var model = CLAUDE_MODELS[selectedClaudeIdx];
+  showOverlay(true, 'ANALYZING', 'Running ' + model.name + '...');
   setStep(1, 'active');
-
-  var systemPrompt = 'You are a YouTube title and thumbnail strategist for a WWII/Korean War military history channel. Analyze scripts and return structured JSON only.\n\nTITLE FORMULA — these are REAL titles from a channel with 50k-170k views each. Study the sentence structure EXACTLY:\n- He Founded American Special Operations. The Marine Corps Buried His Name for Fifty Years.\n- The General Who Won Every Campaign MacArthur Claimed as His Own.\n- Marshall Built the Army That Won the War. Roosevelt Would Not Let Him Lead It.\n- Eisenhower Let Patton STARVE for Fuel While Montgomery Got Everything.\n- Two Generals the Army Could Not Tolerate Together. They Won North Africa Anyway.\n- Bradley Fired His Best Corps Commander at Normandy. He Was Right to Do It.\n- The Only WWII General to Carry an M1 and Jump With His Men.\n- A Marine General Fired an Army General on Saipan. It Nearly Split the Military.\n\nTITLE RULES — READ CAREFULLY:\n1. Titles use plain past tense declarative sentences. No questions. No colons. No em dashes.\n2. Structure A: [Specific thing that happened]. [The consequence or twist that makes it outrageous.] — two sentences joined.\n3. Structure B: [Person] [did specific dramatic thing] [while/when/because X happened].\n4. NEVER use vague words like: story, tale, incredible, amazing, remarkable, forgotten, untold, secret.\n5. Use SPECIFIC details: names, numbers, places, exact actions.\n6. Every title MUST be between 75 and 100 characters. Count every character. This is a hard requirement.\n\nBANNER WORDS that work: ERASED, BETRAYED, IGNORED, WRONG CALL, STOLEN GLORY, NO FUEL, TIGER JACK, JUMPING GENERAL, SMITH vs SMITH, UNBREAKABLE, THE MYTH, SACRIFICED.\n\nBACKGROUND TYPES:\n- COLLISION_MAP: tactical map with two forces colliding (best for battles)\n- LOCATION_MAP: geographic map showing campaign area\n- NEWSPAPER: 1940s newspaper front page\n- DOCUMENT: aged military orders or memos, yellowed paper, official letterhead\n- BATTLE_ACTION: combat scene\n\nReturn ONLY valid JSON:\n{\n  \"general\": {\"name\": \"Full rank and name\", \"physical\": \"Age, build, face, hair, uniform details, any signature items\", \"era\": \"WWII European/Pacific/Korean War\"},\n  \"hook\": \"2-3 sentences on the central injustice or irony\",\n  \"dramatic_moment\": \"The most cinematic peak moment\",\n  \"tone\": \"cold_betrayal/furious_injustice/tragic_irony/dark_mystery/triumphant_irony\",\n  \"lighting\": \"Specific cinematic lighting description\",\n  \"titles\": [{\"text\": \"Title between 75-100 chars\", \"formula\": \"Structure A or B\", \"why\": \"Why this drives clicks\", \"chars\": 87}],\n  \"backgrounds\": [{\"type\": \"TYPE\", \"label\": \"Name\", \"specific\": \"Exact visual details — geographic features, arrows, terrain only. No stamps, no readable text, no labels with words.\", \"recommended\": true}],\n  \"banners\": [{\"word\": \"WORD\", \"category\": \"Category\", \"why\": \"CTR reason\"}],\n  \"description\": \"2-3 sentence YouTube description under 300 chars. Hook, context, tease.\",\n  \"tags\": \"tag1, tag2, tag3, tag4, tag5, tag6, tag7, tag8, tag9, tag10, tag11, tag12, tag13, tag14, tag15\"\n}\n\nGenerate: 4 titles (STRICT 75-100 chars each, count carefully), 3-4 backgrounds, 4 banners, description, tags. IMPORTANT: In background specific descriptions, never include stamps, seals, text overlays, watermarks, or any elements that would cause the AI to render readable text.';
 
   fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -324,9 +531,9 @@ function analyzeScript() {
       'anthropic-dangerous-direct-browser-access': 'true'
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 2500,
-      system: systemPrompt,
+      model: model.id,
+      max_tokens: 3000,
+      system: buildSystemPrompt(),
       messages: [{ role: 'user', content: 'Analyze this script:\n\n' + script }]
     })
   }).then(function(res) {
@@ -335,18 +542,20 @@ function analyzeScript() {
       return json;
     });
   }).then(function(json) {
+    // Track cost
+    if (json.usage) {
+      var cost = (json.usage.input_tokens / 1e6) * model.inPrice + (json.usage.output_tokens / 1e6) * model.outPrice;
+      updateCost(cost);
+    }
+
     var raw = json.content[0].text.trim();
-    // Extract JSON from response - find first { to last }
     var jsonStart = raw.indexOf('{');
     var jsonEnd = raw.lastIndexOf('}');
-    if (jsonStart >= 0 && jsonEnd >= 0) {
-      raw = raw.substring(jsonStart, jsonEnd + 1);
-    }
+    if (jsonStart >= 0 && jsonEnd >= 0) raw = raw.substring(jsonStart, jsonEnd + 1);
     raw = raw.replace(/```json|```/g, '').trim();
     try {
       appData = JSON.parse(raw);
     } catch(parseErr) {
-      // Try to fix common JSON issues - trailing commas, unescaped chars
       raw = raw.replace(/,(\s*[}\]])/g, '$1');
       appData = JSON.parse(raw);
     }
@@ -363,6 +572,9 @@ function analyzeScript() {
   });
 }
 
+// ============================================================================
+// RENDER
+// ============================================================================
 function makeCard(label, meta, inner) {
   var c = document.createElement('div');
   c.className = 'card';
@@ -371,158 +583,245 @@ function makeCard(label, meta, inner) {
 }
 
 function bgIcon(type) {
-  var icons = { COLLISION_MAP: '⚔', LOCATION_MAP: '🗺', NEWSPAPER: '📰', DOCUMENT: '📋', BATTLE_ACTION: '💥' };
-  return icons[type] || '';
+  var icons = { COLLISION_MAP:'⚔', LOCATION_MAP:'🗺', NEWSPAPER:'📰', DOCUMENT:'📋', BATTLE_ACTION:'💥', ARCHIVE_STACK:'🗂' };
+  return icons[type] || '◼';
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, function(c) {
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
 }
 
 function renderAll() {
   document.getElementById('analyzeBtn').disabled = false;
   document.getElementById('analyzeTxt').textContent = 'RE-ANALYZE';
-  document.getElementById('mainTitle').textContent = appData.general.name.toUpperCase();
-  document.getElementById('mainMeta').textContent = appData.general.era.toUpperCase();
+  document.getElementById('mainTitle').textContent = (appData.general.name || 'UNKNOWN').toUpperCase();
+  document.getElementById('mainMeta').textContent = (appData.general.era || '').toUpperCase();
 
   var body = document.getElementById('mainBody');
   body.innerHTML = '';
 
-  body.appendChild(makeCard('Intel — Emotional Core', appData.general.era,
-    '<div class="intel-text">' + appData.hook + '</div>' +
-    '<div class="intel-row"><b>Dramatic moment —</b> ' + appData.dramatic_moment + '</div>' +
-    '<div class="intel-row"><b>Tone —</b> ' + appData.tone.replace(/_/g, ' ') + ' &nbsp;·&nbsp; <b>Lighting —</b> ' + appData.lighting + '</div>'
+  // Intel card
+  body.appendChild(makeCard('Intel — Emotional Core', escapeHtml(appData.general.era || ''),
+    '<div class="intel-text">' + escapeHtml(appData.hook) + '</div>' +
+    '<div class="intel-row"><b>Dramatic moment —</b> ' + escapeHtml(appData.dramatic_moment) + '</div>' +
+    '<div class="intel-row"><b>Tone —</b> ' + escapeHtml((appData.tone || '').replace(/_/g, ' ')) + ' &nbsp;·&nbsp; <b>Lighting —</b> ' + escapeHtml(appData.lighting) + '</div>'
   ));
 
-  // Description card
+  // Description
   if (appData.description) {
     window._desc = appData.description;
-    var descCard = makeCard('Video Description', 'Copy for YouTube',
+    var dLen = appData.description.length;
+    var descCard = makeCard('Video Description', dLen + ' chars · Copy for YouTube',
       '<div id="descText" style="font-family:var(--mono);font-size:11px;color:var(--muted2);line-height:1.8;margin-bottom:10px"></div>' +
-      '<button class="copy-btn" onclick="navigator.clipboard.writeText(window._desc).then(function(){showToast(\'Description copied!\')})">Copy Description</button>'
+      '<button class="copy-btn" onclick="copyDescription()">Copy Description</button>'
     );
     body.appendChild(descCard);
     document.getElementById('descText').textContent = appData.description;
   }
 
-  // Tags card
+  // Tags
   if (appData.tags) {
     window._tags = appData.tags;
     var tagsCard = makeCard('Video Tags', 'Copy for YouTube',
       '<div id="tagsText" style="font-family:var(--mono);font-size:11px;color:var(--muted2);line-height:1.8;margin-bottom:10px"></div>' +
-      '<button class="copy-btn" onclick="navigator.clipboard.writeText(window._tags).then(function(){showToast(\'Tags copied!\')})">Copy Tags</button>'
+      '<button class="copy-btn" onclick="copyTags()">Copy Tags</button>'
     );
     body.appendChild(tagsCard);
     document.getElementById('tagsText').textContent = appData.tags;
   }
 
+  // Titles — 70-90 enforcement
   var titleHtml = '<div class="opt-list">';
   for (var i = 0; i < appData.titles.length; i++) {
     var t = appData.titles[i];
-    titleHtml += '<div class="opt-item" id="title_' + i + '" onclick="selectTitle(' + i + ')">' +
+    var L = t.text.length;
+    var ok = L >= 70 && L <= 90;
+    var pillText = ok ? L + '/90 ✓ good length' : (L < 70 ? L + '/90 ✗ too short' : L + '/90 ✗ too long');
+    titleHtml += '<div class="opt-item" data-title="' + i + '">' +
       '<div class="opt-check">✓</div>' +
-      '<div class="opt-formula">' + t.formula.toUpperCase() + '</div>' +
-      '<div class="opt-text">' + t.text + '</div>' +
-      '<div style="font-family:var(--mono);font-size:9px;margin-top:3px;padding:2px 6px;border-radius:2px;display:inline-block;background:' + (t.text.length >= 75 && t.text.length <= 100 ? 'rgba(42,94,54,0.3);color:#4a9a5c' : 'rgba(196,26,0,0.2);color:#ff6644') + '">' + t.text.length + '/100 ' + (t.text.length >= 75 && t.text.length <= 100 ? '✓ good length' : t.text.length < 75 ? '✗ too short — Claude missed the rule' : '✗ too long') + '</div>' +
-      '<div class="opt-why">' + t.why + '</div>' +
+      '<div class="opt-formula">' + escapeHtml((t.formula || '').toUpperCase()) + '</div>' +
+      '<div class="opt-text">' + escapeHtml(t.text) + '</div>' +
+      '<div class="char-pill ' + (ok ? 'char-ok' : 'char-bad') + '">' + pillText + '</div>' +
+      '<div class="opt-why">' + escapeHtml(t.why || '') + '</div>' +
       '</div>';
   }
   titleHtml += '</div>';
-  body.appendChild(makeCard('Step 2 — Video Title', 'Select one', titleHtml));
+  body.appendChild(makeCard('Step 2 — Video Title', '70–90 chars · Select one', titleHtml));
 
+  // Backgrounds
   var bgHtml = '<div class="bg-grid">';
   for (var j = 0; j < appData.backgrounds.length; j++) {
     var b = appData.backgrounds[j];
-    bgHtml += '<div class="bg-opt" id="bg_' + j + '" onclick="selectBg(' + j + ')">' +
+    bgHtml += '<div class="bg-opt" data-bg="' + j + '">' +
       (b.recommended ? '<div class="bg-rec">REC</div>' : '') +
       '<div class="bg-check">✓</div>' +
-      '<div class="bg-type">' + bgIcon(b.type) + ' ' + b.label + '</div>' +
-      '<div class="bg-why">' + b.specific + '</div>' +
+      '<div class="bg-type">' + bgIcon(b.type) + ' ' + escapeHtml(b.label) + '</div>' +
+      '<div class="bg-why">' + escapeHtml(b.specific) + '</div>' +
       '</div>';
   }
   bgHtml += '</div>';
   body.appendChild(makeCard('Step 3 — Background Type', 'Select one', bgHtml));
 
+  // Banner words
   var banHtml = '<div class="banner-wrap">';
   for (var k = 0; k < appData.banners.length; k++) {
     var bn = appData.banners[k];
-    banHtml += '<div class="ban-opt" style="cursor:default" onclick="copyBannerWord(this,\''+bn.word+'\')">' +
-      '<div class="ban-word">' + bn.word + '</div>' +
-      '<div class="ban-cat">' + bn.category.toUpperCase() + '</div>' +
-      '<div class="ban-why">' + bn.why + '</div>' +
+    banHtml += '<div class="ban-opt" data-ban="' + k + '">' +
+      '<div class="ban-check">✓</div>' +
+      '<div class="ban-word">' + escapeHtml(bn.word) + '</div>' +
+      '<div class="ban-cat">' + escapeHtml((bn.category || '').toUpperCase()) + '</div>' +
+      '<div class="ban-why">' + escapeHtml(bn.why || '') + '</div>' +
       '</div>';
   }
   banHtml += '</div>';
-  body.appendChild(makeCard('Step 4 — Banner Word for Canva', 'Pick one to use manually in Canva', banHtml));
+  body.appendChild(makeCard('Step 4 — Banner Word', 'Click to select · baked onto final image', banHtml));
 
+  // Reference photos
   body.appendChild(makeCard('Step 5 — General Reference Photos', '1-3 photos for face & uniform likeness',
-    '<div style="font-family:var(--mono);font-size:9px;color:var(--muted2);margin-bottom:8px;line-height:1.6">Portrait reference for <strong style="color:var(--text)">' + appData.general.name + '</strong><br>' + appData.general.physical + '</div>' +
-    '<div class="ref-drop" onclick="document.getElementById(\'refGeneral\').click()">' +
-    '<input type="file" id="refGeneral" accept="image/*" multiple onchange="handleGeneralRefs(event)">' +
-    '<div class="ref-thumbs" id="generalThumbs"><div class="ref-plus">+</div></div>' +
+    '<div style="font-family:var(--mono);font-size:9px;color:var(--muted2);margin-bottom:8px;line-height:1.6">Portrait reference for <strong style="color:var(--text)">' + escapeHtml(appData.general.name) + '</strong><br>' + escapeHtml(appData.general.physical) + '</div>' +
+    '<div class="ref-drop">' +
+    '<input type="file" id="refGeneral" accept="image/*" multiple>' +
+    '<div class="ref-thumbs" id="generalThumbs"><div class="ref-plus" id="refPlus">+</div></div>' +
     '<div class="ref-hint">FACE · UNIFORM · 1-3 PHOTOS</div>' +
     '</div>' +
-    '<div class="ref-note" style="margin-top:8px">Best: 1 front-facing portrait + 1 in uniform · Sources: archives.gov · Wikipedia Commons</div>'
+    '<div class="ref-note">Best: 1 front-facing portrait + 1 in uniform · Sources: archives.gov · Wikipedia Commons</div>'
   ));
 
-  body.appendChild(makeCard('Step 6 — Final Prompt & Generate', 'Nano Banana Pro · Google AI Studio',
+  // Final prompt + banner style/position + generate
+  var styleOpts = BANNER_STYLES.map(function(s) {
+    return '<div class="mini-opt' + (s.id === selectedBannerStyle ? ' sel' : '') + '" data-bstyle="' + s.id + '" title="' + s.desc + '">' + s.name + '</div>';
+  }).join('');
+  var posOpts = BANNER_POSITIONS.map(function(p) {
+    return '<div class="mini-opt' + (p.id === selectedBannerPos ? ' sel' : '') + '" data-bpos="' + p.id + '">' + p.name + '</div>';
+  }).join('');
+
+  body.appendChild(makeCard('Step 6 — Final Prompt & Generate', GEMINI_MODELS[selectedImgIdx].name + ' · Google AI Studio',
+    '<span class="lbl" style="margin-bottom:2px">Banner Style</span>' +
+    '<div class="style-grid">' + styleOpts + '</div>' +
+    '<span class="lbl" style="margin-top:12px;margin-bottom:2px">Banner Position</span>' +
+    '<div class="pos-grid">' + posOpts + '</div>' +
+    '<span class="lbl" style="margin-top:12px;margin-bottom:2px">Generated Prompt</span>' +
     '<div class="prompt-out awaiting" id="promptOut">Select a background above — prompt builds automatically...</div>' +
     '<div class="act-row" style="margin-top:10px">' +
-    '<button class="gen-btn" id="genBtn" onclick="generateImage()" disabled style="opacity:0.5">GENERATE THUMBNAIL</button>' +
-    '<button class="copy-btn" onclick="copyPrompt()">Copy Prompt</button>' +
+    '<button class="gen-btn" id="genBtn" disabled style="opacity:0.5">GENERATE THUMBNAIL</button>' +
+    '<button class="copy-btn" id="copyPromptBtn">Copy Prompt</button>' +
     '</div>' +
     '<div id="resultWrap" style="display:none;flex-direction:column;gap:10px;margin-top:14px">' +
     '<div class="div-line">Generated Thumbnail</div>' +
     '<canvas id="resultCanvas" style="width:100%;border-radius:4px;border:1px solid var(--border2);display:block"></canvas>' +
-    '<img id="resultImg" style="display:none">' +
     '<div class="act-row">' +
-    '<button class="dl-btn" onclick="dlImage()">Download PNG</button>' +
-    '<button class="regen-btn" onclick="generateImage()">Regenerate</button>' +
+    '<button class="dl-btn" id="dlBtn">Download PNG</button>' +
+    '<button class="regen-btn" id="regenBtn">Regenerate</button>' +
+    '<button class="regen-btn" id="rebannerBtn">Re-apply Banner Only</button>' +
     '</div></div>'
   ));
 
+  // Bind all dynamic elements AFTER insertion
+  bindDynamic();
+
+  // Auto-select recommended background
   var recIdx = -1;
   for (var r = 0; r < appData.backgrounds.length; r++) {
     if (appData.backgrounds[r].recommended) { recIdx = r; break; }
   }
-  if (recIdx >= 0) {
-    setTimeout(function() {
-      selectBg(recIdx);
-    }, 300);
-  } else if (appData.backgrounds.length > 0) {
-    setTimeout(function() {
-      selectBg(0);
-    }, 300);
+  if (recIdx < 0 && appData.backgrounds.length > 0) recIdx = 0;
+  if (recIdx >= 0) setTimeout(function() { selectBg(recIdx); }, 300);
+
+  // Auto-select first banner
+  if (appData.banners && appData.banners.length > 0) {
+    setTimeout(function() { selectBanner(0); }, 400);
   }
 }
 
+function bindDynamic() {
+  document.querySelectorAll('[data-title]').forEach(function(el) {
+    el.addEventListener('click', function() { selectTitle(+el.dataset.title); });
+  });
+  document.querySelectorAll('[data-bg]').forEach(function(el) {
+    el.addEventListener('click', function() { selectBg(+el.dataset.bg); });
+  });
+  document.querySelectorAll('[data-ban]').forEach(function(el) {
+    el.addEventListener('click', function() { selectBanner(+el.dataset.ban); });
+  });
+  document.querySelectorAll('[data-bstyle]').forEach(function(el) {
+    el.addEventListener('click', function() {
+      selectedBannerStyle = el.dataset.bstyle;
+      document.querySelectorAll('[data-bstyle]').forEach(function(x) {
+        x.classList.toggle('sel', x.dataset.bstyle === selectedBannerStyle);
+      });
+      // If we already have a result, re-draw banner
+      if (window._baseImg) compositeWithBanner(window._baseImg);
+    });
+  });
+  document.querySelectorAll('[data-bpos]').forEach(function(el) {
+    el.addEventListener('click', function() {
+      selectedBannerPos = el.dataset.bpos;
+      document.querySelectorAll('[data-bpos]').forEach(function(x) {
+        x.classList.toggle('sel', x.dataset.bpos === selectedBannerPos);
+      });
+      if (window._baseImg) compositeWithBanner(window._baseImg);
+    });
+  });
+
+  var refInput = document.getElementById('refGeneral');
+  if (refInput) refInput.addEventListener('change', handleGeneralRefs);
+  var refPlus = document.getElementById('refPlus');
+  if (refPlus) refPlus.addEventListener('click', function() { refInput.click(); });
+
+  var genBtn = document.getElementById('genBtn');
+  if (genBtn) genBtn.addEventListener('click', generateImage);
+  var cpBtn = document.getElementById('copyPromptBtn');
+  if (cpBtn) cpBtn.addEventListener('click', copyPrompt);
+  var dl = document.getElementById('dlBtn');
+  if (dl) dl.addEventListener('click', dlImage);
+  var rg = document.getElementById('regenBtn');
+  if (rg) rg.addEventListener('click', generateImage);
+  var rb = document.getElementById('rebannerBtn');
+  if (rb) rb.addEventListener('click', function() {
+    if (window._baseImg) compositeWithBanner(window._baseImg);
+  });
+}
+
+// ============================================================================
+// SELECTIONS
+// ============================================================================
 function selectTitle(i) {
-  document.querySelectorAll('.opt-item').forEach(function(e) { e.classList.remove('sel'); });
-  document.getElementById('title_' + i).classList.add('sel');
+  document.querySelectorAll('[data-title]').forEach(function(e) { e.classList.remove('sel'); });
+  var el = document.querySelector('[data-title="' + i + '"]');
+  if (el) el.classList.add('sel');
   selTitle = appData.titles[i];
-  setStep(2, 'done'); setStep(3, 'active');
+  setStep(2, 'done');
+  if (!selBg) setStep(3, 'active');
   buildPrompt();
 }
 
 function selectBg(i) {
-  document.querySelectorAll('.bg-opt').forEach(function(e) { e.classList.remove('sel'); });
-  var el = document.getElementById('bg_' + i);
+  document.querySelectorAll('[data-bg]').forEach(function(e) { e.classList.remove('sel'); });
+  var el = document.querySelector('[data-bg="' + i + '"]');
   if (el) el.classList.add('sel');
   selBg = appData.backgrounds[i];
   setStep(3, 'done');
-  setStep(5, 'active');
-  console.log('selectBg called:', i, selBg);
+  if (!selBanner) setStep(4, 'active');
   buildPrompt();
 }
 
-
-function copyBannerWord(el, word) {
-  navigator.clipboard.writeText(word).then(function() {
-    var orig = el.querySelector('.ban-word').textContent;
-    el.querySelector('.ban-word').textContent = 'COPIED!';
-    setTimeout(function() { el.querySelector('.ban-word').textContent = orig; }, 1200);
-  });
-  setStep(4, 'done'); setStep(5, 'active');
+function selectBanner(i) {
+  document.querySelectorAll('[data-ban]').forEach(function(e) { e.classList.remove('sel'); });
+  var el = document.querySelector('[data-ban="' + i + '"]');
+  if (el) el.classList.add('sel');
+  selBanner = appData.banners[i];
+  setStep(4, 'done');
+  if (generalImgs.length === 0) setStep(5, 'active');
+  else setStep(6, 'active');
+  // Re-apply banner if we already have a base image
+  if (window._baseImg) compositeWithBanner(window._baseImg);
 }
 
-var generalImgs = [];
-
+// ============================================================================
+// REFERENCE IMAGES
+// ============================================================================
 function handleGeneralRefs(e) {
   var files = Array.from(e.target.files);
   generalImgs = [];
@@ -533,133 +832,108 @@ function handleGeneralRefs(e) {
     reader.onload = function(ev) {
       generalImgs.push({ data: ev.target.result.split(',')[1], type: file.type });
       var img = document.createElement('img');
-      img.src = ev.target.result; img.className = 'ref-img';
+      img.src = ev.target.result;
+      img.className = 'ref-img';
       row.appendChild(img);
     };
     reader.readAsDataURL(file);
   });
   var plus = document.createElement('div');
-  plus.className = 'ref-plus'; plus.textContent = '+';
-  plus.onclick = function() { document.getElementById('refGeneral').click(); };
+  plus.className = 'ref-plus';
+  plus.id = 'refPlus';
+  plus.textContent = '+';
+  plus.addEventListener('click', function() { document.getElementById('refGeneral').click(); });
   row.appendChild(plus);
-  checkRefsComplete();
+  setStep(5, 'done');
+  setStep(6, 'active');
 }
 
-
-
-function checkRefsComplete() {
-  if (generalImgs.length > 0) {
-    setStep(5, 'done'); setStep(6, 'active');
-  }
-}
-
-function handleRefs(e) { handleGeneralRefs(e); }
-
-var selectedExpression = 'Stern and authoritative — hard jaw set, cold eyes locked on camera, the look of a man who has sent men to die and would do it again';
-
-function selectExpr(i, expr) {
-  selectedExpression = expr;
-  document.querySelectorAll('.expr-opt').forEach(function(el, idx) {
-    if (idx === i) {
-      el.style.border = '1px solid var(--red)';
-      el.style.background = 'var(--red-dim)';
-    } else {
-      el.style.border = '1px solid var(--border2)';
-      el.style.background = 'var(--bg2)';
-    }
-  });
-  buildPrompt();
-}
-
-var MODEL_IDS = [
-  'gemini-2.5-flash-preview-04-17',
-  'gemini-2.5-flash-preview-04-17',
-  'gemini-3-pro-image-preview'
-];
-var selectedModelIdx = 2;
-
-function selectModel(i) {
-  selectedModelIdx = i;
-  document.querySelectorAll('.model-opt').forEach(function(el, idx) {
-    if (idx === i) {
-      el.style.border = '1px solid var(--red)';
-      el.style.background = 'var(--red-dim)';
-    } else {
-      el.style.border = '1px solid var(--border2)';
-      el.style.background = 'var(--bg2)';
-    }
-  });
-}
-
+// ============================================================================
+// BACKGROUND DESCRIPTIONS (for the image prompt)
+// ============================================================================
 function getBgDesc(bg) {
   var descs = {
-    COLLISION_MAP: 'A richly detailed period military map of Korea fills the entire background — ' + bg.specific + '. The map has the following cartographic elements rendered in authentic period style: bold red arrows labeled "CCF" or enemy force names sweeping inward from multiple directions toward a central battle point circled in red; a bold blue arrow labeled with the Allied operation name pushing northward; phase lines labeled "PHASE LINE 1" and "PHASE LINE 2" as dashed horizontal lines; the 38th PARALLEL marked as a bold horizontal line; city names including SEOUL, CHIPYONG-NI, and other Korean locations in bold black cartographic font; river names including HAN RIVER in italic; compass grid lines; a military scale bar. Map printed on aged cream-colored paper with subtle brown terrain contour lines. All labels are part of the map itself — crisp, period-accurate military cartographic typography. The overall map color palette is muted cream, brown, blue rivers, with the tactical arrows being the most vivid elements in red and blue.',
-
-    LOCATION_MAP: 'A richly detailed period military map fills the entire background — ' + bg.specific + '. Authentic cartographic elements: Korean peninsula or regional geography with terrain contours, rivers labeled by name, cities and towns labeled in bold black type, military unit positions marked with standard symbols, operation phase lines labeled with names and numbers, compass rose in corner, military grid coordinates along edges, scale bar at bottom. Map printed on aged cream paper with brown terrain shading. All place names, labels, and tactical annotations are rendered in crisp period military cartographic style as integral parts of the map.',
-
-    NEWSPAPER: 'An aged yellowed 1940s broadsheet newspaper fills the entire background — ' + bg.specific + '. Full newspaper layout: bold serif masthead at top, large dramatic headline in 72pt bold type, subheadline below, three-column body text in period newspaper font, a wire photograph placeholder with caption, dateline and byline, page number and edition stamp, classified advertisement column on right side. Paper is yellowed and slightly worn with authentic aging.',
-
-    DOCUMENT: 'An aged official US Army document fills the entire background — ' + bg.specific + '. Full document layout: official Army letterhead at top with unit designation, date and classification markings, typewritten body text in period Courier font with ribbon ink texture, handwritten margin annotations in blue or black ink, paragraph numbers, signature block at bottom, official stamps and initials. Paper is yellowed with fold marks and slight foxing.',
-
-    BATTLE_ACTION: 'A dramatic ' + bg.specific + ' battlefield scene fills the entire background. Photorealistic: heavy smoke rising in columns, orange fire glow in distance, soldiers and equipment silhouetted against dramatic sky, shell bursts visible, overcast sky with dramatic lighting breaking through. Cinematic desaturated color grading.'
+    COLLISION_MAP: 'A richly detailed period military map fills the entire background — ' + bg.specific + '. Cartographic elements rendered in authentic period style: bold red arrows sweeping inward from multiple directions toward a central battle point circled in red; a bold blue arrow pushing in the opposite direction; dashed phase lines as horizontal lines; compass grid lines; a military scale bar. Map printed on aged cream-colored paper with subtle brown terrain contour lines. The overall map color palette is muted cream, brown, blue rivers, with the tactical arrows being the most vivid elements in red and blue. NO readable text, NO labels, NO stamps — only shapes, arrows, and terrain.',
+    LOCATION_MAP: 'A richly detailed period military map fills the entire background — ' + bg.specific + '. Authentic cartographic elements: regional geography with terrain contours, rivers, military unit positions marked with standard symbols, compass rose in corner, military grid coordinates along edges, scale bar at bottom. Map printed on aged cream paper with brown terrain shading. NO readable text, NO labels, only shapes and terrain.',
+    NEWSPAPER: 'An aged yellowed 1940s broadsheet newspaper fills the entire background — ' + bg.specific + '. Full newspaper layout visible but text appears blurred and unreadable: masthead shape at top, large headline shape, column structures, photograph placeholder shapes with caption areas. Paper is yellowed and slightly worn with authentic aging. NO readable words.',
+    DOCUMENT: 'An aged official military document fills the entire background — ' + bg.specific + '. Layout visible but text is deliberately blurred/unreadable: letterhead shape at top, typewritten body text texture in period Courier-style, paragraph blocks, signature block shape at bottom, ink marks. Paper is yellowed with fold marks and slight foxing. NO readable words, NO stamps with readable text.',
+    BATTLE_ACTION: 'A dramatic ' + bg.specific + ' battlefield scene fills the entire background. Photorealistic: heavy smoke rising in columns, orange fire glow in distance, soldiers and equipment silhouetted against dramatic sky, shell bursts visible, overcast sky with dramatic lighting breaking through. Cinematic desaturated color grading.',
+    ARCHIVE_STACK: 'An overhead view of stacked period documents fills the entire background — ' + bg.specific + '. Yellowed letters, photographs, memos, and maps layered at slight angles on a dark wood surface. Edges worn and slightly torn. NO readable text visible — text texture only.'
   };
   return descs[bg.type] || bg.specific;
 }
+
+// ============================================================================
+// BUILD PROMPT (for image generation)
+// ============================================================================
 function buildPrompt() {
-  console.log('buildPrompt called, selBg:', !!selBg, 'appData:', !!appData);
-  if (!selBg || !appData) { console.log('buildPrompt bailed early'); return; }
+  if (!selBg || !appData) return;
   try {
-  var g = appData.general;
-  var refNote = generalImgs.length > 0 ? 'Using the provided reference photos of ' + g.name + ' — maintain exact facial likeness, skin tone, face shape, and uniform details from these photos. ' : '';
+    var g = appData.general;
+    var refNote = generalImgs.length > 0
+      ? 'Using the provided reference photos of ' + g.name + ' — maintain exact facial likeness, skin tone, face shape, and uniform details from these photos. '
+      : '';
 
-  var prompt = 'Photorealistic digital artwork, 1280x720 pixels, widescreen 16:9 composition. Finished artwork — no placeholder text, no title card, no watermark, no caption needed.\n\n' +
+    var prompt = [
+      'Photorealistic digital artwork, 1280x720 pixels, widescreen 16:9 composition. Finished artwork — NO placeholder text, NO title card, NO watermark, NO caption, NO banner text, NO words of any kind rendered in the image.',
+      '',
+      'FIGURE: ' + refNote + 'Photorealistic portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + EXPRESSIONS[selectedExprIdx] + '. Standing in the right half of the frame occupying roughly 45-55% of the width, bust to upper chest, head fully inside the frame with space above. Standing directly in front of the background with no separation — the background wraps around the figure naturally.',
+      '',
+      'LIGHTING: ' + (appData.lighting || 'Hard directional key light from left, dramatic shadows across the face') + '. Face is the brightest sharpest element. Subtle rim light separating shoulders from background.',
+      '',
+      'BACKGROUND: ' + getBgDesc(selBg),
+      '',
+      'UNIFORM COLOR: Vivid, warm, saturated — historically accurate for the era.',
+      '',
+      'TECHNICAL REQUIREMENTS: Photorealistic rendering. No illustrated or cartoon look. High contrast. Rich saturated colors. The background occupies the full frame behind the figure. CRITICAL: Do NOT render ANY text, ANY words, ANY banners, ANY labels, ANY readable letters anywhere in the image — the banner and title will be added in post-production. Leave the lower-left and lower-center areas of the image relatively uncluttered so a banner can be overlaid there cleanly.'
+    ].join('\n');
 
-    'FIGURE: ' + refNote + 'Photorealistic portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + selectedExpression + '. Standing left-of-center occupying the left 40-45% of the frame, bust to upper chest, head fully inside the frame with space above. Standing directly in front of the map with no backdrop — the map wraps around and behind the figure naturally.\n\n' +
-
-    'LIGHTING: ' + (appData.lighting || 'Hard directional key light from left, dramatic shadows across the face') + '. Face is the brightest sharpest element. Subtle rim light separating shoulders from background.\n\n' +
-
-    'MAP BACKGROUND: ' + getBgDesc(selBg) + '\n\n' +
-
-    'UNIFORM COLOR: Vivid olive drab green, warm and saturated.\n\n' +
-
-    'TECHNICAL REQUIREMENTS: Photorealistic rendering. No illustrated or cartoon look. High contrast. Rich saturated colors on the map. The map occupies the full frame behind the figure. No text added by the renderer outside of cartographic map labels.';
-
-  var box = document.getElementById('promptOut');
-  if (box) {
-    box.textContent = prompt;
-    box.classList.remove('awaiting');
-  }
-  var genBtn = document.getElementById('genBtn');
-  if (genBtn) { genBtn.disabled = false; genBtn.style.opacity = '1'; }
+    var box = document.getElementById('promptOut');
+    if (box) {
+      box.textContent = prompt;
+      box.classList.remove('awaiting');
+    }
+    var genBtn = document.getElementById('genBtn');
+    if (genBtn) { genBtn.disabled = false; genBtn.style.opacity = '1'; }
   } catch(err) {
     console.error('buildPrompt error:', err);
     showToast('Prompt build error: ' + err.message, true);
   }
 }
 
-
 function copyPrompt() {
-  var txt = document.getElementById('promptOut').textContent;
-  if (txt.indexOf('Select title') >= 0) return showToast('Make your selections first', true);
-  navigator.clipboard.writeText(txt).then(function() { showToast('Prompt copied to clipboard'); });
+  var box = document.getElementById('promptOut');
+  if (!box || box.classList.contains('awaiting')) return showToast('Make your selections first', true);
+  navigator.clipboard.writeText(box.textContent).then(function() { showToast('Prompt copied to clipboard'); });
 }
 
+function copyDescription() {
+  navigator.clipboard.writeText(window._desc || '').then(function() { showToast('Description copied!'); });
+}
+
+function copyTags() {
+  navigator.clipboard.writeText(window._tags || '').then(function() { showToast('Tags copied!'); });
+}
+
+// ============================================================================
+// GENERATE IMAGE
+// ============================================================================
 function generateImage() {
   var gKey = document.getElementById('googleKey').value.trim();
   if (!gKey) return showToast('Enter your Google AI Studio API key', true);
   if (!selBg) return showToast('Select a background type first (Step 3)', true);
 
   var btn = document.getElementById('genBtn');
-  btn.disabled = true; btn.textContent = 'GENERATING...';
-  showOverlay(true, 'GENERATING', 'Sending to Nano Banana Pro...');
+  btn.disabled = true;
+  btn.textContent = 'GENERATING...';
+  showOverlay(true, 'GENERATING', 'Sending to ' + GEMINI_MODELS[selectedImgIdx].name + '...');
+
   var elapsed = 0;
   var progressTimer = setInterval(function() {
     elapsed += 5;
     var subEl = document.getElementById('ovSub');
     if (subEl) subEl.textContent = 'Processing... ' + elapsed + 's (usually 20-60s)';
-    if (elapsed >= 90) clearInterval(progressTimer);
   }, 5000);
-  window._progressTimer = progressTimer;
 
   var prompt = document.getElementById('promptOut').textContent;
   var parts = [{ text: prompt }];
@@ -667,13 +941,11 @@ function generateImage() {
     parts.push({ inlineData: { mimeType: img.type, data: img.data } });
   });
 
-
   var controller = new AbortController();
-  var timeout = setTimeout(function() {
-    controller.abort();
-  }, 90000);
+  var timeout = setTimeout(function() { controller.abort(); }, 120000);
 
-  fetch('https://generativelanguage.googleapis.com/v1beta/models/' + MODEL_IDS[selectedModelIdx] + ':generateContent?key=' + gKey, {
+  var imgModel = GEMINI_MODELS[selectedImgIdx];
+  fetch('https://generativelanguage.googleapis.com/v1beta/models/' + imgModel.id + ':generateContent?key=' + gKey, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -688,10 +960,13 @@ function generateImage() {
       return json;
     });
   }).then(function(json) {
+    // Track approximate cost
+    updateCost(imgModel.cost);
+
     var imgB64 = null, imgMime = 'image/png';
     var candidates = json.candidates || [];
     for (var i = 0; i < candidates.length; i++) {
-      var pts = candidates[i].content && candidates[i].content.parts ? candidates[i].content.parts : [];
+      var pts = (candidates[i].content && candidates[i].content.parts) || [];
       for (var j = 0; j < pts.length; j++) {
         if (pts[j].inlineData && pts[j].inlineData.mimeType && pts[j].inlineData.mimeType.indexOf('image/') === 0) {
           imgB64 = pts[j].inlineData.data;
@@ -701,18 +976,22 @@ function generateImage() {
       }
       if (imgB64) break;
     }
+
+    clearInterval(progressTimer);
     showOverlay(false);
+
     if (imgB64) {
       var src = 'data:' + imgMime + ';base64,' + imgB64;
       var baseImg = new Image();
       baseImg.onload = function() {
-        compositeWithText(baseImg);
+        window._baseImg = baseImg;
+        compositeWithBanner(baseImg);
         var wrap = document.getElementById('resultWrap');
         wrap.style.display = 'flex';
         wrap.style.flexDirection = 'column';
         setStep(6, 'done');
         showToast('Thumbnail generated!');
-        wrap.scrollIntoView({ behavior: 'smooth' });
+        wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       };
       baseImg.src = src;
     } else {
@@ -724,72 +1003,186 @@ function generateImage() {
       throw new Error('No image in response. ' + txt);
     }
   }).catch(function(err) {
+    clearInterval(progressTimer);
     clearTimeout(timeout);
     showOverlay(false);
     if (err.name === 'AbortError') {
-      showToast('Request timed out after 90 seconds. Try regenerating or use a faster model.', true, 7000);
+      showToast('Request timed out after 120s. Try again or use a faster model.', true, 7000);
     } else {
       showToast('Error: ' + err.message, true, 7000);
     }
     console.error(err);
   }).finally(function() {
-    clearInterval(window._progressTimer);
     btn.disabled = false;
     btn.textContent = 'GENERATE THUMBNAIL';
   });
 }
 
-function compositeWithText(baseImg) {
+// ============================================================================
+// BANNER RENDERING — the fun part
+// ============================================================================
+function compositeWithBanner(baseImg) {
   var canvas = document.getElementById('resultCanvas');
-  var W = baseImg.naturalWidth || 2048;
-  var H = baseImg.naturalHeight || 1152;
+  var W = baseImg.naturalWidth || 1280;
+  var H = baseImg.naturalHeight || 720;
   canvas.width = W;
   canvas.height = H;
   var ctx = canvas.getContext('2d');
 
-  // Draw base image
+  // 1. Draw base image
   ctx.drawImage(baseImg, 0, 0, W, H);
 
-  // Banner zone: center at 87% from top (13% from bottom), height = 22% of H
-  var bannerH = Math.round(H * 0.22);
-  var bannerCenterY = Math.round(H * 0.87);
-  var bannerTop = bannerCenterY - Math.round(bannerH / 2);
-
-  // Get banner word
-  var word = selBanner ? selBanner.word : 'thumbnail';
-
-  // Calculate font size to fill banner width (max 88% of width)
-  var maxW = W * 0.88;
-  var fontSize = Math.round(bannerH * 0.62);
-  ctx.font = 'bold ' + fontSize + 'px "Montserrat", "Arial Black", sans-serif';
-  while (ctx.measureText(word).width > maxW && fontSize > 40) {
-    fontSize -= 4;
-    ctx.font = 'bold ' + fontSize + 'px "Montserrat", "Arial Black", sans-serif';
+  // 2. If no banner selected, stop here
+  if (!selBanner || !selBanner.word) {
+    window._lastCanvas = canvas;
+    return;
   }
 
-  // Text vertical center in banner
-  var textY = bannerTop + Math.round(bannerH * 0.72);
-
-  // Draw shadow
-  ctx.fillStyle = 'rgba(0,0,0,0.85)';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'alphabetic';
-  var shadowOffset = Math.round(fontSize * 0.06);
-  ctx.fillText(word, W / 2 + shadowOffset, textY + shadowOffset);
-
-  // Draw white text
-  ctx.fillStyle = '#FFFFFF';
-  ctx.fillText(word, W / 2, textY);
-
+  var word = selBanner.word;
+  drawBanner(ctx, W, H, word, selectedBannerStyle, selectedBannerPos);
   window._lastCanvas = canvas;
 }
 
+function drawBanner(ctx, W, H, word, style, pos) {
+  // Measure text first to size the banner
+  var fontFamily = '"Montserrat", "Anton", "Arial Black", sans-serif';
+  var fontWeight = '900';
+  // Start with a generous font size and scale down to fit
+  var maxBannerWidth = W * 0.55;
+  var fontSize = Math.round(H * 0.11);
+  ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
+  while (ctx.measureText(word).width > maxBannerWidth - 60 && fontSize > 30) {
+    fontSize -= 2;
+    ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
+  }
+  var textMetrics = ctx.measureText(word);
+  var textW = textMetrics.width;
+  var textH = fontSize;
+
+  // Banner box dimensions
+  var padX = Math.round(fontSize * 0.55);
+  var padY = Math.round(fontSize * 0.28);
+  var boxW = textW + padX * 2;
+  var boxH = textH + padY * 2;
+
+  // Banner position
+  var boxX, boxY;
+  var margin = Math.round(W * 0.035);
+  var bottomMargin = Math.round(H * 0.06);
+  if (pos === 'bl')      { boxX = margin; }
+  else if (pos === 'br') { boxX = W - boxW - margin; }
+  else                   { boxX = (W - boxW) / 2; }
+  boxY = H - boxH - bottomMargin;
+
+  // Slight rotation for energy
+  var tilt = 0;
+  if (style === 'tilted') tilt = -2.5 * Math.PI / 180;
+  else if (style === 'torn') tilt = -1.5 * Math.PI / 180;
+
+  ctx.save();
+
+  // Rotate around banner center
+  var cx = boxX + boxW / 2;
+  var cy = boxY + boxH / 2;
+  ctx.translate(cx, cy);
+  ctx.rotate(tilt);
+  ctx.translate(-cx, -cy);
+
+  // Drop shadow under the whole banner
+  ctx.shadowColor = 'rgba(0,0,0,0.55)';
+  ctx.shadowBlur = Math.round(fontSize * 0.18);
+  ctx.shadowOffsetX = Math.round(fontSize * 0.04);
+  ctx.shadowOffsetY = Math.round(fontSize * 0.08);
+
+  // Draw the banner shape
+  ctx.fillStyle = '#c41a00';
+  if (style === 'torn') {
+    drawTornRect(ctx, boxX, boxY, boxW, boxH, fontSize);
+  } else if (style === 'banner') {
+    drawRibbonRect(ctx, boxX, boxY, boxW, boxH);
+  } else {
+    // clean + tilted both use straight rect
+    ctx.fillRect(boxX, boxY, boxW, boxH);
+  }
+
+  // Remove shadow for text
+  ctx.shadowColor = 'transparent';
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
+
+  // Text shadow (small, on the letters themselves)
+  var textShadowOffset = Math.round(fontSize * 0.04);
+  ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  ctx.fillStyle = 'rgba(0,0,0,0.45)';
+  ctx.fillText(word, cx + textShadowOffset, cy + textShadowOffset);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(word, cx, cy);
+
+  ctx.restore();
+}
+
+// Torn-edge rectangle — jagged zigzag along top and bottom
+function drawTornRect(ctx, x, y, w, h, fontSize) {
+  var jag = Math.max(4, Math.round(fontSize * 0.10));
+  var step = Math.max(10, Math.round(fontSize * 0.28));
+  ctx.beginPath();
+  // Top edge
+  ctx.moveTo(x, y);
+  for (var i = 0; i < w; i += step) {
+    var nx = x + i + step / 2;
+    var ny = y - (Math.random() > 0.5 ? jag : 0);
+    ctx.lineTo(nx, ny);
+    ctx.lineTo(x + i + step, y);
+  }
+  // Right edge
+  ctx.lineTo(x + w, y + h);
+  // Bottom edge
+  for (var j = w; j > 0; j -= step) {
+    var bx = x + j - step / 2;
+    var by = y + h + (Math.random() > 0.5 ? jag : 0);
+    ctx.lineTo(bx, by);
+    ctx.lineTo(x + j - step, y + h);
+  }
+  // Left edge
+  ctx.lineTo(x, y);
+  ctx.closePath();
+  ctx.fill();
+}
+
+// Ribbon rectangle — triangles cut out of left + right ends
+function drawRibbonRect(ctx, x, y, w, h) {
+  var tail = Math.round(h * 0.35);
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + w, y);
+  ctx.lineTo(x + w - tail, y + h / 2);
+  ctx.lineTo(x + w, y + h);
+  ctx.lineTo(x, y + h);
+  ctx.lineTo(x + tail, y + h / 2);
+  ctx.closePath();
+  ctx.fill();
+}
+
+// ============================================================================
+// DOWNLOAD
+// ============================================================================
 function dlImage() {
   var canvas = window._lastCanvas;
   if (!canvas) return;
   var a = document.createElement('a');
   a.href = canvas.toDataURL('image/png');
-  a.download = (selBanner ? selBanner.word : 'thumbnail') + '-' + (appData && appData.general ? appData.general.name.split(' ').pop() : 'export') + '-2K.png';
+  var lastName = 'thumbnail';
+  if (appData && appData.general && appData.general.name) {
+    var parts = appData.general.name.split(' ').filter(function(s) { return s.length > 0; });
+    if (parts.length > 0) lastName = parts[parts.length - 1];
+  }
+  var word = selBanner && selBanner.word ? selBanner.word.replace(/[^a-zA-Z0-9]/g, '') : 'final';
+  a.download = word + '-' + lastName + '-thumb.png';
   a.click();
 }
 </script>
