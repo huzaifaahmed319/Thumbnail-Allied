@@ -427,7 +427,7 @@ function renderAll() {
   ));
 
   body.appendChild(makeCard('Step 6 — Final Prompt & Generate', 'Nano Banana Pro · Google AI Studio',
-    '<div class="prompt-out awaiting" id="promptOut">Select title, background, and banner word above to build your prompt...</div>' +
+    '<div class="prompt-out awaiting" id="promptOut awaiting">Select a background above — prompt builds automatically...</div>' +
     '<div class="act-row" style="margin-top:10px">' +
     '<button class="gen-btn" id="genBtn" onclick="generateImage()" disabled>GENERATE THUMBNAIL</button>' +
     '<button class="copy-btn" onclick="copyPrompt()">Copy Prompt</button>' +
@@ -461,9 +461,11 @@ function selectBg(i) {
   document.querySelectorAll('.bg-opt').forEach(function(e) { e.classList.remove('sel'); });
   document.getElementById('bg_' + i).classList.add('sel');
   selBg = appData.backgrounds[i];
-  setStep(3, 'done'); setStep(4, 'active');
+  setStep(3, 'done');
+  setStep(5, 'active');
   buildPrompt();
 }
+
 
 function copyBannerWord(el, word) {
   navigator.clipboard.writeText(word).then(function() {
@@ -593,7 +595,7 @@ function copyPrompt() {
 function generateImage() {
   var gKey = document.getElementById('googleKey').value.trim();
   if (!gKey) return showToast('Enter your Google AI Studio API key', true);
-  if (!selBg) return showToast('Select a background first', true);
+  if (!selBg) return showToast('Select a background type first (Step 3)', true);
 
   var btn = document.getElementById('genBtn');
   btn.disabled = true; btn.textContent = 'GENERATING...';
