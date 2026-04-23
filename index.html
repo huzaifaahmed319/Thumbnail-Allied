@@ -596,23 +596,17 @@ function buildPrompt() {
   var g = appData.general;
   var refNote = generalImgs.length > 0 ? 'Using the provided reference photos of ' + g.name + ' — maintain exact facial likeness, skin tone, face shape, and uniform details from these photos. ' : '';
 
-  var prompt = 'YouTube thumbnail, 16:9 format, 1280x720.\n\n' +
+  var prompt = 'Hyper-photorealistic YouTube thumbnail image, 16:9 format, 1280x720 pixels.\n\n' +
 
-    'IMAGE CONTAINS NO TEXT OF ANY KIND. No words, no letters, no numbers, no labels anywhere — not on the map, not on the general, not at the bottom. The lower 20% of the image is an empty visual area showing only the background map — no text, no banner, no overlay. This is a base image layer only.\n\n' +
+    'GENERAL (SUBJECT): ' + refNote + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + selectedExpression + '. Positioned left-of-center, bust to upper chest visible, filling the left 40-45% of the frame. Head and helmet fully within frame with clearance from top edge. The general stands in front of the map background — map is visible everywhere around and behind him, no dark backdrop.\n\n' +
 
-    'CRITICAL FRAMING: The general figure must be fully contained within the frame — head and helmet included — with at least 30px clearance from the top edge. Never crop the head.\n\n' +
+    'LIGHTING: ' + (appData.lighting || 'Hard directional key light from left, dramatic shadows on right side of face') + '. Strong spotlight on the face making it the brightest element. Subtle warm rim light on shoulders only.\n\n' +
 
-    'SUBJECT: ' + refNote + 'Hyper-photorealistic photograph-quality portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + selectedExpression + '. Unflinching gaze directly into camera. Positioned left of center, bust to upper chest visible, figure large and dominant filling the left 40-45% of the frame. The general is composited DIRECTLY ON TOP OF the background map — no curtains, no studio backdrop, no empty dark space behind him. Map is fully visible behind him everywhere.\n\n' +
+    'BACKGROUND: ' + getBgDesc(selBg) + ' Fills the entire frame edge to edge. Sharp and clear across the full frame — no blur anywhere. Slight desaturation overlay (20%) to make general pop. Rich detailed cartography with vivid colored arrows.\n\n' +
 
-    'FACE LIGHTING: Strong hero spotlight on the face — face is the brightest element in the image, skin texture and eyes hyper-sharp and high contrast. ' + (appData.lighting || 'Hard directional light from left, dramatic shadows') + '. Subtle warm rim light on face edges and shoulders only to separate him from background.\n\n' +
+    'UNIFORM: Bright vivid olive drab green, warm and saturated, clearly visible against the map.\n\n' +
 
-    'BACKGROUND: ' + getBgDesc(selBg) + ' The background fills the ENTIRE 1280x720 frame edge to edge — no dark areas, no empty zones anywhere. The background is SHARP and CLEAR across the full frame — absolutely no blur. Apply a subtle dark overlay (20-30% opacity) uniformly across the background to slightly desaturate it so the general pops through brightness contrast. The map must look rich, detailed, and colorful — aged parchment tones, clear geographic features, vivid colored arrows.\n\n' +
-
-    'UNIFORM: Bright vivid olive green — saturated warm green, clearly visible. Not dark, not muddy, not brown.\n\n' +
-
-    'STYLE: Ultra photorealistic photograph quality — not illustrated, not painted, not animated. High contrast, punchy, vivid colors. Leave the bottom 20% of the image with no major elements — this space is reserved for a text banner to be added manually afterward.\n\n' +
-
-    'The image is a clean base layer. Text and banner will be added in post-production. Generate a photorealistic image with no typography whatsoever.';
+    'TECHNICAL: Ultra photorealistic, not illustrated or painted. No vignette. No dark corners. Full color throughout the entire frame including edges. Clean composition.';
 
   var box = document.getElementById('promptOut');
   if (box) {
