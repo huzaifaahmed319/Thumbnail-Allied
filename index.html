@@ -175,7 +175,7 @@ input[type=password]::placeholder{color:var(--muted)}
 <div class="toast" id="toast"></div>
 <header class="hdr">
   <div class="logo"><div class="logo-bar"></div>ALLIED THUMBNAILS</div>
-  <div class="hdr-right"><span class="pill">PIPELINE v3.0</span><span>OPUS 4.7 · NANO BANANA PRO</span></div>
+  <div class="hdr-right"><span class="pill">PIPELINE v3.2</span><span>OPUS 4.7 · 2K NATIVE</span></div>
 </header>
 <div class="layout">
   <div class="side">
@@ -217,6 +217,36 @@ input[type=password]::placeholder{color:var(--muted)}
           <div class="model-opt sel" data-img="1">
             <div><div class="model-name">NANO BANANA PRO</div><div class="model-meta">3 Pro Image · Best</div></div>
             <div class="model-cost">~$0.134</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <span class="lbl">Output Resolution</span>
+        <div style="display:flex;flex-direction:column;gap:5px" id="resPicker">
+          <div class="model-opt" data-res="1K">
+            <div><div class="model-name">1K</div><div class="model-meta">1344×768 · Fast</div></div>
+            <div class="model-cost">~$0.134</div>
+          </div>
+          <div class="model-opt sel" data-res="2K">
+            <div><div class="model-name">2K</div><div class="model-meta">2688×1536 · Recommended</div></div>
+            <div class="model-cost">~$0.134</div>
+          </div>
+          <div class="model-opt" data-res="4K">
+            <div><div class="model-name">4K</div><div class="model-meta">5376×3072 · Max detail</div></div>
+            <div class="model-cost">~$0.24</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <span class="lbl">Generation Mode</span>
+        <div style="display:flex;flex-direction:column;gap:5px" id="modePicker">
+          <div class="model-opt sel" data-mode="single">
+            <div><div class="model-name">SINGLE PASS</div><div class="model-meta">One generation · Fast</div></div>
+            <div class="model-cost">1x cost</div>
+          </div>
+          <div class="model-opt" data-mode="twopass">
+            <div><div class="model-name">TWO-PASS</div><div class="model-meta">Map → composite general</div></div>
+            <div class="model-cost">2x cost</div>
           </div>
         </div>
       </div>
@@ -304,7 +334,19 @@ var selectedImgIdx = 1;      // Nano Banana Pro default
 var selectedExprIdx = 0;     // Stern default
 var selectedBannerStyle = 'torn';
 var selectedBannerPos = 'bl';
+var selectedMode = 'single'; // 'single' or 'twopass'
+var selectedResolution = '2K'; // '1K', '2K', or '4K'
 var sessionCost = 0;
+
+// Nano Banana Pro cost varies by resolution; Nano Banana only supports 1K
+// 1K & 2K = 1120 tokens = $0.134; 4K = 2000 tokens = $0.24
+function getImageCost() {
+  var model = GEMINI_MODELS[selectedImgIdx];
+  if (model.id.indexOf('flash') >= 0) return 0.039; // Nano Banana flash is flat
+  // Nano Banana Pro
+  if (selectedResolution === '4K') return 0.24;
+  return 0.134; // 1K or 2K
+}
 
 // ============================================================================
 // INIT
@@ -329,6 +371,31 @@ function bindUI() {
   document.querySelectorAll('[data-expr]').forEach(function(el) {
     el.addEventListener('click', function() { selectExpr(+el.dataset.expr); });
   });
+  document.querySelectorAll('[data-mode]').forEach(function(el) {
+    el.addEventListener('click', function() { selectMode(el.dataset.mode); });
+  });
+  document.querySelectorAll('[data-res]').forEach(function(el) {
+    el.addEventListener('click', function() { selectResolution(el.dataset.res); });
+  });
+}
+
+function selectResolution(r) {
+  selectedResolution = r;
+  document.querySelectorAll('[data-res]').forEach(function(el) {
+    el.classList.toggle('sel', el.dataset.res === r);
+  });
+  // Warn user on the expensive option
+  if (r === '4K') {
+    showToast('4K mode — ~$0.24/image, 30s+ slower per pass', false, 4500);
+  }
+}
+
+function selectMode(m) {
+  selectedMode = m;
+  document.querySelectorAll('[data-mode]').forEach(function(el) {
+    el.classList.toggle('sel', el.dataset.mode === m);
+  });
+  if (selBg && appData) buildPrompt();
 }
 
 // ============================================================================
@@ -850,55 +917,132 @@ function handleGeneralRefs(e) {
 
 // ============================================================================
 // BACKGROUND DESCRIPTIONS (for the image prompt)
+// Rewritten for MAXIMUM visual punch — thick arrows, dark outlines, high sat.
 // ============================================================================
 function getBgDesc(bg) {
   var descs = {
-    COLLISION_MAP: 'A richly detailed period military map fills the entire background — ' + bg.specific + '. Cartographic elements rendered in authentic period style: bold red arrows sweeping inward from multiple directions toward a central battle point circled in red; a bold blue arrow pushing in the opposite direction; dashed phase lines as horizontal lines; compass grid lines; a military scale bar. Map printed on aged cream-colored paper with subtle brown terrain contour lines. The overall map color palette is muted cream, brown, blue rivers, with the tactical arrows being the most vivid elements in red and blue. NO readable text, NO labels, NO stamps — only shapes, arrows, and terrain.',
-    LOCATION_MAP: 'A richly detailed period military map fills the entire background — ' + bg.specific + '. Authentic cartographic elements: regional geography with terrain contours, rivers, military unit positions marked with standard symbols, compass rose in corner, military grid coordinates along edges, scale bar at bottom. Map printed on aged cream paper with brown terrain shading. NO readable text, NO labels, only shapes and terrain.',
-    NEWSPAPER: 'An aged yellowed 1940s broadsheet newspaper fills the entire background — ' + bg.specific + '. Full newspaper layout visible but text appears blurred and unreadable: masthead shape at top, large headline shape, column structures, photograph placeholder shapes with caption areas. Paper is yellowed and slightly worn with authentic aging. NO readable words.',
-    DOCUMENT: 'An aged official military document fills the entire background — ' + bg.specific + '. Layout visible but text is deliberately blurred/unreadable: letterhead shape at top, typewritten body text texture in period Courier-style, paragraph blocks, signature block shape at bottom, ink marks. Paper is yellowed with fold marks and slight foxing. NO readable words, NO stamps with readable text.',
-    BATTLE_ACTION: 'A dramatic ' + bg.specific + ' battlefield scene fills the entire background. Photorealistic: heavy smoke rising in columns, orange fire glow in distance, soldiers and equipment silhouetted against dramatic sky, shell bursts visible, overcast sky with dramatic lighting breaking through. Cinematic desaturated color grading.',
-    ARCHIVE_STACK: 'An overhead view of stacked period documents fills the entire background — ' + bg.specific + '. Yellowed letters, photographs, memos, and maps layered at slight angles on a dark wood surface. Edges worn and slightly torn. NO readable text visible — text texture only.'
+    COLLISION_MAP: 'Dramatic high-contrast period military map fills the entire background — ' + bg.specific + '. Rendered in a bold YouTube-thumbnail style (NOT washed out, NOT muted): THICK BOLD RED ARROWS (saturated crimson red #c41a00, 12-15 pixels wide with hard dark outlines) sweeping aggressively inward from multiple directions toward a central battle point marked with a bold red circle. THICK BOLD BLUE ARROWS (saturated navy blue) pushing in the opposite direction. Black tank silhouettes and unit markers scattered across the map at battle points — dark, high-contrast shapes that read instantly at thumbnail size. Terrain rendered with visible brown contour lines and darker earth tones in the background layer. Rivers drawn as bold curving blue lines. The map has a subtle vintage paper texture but colors are SATURATED and HIGH-CONTRAST, not faded. Dark vignette around the map edges. NO readable text, NO labels with words, NO stamps — only shapes, arrows, tanks, circles, and terrain. The arrows should dominate the composition as the most eye-catching elements.',
+    LOCATION_MAP: 'Dramatic high-contrast period military map fills the entire background — ' + bg.specific + '. Bold YouTube-thumbnail rendering: saturated colors, thick dark outlines, visible terrain contours with strong brown/green shading, bold blue rivers, black silhouette markers for unit positions. THICK BOLD ARROWS (red and blue, hard-outlined) indicating movement and strategic direction. Dark vignette around edges. High contrast, not washed out. NO readable text, NO place names as words — only shapes, arrows, and terrain.',
+    NEWSPAPER: 'A dramatic aged 1940s broadsheet newspaper fills the entire background — ' + bg.specific + '. High-contrast rendering with warm yellow-sepia tones but BOLD and READABLE from thumbnail distance: large bold masthead shape at top (dark text silhouette, unreadable but visually striking), huge dramatic headline shape (bold black block), column text texture, a large dark photograph rectangle as focal point. Paper has authentic aging, fold marks, and torn edges. Dark vignette around edges. Colors are saturated (warm yellow + deep black), not faded. NO readable words — only the VISUAL WEIGHT of newspaper layout shapes.',
+    DOCUMENT: 'A dramatic aged official military document fills the entire background — ' + bg.specific + '. High-contrast rendering: layered yellowed papers on a dark wooden desk surface with dramatic side lighting, visible typewriter text texture (unreadable but dense and visually interesting), bold letterhead seal/insignia as a dark silhouette, red ink stamps and markings as color accents, fountain pen or brass details. Papers slightly overlapping with torn/worn edges. Dark shadows and strong directional lighting creating depth. High contrast, saturated warm tones. NO readable words — only the visual impression of important paperwork.',
+    BATTLE_ACTION: 'A dramatic ' + bg.specific + ' battlefield scene fills the entire background. CINEMATIC HIGH-CONTRAST composition: massive columns of dark smoke rising, intense orange and red fire glow in mid-distance creating a rim light effect across the scene, soldiers and tanks as dark silhouettes against the flames, explosive shell bursts with bright orange centers, heavy overcast sky with dramatic god-rays breaking through, debris and dust in the air. Saturated orange/red fire tones contrasted against dark blue-gray smoke and silhouettes. The scene should have the visual weight and drama of a war film poster.',
+    ARCHIVE_STACK: 'Dramatic overhead view of stacked period documents fills the entire background — ' + bg.specific + '. HIGH-CONTRAST rendering: yellowed letters, old photographs with dark borders, military memos, folded maps, brass dog tags on chains, a leather-bound journal, a brass desk lamp casting warm directional light from one side creating strong shadows. Items layered at dramatic angles on dark mahogany wood. Torn and worn edges visible. Warm sepia-gold tones with deep shadows. Dark vignette around edges. Photographs should have visible dark-bordered frames. NO readable text — text appears as texture only. The lighting should feel like a detective\'s desk at night.'
   };
   return descs[bg.type] || bg.specific;
 }
 
 // ============================================================================
-// BUILD PROMPT (for image generation)
+// BUILD PROMPT — REWRITTEN for aura, rim lights, bold composition
 // ============================================================================
 function buildPrompt() {
   if (!selBg || !appData) return;
   try {
-    var g = appData.general;
-    var refNote = generalImgs.length > 0
-      ? 'Using the provided reference photos of ' + g.name + ' — maintain exact facial likeness, skin tone, face shape, and uniform details from these photos. '
-      : '';
-
-    var prompt = [
-      'Photorealistic digital artwork, 1280x720 pixels, widescreen 16:9 composition. Finished artwork — NO placeholder text, NO title card, NO watermark, NO caption, NO banner text, NO words of any kind rendered in the image.',
-      '',
-      'FIGURE: ' + refNote + 'Photorealistic portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + EXPRESSIONS[selectedExprIdx] + '. Standing in the right half of the frame occupying roughly 45-55% of the width, bust to upper chest, head fully inside the frame with space above. Standing directly in front of the background with no separation — the background wraps around the figure naturally.',
-      '',
-      'LIGHTING: ' + (appData.lighting || 'Hard directional key light from left, dramatic shadows across the face') + '. Face is the brightest sharpest element. Subtle rim light separating shoulders from background.',
-      '',
-      'BACKGROUND: ' + getBgDesc(selBg),
-      '',
-      'UNIFORM COLOR: Vivid, warm, saturated — historically accurate for the era.',
-      '',
-      'TECHNICAL REQUIREMENTS: Photorealistic rendering. No illustrated or cartoon look. High contrast. Rich saturated colors. The background occupies the full frame behind the figure. CRITICAL: Do NOT render ANY text, ANY words, ANY banners, ANY labels, ANY readable letters anywhere in the image — the banner and title will be added in post-production. Leave the lower-left and lower-center areas of the image relatively uncluttered so a banner can be overlaid there cleanly.'
-    ].join('\n');
-
     var box = document.getElementById('promptOut');
-    if (box) {
-      box.textContent = prompt;
-      box.classList.remove('awaiting');
+    if (!box) return;
+    if (selectedMode === 'twopass') {
+      box.textContent = buildPromptPass1() + '\n\n' +
+        '══════════════════════════════════════\n' +
+        'PASS 2 (sent automatically after Pass 1):\n' +
+        '══════════════════════════════════════\n\n' +
+        buildPromptPass2Template();
+    } else {
+      box.textContent = buildPromptSingle();
     }
+    box.classList.remove('awaiting');
     var genBtn = document.getElementById('genBtn');
     if (genBtn) { genBtn.disabled = false; genBtn.style.opacity = '1'; }
   } catch(err) {
     console.error('buildPrompt error:', err);
     showToast('Prompt build error: ' + err.message, true);
   }
+}
+
+// The original single-pass prompt, but rewritten for bigger punch
+function buildPromptSingle() {
+  var g = appData.general;
+  var refNote = generalImgs.length > 0
+    ? 'CRITICAL: Use the provided reference photos of ' + g.name + ' as the EXACT facial likeness — match skin tone, face shape, jawline, eyes, hair, and uniform details precisely. Do not invent a different face. '
+    : '';
+
+  return [
+    'YOUTUBE THUMBNAIL — photorealistic digital artwork, 1280x720 pixels, widescreen 16:9 composition. Finished standalone artwork. ABSOLUTELY NO text, NO words, NO letters, NO banners, NO captions, NO watermarks rendered anywhere in the image — ALL text will be added in post-production.',
+    '',
+    'SUBJECT FIGURE (the most prominent element): ' + refNote + 'Photorealistic portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + EXPRESSIONS[selectedExprIdx] + '.',
+    '',
+    'COMPOSITION: The general occupies the RIGHT HALF of the frame, taking up roughly 50-55% of the image width. TIGHT CROP — head and upper chest only, head fills the upper-right portion, with only a small margin above the hat/hair. Body visible from upper chest up. The figure should feel LARGE, DOMINANT, and LOOMING — like he is stepping out of the frame toward the viewer.',
+    '',
+    'LIGHTING ON FIGURE — CRITICAL FOR THUMBNAIL PUNCH:',
+    '- Strong HARD rim light on the left side of face/shoulders (bright highlight edge separating him from background)',
+    '- Warm orange/red glow on right side of face and shoulders (motivated by the background — like fire or warm studio light)',
+    '- Face is the BRIGHTEST, SHARPEST, most in-focus element of the entire image — eyes catch light, skin texture visible',
+    '- Dramatic directional key light from upper-left at a ~45° angle, hard shadows under jaw and helmet brim',
+    '- Subtle color grading: slightly cool shadows, warm highlights (teal-and-orange look)',
+    '',
+    'BACKDROP AURA BEHIND FIGURE — CRITICAL FOR POP:',
+    'Behind the figure\'s head and shoulders, add a subtle radial gradient glow (warm orange/red fading outward into darker tones) that creates clear visual separation between the figure and the background map/scene. The general should appear LIT FROM BEHIND by this glow — like he is standing in front of a sunset or fire. This backdrop aura is what makes the figure "pop off" the background.',
+    '',
+    'BACKGROUND: ' + getBgDesc(selBg),
+    '',
+    'BACKGROUND COMPOSITION: The background occupies the LEFT HALF and fills the area behind the figure, but is slightly darkened on the right side (where the figure stands) to let the figure pop. Dark vignette around all four corners of the final image.',
+    '',
+    'UNIFORM: Vivid, warm, saturated olive drab or era-appropriate color. All insignia, buckles, straps, and equipment rendered with high detail and sharp focus.',
+    '',
+    'OVERALL RENDERING STYLE: Photorealistic but GRAPHIC and HIGH-CONTRAST like a theatrical movie poster. Saturated colors. Deep blacks. Bright highlights. Cinematic color grading. The image should read instantly at small YouTube thumbnail size — the general\'s face should be identifiable and emotionally legible even at 200px wide.',
+    '',
+    'NEGATIVE REQUIREMENTS: NO text, NO letters, NO numbers, NO watermarks, NO UI elements, NO play buttons, NO borders. Leave the lower-left, lower-center, and lower-right areas relatively uncluttered so a banner can be overlaid cleanly in post-production.'
+  ].join('\n');
+}
+
+// PASS 1: Generate just the background — NO figure. Maximum map detail.
+function buildPromptPass1() {
+  return [
+    'PASS 1 OF 2 — BACKGROUND ONLY (no human figure).',
+    '',
+    'Generate a 1280x720 pixel widescreen 16:9 image. Fill the ENTIRE frame with the background element described below — no human figures, no people, just the environment.',
+    '',
+    'BACKGROUND: ' + getBgDesc(selBg),
+    '',
+    'LIGHTING: Dramatic directional lighting. Warm orange/red tones on the right-center area of the frame (as if lit by fire or warm light from that direction) transitioning to cooler darker tones on the left. This lighting gradient is intentional — the right-center area will become the backdrop for a figure in Pass 2.',
+    '',
+    'RENDERING: HIGH-CONTRAST, SATURATED colors, deep blacks. Photorealistic but with graphic YouTube-thumbnail punch. Dark vignette around all four edges.',
+    '',
+    'NEGATIVE: NO human figures, NO people, NO soldiers visible in this image. NO text, NO letters, NO readable words of any kind. NO watermarks.'
+  ].join('\n');
+}
+
+// PASS 2: Composite the general onto the Pass 1 output
+function buildPromptPass2Template() {
+  var g = appData.general;
+  var refNote = generalImgs.length > 0
+    ? 'CRITICAL: Match the face in the provided reference photo EXACTLY — same skin tone, face shape, jawline, eyes, hair, uniform details. Do not invent a different face. '
+    : '';
+
+  return [
+    'PASS 2 OF 2 — COMPOSITE the general onto the provided background image.',
+    '',
+    'You are given: (1) a background image from Pass 1, (2) reference photo(s) of the general.',
+    '',
+    'TASK: Add a photorealistic portrait of ' + g.name + ' onto the RIGHT HALF of the background image. ' + refNote,
+    '',
+    'FIGURE DETAILS: Full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + EXPRESSIONS[selectedExprIdx] + '.',
+    '',
+    'PLACEMENT: Right half of the frame, taking up roughly 50-55% of image width. TIGHT CROP — head and upper chest only. Head fills the upper-right area with small margin above. Figure should feel LARGE, DOMINANT, LOOMING.',
+    '',
+    'LIGHTING ON FIGURE (CRITICAL):',
+    '- Strong HARD rim light on the LEFT side of face/shoulders (bright edge highlight separating figure from background)',
+    '- Warm orange/red glow on the RIGHT side of face and shoulders motivated by the background\'s warm lighting',
+    '- Face is the BRIGHTEST, SHARPEST element of the entire image',
+    '- Hard directional key light from upper-left at ~45°, hard shadows under jaw and helmet brim',
+    '- The figure\'s lighting must MATCH the direction and color temperature of the background\'s lighting',
+    '',
+    'BACKDROP AURA: Add/enhance a subtle radial gradient glow directly behind the figure\'s head and shoulders (warm orange/red fading outward) to make the figure POP off the background. This is the "aura" effect that makes YouTube thumbnails read at small sizes.',
+    '',
+    'INTEGRATION: The figure must look naturally embedded in the scene — not pasted on. Soft shadow where figure meets background. Edge light that matches background light sources. The background\'s left-half detail should remain visible and un-obstructed.',
+    '',
+    'COLOR GRADING: Cinematic teal-and-orange — cool shadows, warm highlights. High saturation. Deep blacks. Dark vignette around edges.',
+    '',
+    'NEGATIVE: NO text, NO letters, NO banners, NO watermarks. Leave the lower portion of the image relatively uncluttered so a banner can be overlaid in post-production.'
+  ].join('\n');
 }
 
 function copyPrompt() {
@@ -916,7 +1060,7 @@ function copyTags() {
 }
 
 // ============================================================================
-// GENERATE IMAGE
+// GENERATE IMAGE — single or two-pass
 // ============================================================================
 function generateImage() {
   var gKey = document.getElementById('googleKey').value.trim();
@@ -926,31 +1070,103 @@ function generateImage() {
   var btn = document.getElementById('genBtn');
   btn.disabled = true;
   btn.textContent = 'GENERATING...';
+
+  if (selectedMode === 'twopass') {
+    runTwoPass(gKey, btn);
+  } else {
+    runSinglePass(gKey, btn);
+  }
+}
+
+function runSinglePass(gKey, btn) {
   showOverlay(true, 'GENERATING', 'Sending to ' + GEMINI_MODELS[selectedImgIdx].name + '...');
-
-  var elapsed = 0;
-  var progressTimer = setInterval(function() {
-    elapsed += 5;
-    var subEl = document.getElementById('ovSub');
-    if (subEl) subEl.textContent = 'Processing... ' + elapsed + 's (usually 20-60s)';
-  }, 5000);
-
-  var prompt = document.getElementById('promptOut').textContent;
+  var progress = startProgressTimer();
+  var prompt = buildPromptSingle();
   var parts = [{ text: prompt }];
   generalImgs.slice(0, 2).forEach(function(img) {
     parts.push({ inlineData: { mimeType: img.type, data: img.data } });
   });
 
-  var controller = new AbortController();
-  var timeout = setTimeout(function() { controller.abort(); }, 120000);
+  callGemini(gKey, parts).then(function(result) {
+    clearInterval(progress);
+    showOverlay(false);
+    updateCost(getImageCost());
+    if (!result.b64) throw new Error('No image in response. ' + (result.text || ''));
+    loadAndComposite(result.b64, result.mime);
+  }).catch(function(err) {
+    clearInterval(progress);
+    showOverlay(false);
+    handleGenError(err);
+  }).finally(function() {
+    btn.disabled = false;
+    btn.textContent = 'GENERATE THUMBNAIL';
+  });
+}
 
+function runTwoPass(gKey, btn) {
+  // PASS 1 — background only, no reference photos
+  showOverlay(true, 'PASS 1 OF 2', 'Generating background...');
+  var progress = startProgressTimer();
+  var prompt1 = buildPromptPass1();
+  var parts1 = [{ text: prompt1 }];
+
+  callGemini(gKey, parts1).then(function(result1) {
+    if (!result1.b64) throw new Error('Pass 1 failed: ' + (result1.text || 'No image returned'));
+    updateCost(getImageCost());
+
+    // PASS 2 — composite general onto pass 1 output
+    clearInterval(progress);
+    showOverlay(true, 'PASS 2 OF 2', 'Compositing general onto background...');
+    progress = startProgressTimer();
+
+    var prompt2 = buildPromptPass2Template();
+    var parts2 = [{ text: prompt2 }];
+    // Pass 1 image first (the "background to edit")
+    parts2.push({ inlineData: { mimeType: result1.mime, data: result1.b64 } });
+    // Then reference photos of the general
+    generalImgs.slice(0, 2).forEach(function(img) {
+      parts2.push({ inlineData: { mimeType: img.type, data: img.data } });
+    });
+
+    return callGemini(gKey, parts2);
+  }).then(function(result2) {
+    clearInterval(progress);
+    showOverlay(false);
+    updateCost(getImageCost());
+    if (!result2.b64) throw new Error('Pass 2 failed: ' + (result2.text || 'No image returned'));
+    loadAndComposite(result2.b64, result2.mime);
+  }).catch(function(err) {
+    clearInterval(progress);
+    showOverlay(false);
+    handleGenError(err);
+  }).finally(function() {
+    btn.disabled = false;
+    btn.textContent = 'GENERATE THUMBNAIL';
+  });
+}
+
+// Single Gemini API call — returns { b64, mime, text }
+function callGemini(gKey, parts) {
+  var controller = new AbortController();
+  var timeout = setTimeout(function() { controller.abort(); }, 180000);
   var imgModel = GEMINI_MODELS[selectedImgIdx];
-  fetch('https://generativelanguage.googleapis.com/v1beta/models/' + imgModel.id + ':generateContent?key=' + gKey, {
+
+  // Nano Banana Pro supports imageConfig for resolution + aspect ratio
+  // Nano Banana (2.5 Flash Image) ignores these params but won't error
+  var generationConfig = {
+    responseModalities: ['IMAGE', 'TEXT'],
+    imageConfig: {
+      aspectRatio: '16:9',
+      imageSize: selectedResolution
+    }
+  };
+
+  return fetch('https://generativelanguage.googleapis.com/v1beta/models/' + imgModel.id + ':generateContent?key=' + gKey, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       contents: [{ role: 'user', parts: parts }],
-      generationConfig: { responseModalities: ['IMAGE', 'TEXT'] }
+      generationConfig: generationConfig
     }),
     signal: controller.signal
   }).then(function(res) {
@@ -960,66 +1176,68 @@ function generateImage() {
       return json;
     });
   }).then(function(json) {
-    // Track approximate cost
-    updateCost(imgModel.cost);
-
-    var imgB64 = null, imgMime = 'image/png';
+    var b64 = null, mime = 'image/png', text = '';
     var candidates = json.candidates || [];
     for (var i = 0; i < candidates.length; i++) {
       var pts = (candidates[i].content && candidates[i].content.parts) || [];
       for (var j = 0; j < pts.length; j++) {
         if (pts[j].inlineData && pts[j].inlineData.mimeType && pts[j].inlineData.mimeType.indexOf('image/') === 0) {
-          imgB64 = pts[j].inlineData.data;
-          imgMime = pts[j].inlineData.mimeType;
-          break;
+          b64 = pts[j].inlineData.data;
+          mime = pts[j].inlineData.mimeType;
+        } else if (pts[j].text) {
+          text = pts[j].text.slice(0, 200);
         }
       }
-      if (imgB64) break;
+      if (b64) break;
     }
-
-    clearInterval(progressTimer);
-    showOverlay(false);
-
-    if (imgB64) {
-      var src = 'data:' + imgMime + ';base64,' + imgB64;
-      var baseImg = new Image();
-      baseImg.onload = function() {
-        window._baseImg = baseImg;
-        compositeWithBanner(baseImg);
-        var wrap = document.getElementById('resultWrap');
-        wrap.style.display = 'flex';
-        wrap.style.flexDirection = 'column';
-        setStep(6, 'done');
-        showToast('Thumbnail generated!');
-        wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      };
-      baseImg.src = src;
-    } else {
-      var txt = '';
-      if (candidates[0] && candidates[0].content && candidates[0].content.parts) {
-        var p = candidates[0].content.parts.find(function(x) { return x.text; });
-        if (p) txt = p.text.slice(0, 140);
-      }
-      throw new Error('No image in response. ' + txt);
-    }
-  }).catch(function(err) {
-    clearInterval(progressTimer);
-    clearTimeout(timeout);
-    showOverlay(false);
-    if (err.name === 'AbortError') {
-      showToast('Request timed out after 120s. Try again or use a faster model.', true, 7000);
-    } else {
-      showToast('Error: ' + err.message, true, 7000);
-    }
-    console.error(err);
-  }).finally(function() {
-    btn.disabled = false;
-    btn.textContent = 'GENERATE THUMBNAIL';
+    return { b64: b64, mime: mime, text: text };
   });
 }
 
+function loadAndComposite(b64, mime) {
+  var src = 'data:' + mime + ';base64,' + b64;
+  var baseImg = new Image();
+  baseImg.onload = function() {
+    window._baseImg = baseImg;
+    // Verify the returned resolution matches what we asked for
+    var actualW = baseImg.naturalWidth;
+    var expected = selectedResolution === '4K' ? 5376 : (selectedResolution === '2K' ? 2688 : 1344);
+    // Allow some tolerance for aspect ratio rounding
+    if (actualW < expected * 0.85) {
+      showToast('Note: Google returned ' + actualW + 'px wide instead of ' + expected + 'px. Resolution may have been downgraded.', true, 5500);
+    }
+    compositeWithBanner(baseImg);
+    var wrap = document.getElementById('resultWrap');
+    wrap.style.display = 'flex';
+    wrap.style.flexDirection = 'column';
+    setStep(6, 'done');
+    showToast('Thumbnail generated at ' + actualW + '×' + baseImg.naturalHeight);
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+  baseImg.src = src;
+}
+
+function startProgressTimer() {
+  var elapsed = 0;
+  return setInterval(function() {
+    elapsed += 5;
+    var subEl = document.getElementById('ovSub');
+    if (subEl) subEl.textContent = 'Processing... ' + elapsed + 's (usually 20-60s per pass)';
+  }, 5000);
+}
+
+function handleGenError(err) {
+  if (err.name === 'AbortError') {
+    showToast('Request timed out after 120s. Try again or switch to single-pass mode.', true, 7000);
+  } else {
+    showToast('Error: ' + err.message, true, 7000);
+  }
+  console.error(err);
+}
+
 // ============================================================================
-// BANNER RENDERING — the fun part
+// BANNER RENDERING — rebuilt for proper YouTube-thumbnail punch
+// Load fonts before drawing, use much bigger text, add stroke + shadows
 // ============================================================================
 function compositeWithBanner(baseImg) {
   var canvas = document.getElementById('resultCanvas');
@@ -1029,132 +1247,160 @@ function compositeWithBanner(baseImg) {
   canvas.height = H;
   var ctx = canvas.getContext('2d');
 
-  // 1. Draw base image
   ctx.drawImage(baseImg, 0, 0, W, H);
 
-  // 2. If no banner selected, stop here
   if (!selBanner || !selBanner.word) {
     window._lastCanvas = canvas;
     return;
   }
 
-  var word = selBanner.word;
-  drawBanner(ctx, W, H, word, selectedBannerStyle, selectedBannerPos);
-  window._lastCanvas = canvas;
+  // Ensure fonts are loaded before measuring/drawing text
+  var fontFamily = '"Montserrat","Anton","Arial Black",sans-serif';
+  var fontWeight = '900';
+
+  var doDraw = function() {
+    drawBanner(ctx, W, H, selBanner.word, selectedBannerStyle, selectedBannerPos, fontFamily, fontWeight);
+    window._lastCanvas = canvas;
+  };
+
+  // Force-load the fonts we actually use
+  if (document.fonts && document.fonts.load) {
+    Promise.all([
+      document.fonts.load('900 100px "Montserrat"'),
+      document.fonts.load('bold 100px "Anton"')
+    ]).then(doDraw, doDraw);
+  } else {
+    doDraw();
+  }
 }
 
-function drawBanner(ctx, W, H, word, style, pos) {
-  // Measure text first to size the banner
-  var fontFamily = '"Montserrat", "Anton", "Arial Black", sans-serif';
-  var fontWeight = '900';
-  // Start with a generous font size and scale down to fit
-  var maxBannerWidth = W * 0.55;
-  var fontSize = Math.round(H * 0.11);
+function drawBanner(ctx, W, H, word, style, pos, fontFamily, fontWeight) {
+  // BIGGER font — target ~14-18% of image height, like the reference thumbnails
+  // DIAMONDS banner is ~18-20% of height. Let's aim for 16% of height base.
+  var targetFontSize = Math.round(H * 0.16);
+  var maxBannerWidth = W * 0.60; // banner can take up to 60% of width
+  var fontSize = targetFontSize;
+
   ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
-  while (ctx.measureText(word).width > maxBannerWidth - 60 && fontSize > 30) {
-    fontSize -= 2;
+  // Scale down if word doesn't fit, but don't go below 60px
+  while (ctx.measureText(word).width > maxBannerWidth - 80 && fontSize > 60) {
+    fontSize -= 4;
     ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
   }
-  var textMetrics = ctx.measureText(word);
-  var textW = textMetrics.width;
+
+  var textW = ctx.measureText(word).width;
   var textH = fontSize;
 
-  // Banner box dimensions
-  var padX = Math.round(fontSize * 0.55);
-  var padY = Math.round(fontSize * 0.28);
+  // Bigger padding for more visual weight
+  var padX = Math.round(fontSize * 0.50);
+  var padY = Math.round(fontSize * 0.22);
   var boxW = textW + padX * 2;
   var boxH = textH + padY * 2;
 
-  // Banner position
+  // Position
+  var margin = Math.round(W * 0.04);
+  var bottomMargin = Math.round(H * 0.05);
   var boxX, boxY;
-  var margin = Math.round(W * 0.035);
-  var bottomMargin = Math.round(H * 0.06);
   if (pos === 'bl')      { boxX = margin; }
   else if (pos === 'br') { boxX = W - boxW - margin; }
   else                   { boxX = (W - boxW) / 2; }
   boxY = H - boxH - bottomMargin;
 
-  // Slight rotation for energy
+  // Rotation
   var tilt = 0;
   if (style === 'tilted') tilt = -2.5 * Math.PI / 180;
-  else if (style === 'torn') tilt = -1.5 * Math.PI / 180;
+  else if (style === 'torn') tilt = -1.8 * Math.PI / 180;
 
   ctx.save();
 
-  // Rotate around banner center
   var cx = boxX + boxW / 2;
   var cy = boxY + boxH / 2;
   ctx.translate(cx, cy);
   ctx.rotate(tilt);
   ctx.translate(-cx, -cy);
 
-  // Drop shadow under the whole banner
-  ctx.shadowColor = 'rgba(0,0,0,0.55)';
-  ctx.shadowBlur = Math.round(fontSize * 0.18);
-  ctx.shadowOffsetX = Math.round(fontSize * 0.04);
-  ctx.shadowOffsetY = Math.round(fontSize * 0.08);
+  // Heavy drop shadow on the whole banner
+  ctx.shadowColor = 'rgba(0,0,0,0.75)';
+  ctx.shadowBlur = Math.round(fontSize * 0.25);
+  ctx.shadowOffsetX = Math.round(fontSize * 0.06);
+  ctx.shadowOffsetY = Math.round(fontSize * 0.12);
 
-  // Draw the banner shape
+  // Banner shape — use a slightly darker red edge for depth
   ctx.fillStyle = '#c41a00';
   if (style === 'torn') {
     drawTornRect(ctx, boxX, boxY, boxW, boxH, fontSize);
   } else if (style === 'banner') {
     drawRibbonRect(ctx, boxX, boxY, boxW, boxH);
   } else {
-    // clean + tilted both use straight rect
     ctx.fillRect(boxX, boxY, boxW, boxH);
   }
 
-  // Remove shadow for text
+  // Inner highlight stripe at top for 3D punch
   ctx.shadowColor = 'transparent';
   ctx.shadowBlur = 0;
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 0;
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  var stripeH = Math.max(3, Math.round(boxH * 0.08));
+  ctx.fillRect(boxX + 4, boxY + 3, boxW - 8, stripeH);
 
-  // Text shadow (small, on the letters themselves)
-  var textShadowOffset = Math.round(fontSize * 0.04);
+  // Text
   ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
 
-  ctx.fillStyle = 'rgba(0,0,0,0.45)';
-  ctx.fillText(word, cx + textShadowOffset, cy + textShadowOffset);
+  // Heavy text shadow
+  var tShadow = Math.round(fontSize * 0.05);
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  ctx.fillText(word, cx + tShadow, cy + tShadow);
 
+  // Black outline around letters for extra punch (like DIAMONDS)
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = Math.max(2, Math.round(fontSize * 0.05));
+  ctx.lineJoin = 'round';
+  ctx.miterLimit = 2;
+  ctx.strokeText(word, cx, cy);
+
+  // Main white fill
   ctx.fillStyle = '#ffffff';
   ctx.fillText(word, cx, cy);
 
   ctx.restore();
 }
 
-// Torn-edge rectangle — jagged zigzag along top and bottom
+// Torn-edge rectangle — uses seeded pseudo-random so re-draws look consistent
 function drawTornRect(ctx, x, y, w, h, fontSize) {
-  var jag = Math.max(4, Math.round(fontSize * 0.10));
-  var step = Math.max(10, Math.round(fontSize * 0.28));
+  var jag = Math.max(5, Math.round(fontSize * 0.09));
+  var step = Math.max(14, Math.round(fontSize * 0.22));
+  // Seeded random from word length for consistent jaggedness across re-draws
+  var seed = (selBanner && selBanner.word) ? selBanner.word.length * 137 : 42;
+  var rnd = function() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+
   ctx.beginPath();
-  // Top edge
   ctx.moveTo(x, y);
-  for (var i = 0; i < w; i += step) {
-    var nx = x + i + step / 2;
-    var ny = y - (Math.random() > 0.5 ? jag : 0);
-    ctx.lineTo(nx, ny);
-    ctx.lineTo(x + i + step, y);
+  var i;
+  // Top edge
+  for (i = step; i < w; i += step) {
+    var dy = rnd() > 0.5 ? -jag * (0.4 + rnd() * 0.6) : -jag * 0.2;
+    ctx.lineTo(x + i - step / 2, y + dy);
+    ctx.lineTo(x + i, y);
   }
-  // Right edge
+  // Right edge (straight)
+  ctx.lineTo(x + w, y);
   ctx.lineTo(x + w, y + h);
-  // Bottom edge
-  for (var j = w; j > 0; j -= step) {
-    var bx = x + j - step / 2;
-    var by = y + h + (Math.random() > 0.5 ? jag : 0);
-    ctx.lineTo(bx, by);
-    ctx.lineTo(x + j - step, y + h);
+  // Bottom edge (reverse)
+  for (i = w - step; i > 0; i -= step) {
+    var dy2 = rnd() > 0.5 ? jag * (0.4 + rnd() * 0.6) : jag * 0.2;
+    ctx.lineTo(x + i + step / 2, y + h + dy2);
+    ctx.lineTo(x + i, y + h);
   }
-  // Left edge
-  ctx.lineTo(x, y);
+  // Left edge (straight)
+  ctx.lineTo(x, y + h);
   ctx.closePath();
   ctx.fill();
 }
 
-// Ribbon rectangle — triangles cut out of left + right ends
+// Ribbon rectangle — triangular cuts out of both short ends
 function drawRibbonRect(ctx, x, y, w, h) {
   var tail = Math.round(h * 0.35);
   ctx.beginPath();
