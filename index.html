@@ -195,7 +195,7 @@ input[type=password]::placeholder{color:var(--muted)}
 <div class="toast" id="toast"></div>
 <header class="hdr">
   <div class="logo"><div class="logo-bar"></div>ALLIED THUMBNAILS</div>
-  <div class="hdr-right"><span class="pill">PIPELINE v3.4</span><span>FULL-FRAME · LABELS ON</span></div>
+  <div class="hdr-right"><span class="pill">PIPELINE v3.5</span><span>8 BANNERS · BIGGER TEXT</span></div>
 </header>
 <div class="layout">
   <div class="side">
@@ -331,10 +331,14 @@ var EXPRESSIONS = [
 ];
 
 var BANNER_STYLES = [
-  { id: 'torn',    name: 'TORN EDGES',    desc: 'Rough jagged edges, high-energy' },
-  { id: 'clean',   name: 'CLEAN BLOCK',   desc: 'Sharp rectangle, minimal tilt' },
-  { id: 'tilted',  name: 'TILTED SLAB',   desc: 'Clean rectangle at 3° angle' },
-  { id: 'banner',  name: 'RIBBON TAILS',  desc: 'Small triangles cut from both ends' }
+  { id: 'torn',     name: 'TORN EDGES',    desc: 'Rough jagged edges' },
+  { id: 'clean',    name: 'CLEAN BLOCK',   desc: 'Sharp rectangle' },
+  { id: 'tilted',   name: 'TILTED SLAB',   desc: 'Clean at 3° angle' },
+  { id: 'banner',   name: 'RIBBON TAILS',  desc: 'Chevron cuts both ends' },
+  { id: 'double',   name: 'DOUBLE LAYER',  desc: 'Red on black shadow slab' },
+  { id: 'brush',    name: 'BRUSH STROKE',  desc: 'Painted brush marks' },
+  { id: 'stamp',    name: 'STAMP BLOCK',   desc: 'Rough stencil edges' },
+  { id: 'slash',    name: 'SLASH CORNERS', desc: 'Diagonal corner cuts' }
 ];
 
 var BANNER_POSITIONS = [
@@ -987,10 +991,10 @@ function getBgDesc(bg) {
   var descs = {
     COLLISION_MAP: 'Dramatic high-contrast period military map fills the entire background — ' + bg.specific + '. Bold YouTube-thumbnail style (NOT washed out): THICK BOLD RED ARROWS (saturated crimson red, 12-15 pixels wide with hard dark outlines) sweeping aggressively inward from multiple directions toward a central battle point marked with a bold red circle. THICK BOLD BLUE ARROWS (saturated navy blue) pushing in the opposite direction. Black tank silhouettes and unit markers scattered across the map at battle points. Terrain rendered with visible brown contour lines. Rivers drawn as bold curving blue lines with clear blue fill. The map includes SHORT PERIOD-STYLE MAP LABELS: place names in small bold black serif type (river names in italic, town names in uppercase bold, the key location name prominently marked near the central circle), campaign dates in a small block in one corner, a brief campaign title in 2-3 words near the key point. Labels look like authentic 1940s-50s military map annotation — compact, clean, legible. Subtle vintage paper texture with saturated colors.',
     LOCATION_MAP: 'Dramatic high-contrast period military map fills the entire background — ' + bg.specific + '. Bold rendering: saturated colors, thick dark outlines, visible terrain contours with strong brown/green shading, bold blue rivers, black silhouette markers for unit positions. THICK BOLD ARROWS (red and blue, hard-outlined) indicating movement. SHORT period map labels in small bold serif type: river names in italic, town/region names in uppercase bold, one or two date or unit designations. Labels look like 1940s-50s authentic military map annotation.',
-    NEWSPAPER: 'A dramatic aged 1940s broadsheet newspaper fills the entire background — ' + bg.specific + '. High-contrast warm yellow-sepia tones: a bold period masthead at top (newspaper name in bold serif), a HUGE dramatic headline in bold black uppercase serif type across the top half, column text texture below (small print unreadable but dense), a large dark photograph with caption as focal point. Paper has authentic aging, fold marks, torn edges. Saturated colors.',
+    NEWSPAPER: 'Full-frame newspaper collage fills the ENTIRE background — NOT on a desk, NOT with a lamp, NOT sitting on any surface. The image is 100% covered with MULTIPLE overlapping period newspaper clippings and magazine covers layered like a war-era propaganda collage — ' + bg.specific + '. Visible elements: 3-5 different period newspapers/magazines overlapping at slight angles covering the entire frame edge-to-edge, each with a bold period masthead in heavy serif type (authentic 1940s newspaper names), each with a HUGE dramatic headline in bold black uppercase type, subheadlines in smaller bold type, column text below as dense texture, one prominent period photograph with caption as focal point. Pages are warm yellowed aged paper with authentic fold marks, torn edges, and subtle brown stains. High-contrast rendering — saturated warm yellow-sepia tones with deep black ink. Bold red accent marks (circles drawn around key headlines, underlines in red ink). The composition has the visual weight of a wartime propaganda wall or evidence board — overlapping documents filling every pixel of the frame.',
     DOCUMENT: 'A dramatic aged official military document fills the entire background — ' + bg.specific + '. Layered yellowed papers on a dark wooden desk with dramatic side lighting. The top document has a bold military LETTERHEAD at top (insignia + a few lines of bold type like "WAR DEPARTMENT" or "GENERAL HEADQUARTERS"), a short TITLE line in uppercase bold ("CLASSIFIED", "OPERATION ORDERS"), paragraphs of typewritten text texture (individual letters blurred), red ink stamp marks as color accents, a bold signature at bottom. Papers slightly overlapping with torn edges. High contrast, saturated warm tones.',
     BATTLE_ACTION: 'A dramatic ' + bg.specific + ' battlefield scene fills the entire background. CINEMATIC: massive columns of dark smoke rising, intense orange and red fire glow in mid-distance creating rim light, soldiers and tanks as dark silhouettes against the flames, explosive shell bursts, heavy overcast sky with dramatic god-rays, debris and dust. Saturated orange/red fire tones against dark blue-gray smoke. War film poster composition.',
-    ARCHIVE_STACK: 'Dramatic overhead view of stacked period documents fills the entire background — ' + bg.specific + '. Yellowed letters with visible bold headers (unit names, dates in bold type), old photographs with dark borders, typewritten memos with bold headings, folded maps with visible place labels, brass dog tags on chains, a leather-bound journal, a brass desk lamp casting warm directional light. Items layered at dramatic angles on dark mahogany wood. Torn and worn edges. Warm sepia-gold tones with deep shadows. Short period-appropriate headings visible on top documents (e.g. "WAR DEPARTMENT", a date, a unit designation).'
+    ARCHIVE_STACK: 'Full-frame document collage — overlapping period papers, photographs, and memos cover the ENTIRE background edge-to-edge (NOT on a desk, NOT with a lamp, NOT on a wood surface — just overlapping documents filling every pixel). ' + bg.specific + '. Yellowed letters with visible bold headers (unit names, dates in bold type), old photographs with dark borders, typewritten memos with bold headings ("WAR DEPARTMENT", "CLASSIFIED", "OPERATION ORDERS"), folded military maps with visible place labels, red ink stamps as color accents, torn edges on the papers at the frame boundaries. Items layered at dramatic angles. Warm sepia-gold tones with deep black ink. High contrast. Dark vignette at outer edges. The composition looks like a wartime evidence wall or investigation board.'
   };
   return descs[bg.type] || bg.specific;
 }
@@ -1409,41 +1413,44 @@ function compositeWithBanner(baseImg) {
     window._lastCanvas = canvas;
   };
 
-  // Force-load the fonts we actually use
+  // Force-load the fonts at multiple sizes so metrics are reliable
   if (document.fonts && document.fonts.load) {
     Promise.all([
       document.fonts.load('900 100px "Montserrat"'),
-      document.fonts.load('bold 100px "Anton"')
-    ]).then(doDraw, doDraw);
+      document.fonts.load('900 200px "Montserrat"'),
+      document.fonts.load('900 300px "Montserrat"'),
+      document.fonts.load('bold 200px "Anton"')
+    ]).then(function() {
+      // Wait a paint frame to ensure fonts are actually ready for canvas
+      requestAnimationFrame(doDraw);
+    }, doDraw);
   } else {
     doDraw();
   }
 }
 
 function drawBanner(ctx, W, H, word, style, pos, fontFamily, fontWeight) {
-  // Target ~22% of image height for the TEXT itself
-  var targetFontSize = Math.round(H * 0.22);
-  var maxBannerWidth = W * 0.72;
+  // Target ~26% of image height for the TEXT (was 22% — bigger like DIAMONDS)
+  var targetFontSize = Math.round(H * 0.26);
+  var maxBannerWidth = W * 0.82; // banner can take up to 82% of frame width (was 72%)
   var fontSize = targetFontSize;
 
   ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
-  while (ctx.measureText(word).width > maxBannerWidth - 60 && fontSize > 80) {
+  while (ctx.measureText(word).width > maxBannerWidth - 80 && fontSize > 90) {
     fontSize -= 4;
     ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
   }
 
-  // --- Measure actual glyph bounds for true optical centering ---
-  // Montserrat Black has uneven ascent/descent — need TextMetrics to compensate
+  // Measure glyph bounds for proper banner sizing + true optical centering
   var metrics = ctx.measureText(word);
   var textW = metrics.width;
-  // actualBoundingBoxAscent/Descent are the tight glyph-bounds pixels from baseline
-  var ascent = metrics.actualBoundingBoxAscent || fontSize * 0.75;
-  var descent = metrics.actualBoundingBoxDescent || fontSize * 0.20;
+  var ascent = metrics.actualBoundingBoxAscent || fontSize * 0.72;
+  var descent = metrics.actualBoundingBoxDescent || fontSize * 0.23;
   var glyphH = ascent + descent;
 
-  // --- Equal padding — text breathes evenly on all four sides ---
-  var padX = Math.round(fontSize * 0.24);
-  var padY = Math.round(fontSize * 0.16);
+  // Equal padding all sides
+  var padX = Math.round(fontSize * 0.22);
+  var padY = Math.round(fontSize * 0.18);
   var boxW = textW + padX * 2;
   var boxH = glyphH + padY * 2;
 
@@ -1458,11 +1465,11 @@ function drawBanner(ctx, W, H, word, style, pos, fontFamily, fontWeight) {
 
   // Rotation
   var tilt = 0;
-  if (style === 'tilted') tilt = -2.5 * Math.PI / 180;
-  else if (style === 'torn') tilt = -1.8 * Math.PI / 180;
+  if (style === 'tilted')      tilt = -2.5 * Math.PI / 180;
+  else if (style === 'torn')   tilt = -1.8 * Math.PI / 180;
+  else if (style === 'brush')  tilt = -1.5 * Math.PI / 180;
 
   ctx.save();
-
   var cx = boxX + boxW / 2;
   var cy = boxY + boxH / 2;
   ctx.translate(cx, cy);
@@ -1474,46 +1481,42 @@ function drawBanner(ctx, W, H, word, style, pos, fontFamily, fontWeight) {
   ctx.shadowBlur = Math.round(fontSize * 0.22);
   ctx.shadowOffsetX = Math.round(fontSize * 0.05);
   ctx.shadowOffsetY = Math.round(fontSize * 0.10);
-
   ctx.fillStyle = '#c41a00';
-  if (style === 'torn') {
-    drawTornRect(ctx, boxX, boxY, boxW, boxH, fontSize);
-  } else if (style === 'banner') {
-    drawRibbonRect(ctx, boxX, boxY, boxW, boxH);
-  } else {
-    ctx.fillRect(boxX, boxY, boxW, boxH);
-  }
 
-  // Clear shadow before drawing text so text gets its own softer shadow
+  // Draw the chosen shape
+  drawBannerShape(ctx, boxX, boxY, boxW, boxH, fontSize, style);
+
+  // Clear shadow
   ctx.shadowColor = 'transparent';
   ctx.shadowBlur = 0;
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 0;
 
-  // Inner highlight stripe for subtle 3D pop
-  ctx.fillStyle = 'rgba(255,255,255,0.10)';
-  var stripeH = Math.max(3, Math.round(boxH * 0.07));
-  ctx.fillRect(boxX + 6, boxY + 4, boxW - 12, stripeH);
+  // Subtle top highlight stripe for 3D pop (except on brush style)
+  if (style !== 'brush' && style !== 'stamp') {
+    ctx.fillStyle = 'rgba(255,255,255,0.10)';
+    var stripeH = Math.max(3, Math.round(boxH * 0.07));
+    ctx.fillRect(boxX + 6, boxY + 4, boxW - 12, stripeH);
+  }
 
-  // === TEXT with true optical centering ===
-  // Use 'alphabetic' baseline + manual y-offset = cy + (ascent-descent)/2
-  // This places the glyph's actual bounding box center at cy
+  // === TEXT — true optical centering ===
+  // Use alphabetic baseline and compute y so that glyph's bbox center = cy
+  // glyph bbox runs from (cy_baseline - ascent) to (cy_baseline + descent)
+  // For glyph center to be at cy: cy_baseline = cy + (ascent - descent) / 2
   ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
   var textY = cy + (ascent - descent) / 2;
 
-  // Soft blurry drop shadow on the text (not an outline — a real shadow)
+  // Text drop shadow (soft, blurry)
   ctx.shadowColor = 'rgba(0,0,0,0.60)';
-  ctx.shadowBlur = Math.round(fontSize * 0.08);
-  ctx.shadowOffsetX = Math.round(fontSize * 0.035);
-  ctx.shadowOffsetY = Math.round(fontSize * 0.055);
+  ctx.shadowBlur = Math.round(fontSize * 0.09);
+  ctx.shadowOffsetX = Math.round(fontSize * 0.04);
+  ctx.shadowOffsetY = Math.round(fontSize * 0.06);
 
-  // White text fill with the shadow attached
   ctx.fillStyle = '#ffffff';
   ctx.fillText(word, cx, textY);
 
-  // Clear shadow
   ctx.shadowColor = 'transparent';
   ctx.shadowBlur = 0;
   ctx.shadowOffsetX = 0;
@@ -1522,39 +1525,49 @@ function drawBanner(ctx, W, H, word, style, pos, fontFamily, fontWeight) {
   ctx.restore();
 }
 
-// Torn-edge rectangle — uses seeded pseudo-random so re-draws look consistent
+// Dispatch to the right shape drawing function
+function drawBannerShape(ctx, x, y, w, h, fontSize, style) {
+  if (style === 'torn')        return drawTornRect(ctx, x, y, w, h, fontSize);
+  if (style === 'banner')      return drawRibbonRect(ctx, x, y, w, h);
+  if (style === 'double')      return drawDoubleRect(ctx, x, y, w, h, fontSize);
+  if (style === 'brush')       return drawBrushRect(ctx, x, y, w, h, fontSize);
+  if (style === 'stamp')       return drawStampRect(ctx, x, y, w, h, fontSize);
+  if (style === 'slash')       return drawSlashRect(ctx, x, y, w, h);
+  return ctx.fillRect(x, y, w, h); // clean + tilted
+}
+
+// Seeded RNG for consistent shapes across re-draws
+function shapeRnd() {
+  var seed = (selBanner && selBanner.word) ? selBanner.word.length * 137 + selBanner.word.charCodeAt(0) : 42;
+  return function() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+}
+
+// Torn-edge rectangle — jagged top and bottom
 function drawTornRect(ctx, x, y, w, h, fontSize) {
   var jag = Math.max(5, Math.round(fontSize * 0.09));
   var step = Math.max(14, Math.round(fontSize * 0.22));
-  // Seeded random from word length for consistent jaggedness across re-draws
-  var seed = (selBanner && selBanner.word) ? selBanner.word.length * 137 : 42;
-  var rnd = function() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
-
+  var rnd = shapeRnd();
   ctx.beginPath();
   ctx.moveTo(x, y);
   var i;
-  // Top edge
   for (i = step; i < w; i += step) {
     var dy = rnd() > 0.5 ? -jag * (0.4 + rnd() * 0.6) : -jag * 0.2;
     ctx.lineTo(x + i - step / 2, y + dy);
     ctx.lineTo(x + i, y);
   }
-  // Right edge (straight)
   ctx.lineTo(x + w, y);
   ctx.lineTo(x + w, y + h);
-  // Bottom edge (reverse)
   for (i = w - step; i > 0; i -= step) {
     var dy2 = rnd() > 0.5 ? jag * (0.4 + rnd() * 0.6) : jag * 0.2;
     ctx.lineTo(x + i + step / 2, y + h + dy2);
     ctx.lineTo(x + i, y + h);
   }
-  // Left edge (straight)
   ctx.lineTo(x, y + h);
   ctx.closePath();
   ctx.fill();
 }
 
-// Ribbon rectangle — triangular cuts out of both short ends
+// Ribbon — triangular chevron cuts on both short ends
 function drawRibbonRect(ctx, x, y, w, h) {
   var tail = Math.round(h * 0.35);
   ctx.beginPath();
@@ -1564,6 +1577,97 @@ function drawRibbonRect(ctx, x, y, w, h) {
   ctx.lineTo(x + w, y + h);
   ctx.lineTo(x, y + h);
   ctx.lineTo(x + tail, y + h / 2);
+  ctx.closePath();
+  ctx.fill();
+}
+
+// Double layer — red on black offset slab behind
+function drawDoubleRect(ctx, x, y, w, h, fontSize) {
+  var off = Math.round(fontSize * 0.08);
+  var prev = ctx.fillStyle;
+  // Black slab behind, offset down-right
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(x + off, y + off, w, h);
+  // Red slab on top
+  ctx.fillStyle = prev;
+  ctx.fillRect(x, y, w, h);
+}
+
+// Brush stroke — wavy top/bottom with feathered edges
+function drawBrushRect(ctx, x, y, w, h, fontSize) {
+  var wave = Math.max(4, Math.round(fontSize * 0.05));
+  var rnd = shapeRnd();
+  ctx.beginPath();
+  // Top edge — subtle wave
+  ctx.moveTo(x, y + wave * 0.3);
+  var step = Math.max(20, Math.round(fontSize * 0.3));
+  var i;
+  for (i = step; i < w; i += step) {
+    ctx.quadraticCurveTo(
+      x + i - step / 2, y + (rnd() - 0.5) * wave,
+      x + i, y + (rnd() - 0.5) * wave * 0.6
+    );
+  }
+  ctx.lineTo(x + w, y + wave * 0.3);
+  // Right edge — slight taper
+  ctx.lineTo(x + w - wave * 0.5, y + h - wave * 0.3);
+  // Bottom edge — wave back
+  for (i = w - step; i > 0; i -= step) {
+    ctx.quadraticCurveTo(
+      x + i + step / 2, y + h - (rnd() - 0.5) * wave,
+      x + i, y + h - (rnd() - 0.5) * wave * 0.6
+    );
+  }
+  ctx.lineTo(x + wave * 0.5, y + h - wave * 0.3);
+  ctx.closePath();
+  ctx.fill();
+}
+
+// Stamp block — rough ink-stamp edges with missing corners
+function drawStampRect(ctx, x, y, w, h, fontSize) {
+  var rough = Math.max(3, Math.round(fontSize * 0.04));
+  var rnd = shapeRnd();
+  ctx.beginPath();
+  // Top — noisy line
+  ctx.moveTo(x + rough * (rnd() + 0.5), y + rough * rnd());
+  var step = Math.max(8, Math.round(fontSize * 0.08));
+  var i;
+  for (i = step; i < w; i += step) {
+    ctx.lineTo(x + i, y + (rnd() - 0.5) * rough);
+  }
+  ctx.lineTo(x + w - rough * rnd(), y + rough * rnd());
+  // Right
+  ctx.lineTo(x + w - rough * rnd(), y + h - rough * rnd());
+  // Bottom
+  for (i = w - step; i > 0; i -= step) {
+    ctx.lineTo(x + i, y + h - (rnd() - 0.5) * rough);
+  }
+  ctx.lineTo(x + rough * rnd(), y + h - rough * rnd());
+  ctx.closePath();
+  ctx.fill();
+  // Add some ink-spray dots outside the shape for stamp feel
+  for (i = 0; i < 8; i++) {
+    var dotX = x + rnd() * w;
+    var dotY = rnd() > 0.5 ? y - rough * (1 + rnd() * 2) : y + h + rough * (1 + rnd() * 2);
+    var dotR = rough * 0.3 * (0.5 + rnd());
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, dotR, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// Slash corners — diagonal cuts on all four corners
+function drawSlashRect(ctx, x, y, w, h) {
+  var cut = Math.round(h * 0.22);
+  ctx.beginPath();
+  ctx.moveTo(x + cut, y);
+  ctx.lineTo(x + w - cut, y);
+  ctx.lineTo(x + w, y + cut);
+  ctx.lineTo(x + w, y + h - cut);
+  ctx.lineTo(x + w - cut, y + h);
+  ctx.lineTo(x + cut, y + h);
+  ctx.lineTo(x, y + h - cut);
+  ctx.lineTo(x, y + cut);
   ctx.closePath();
   ctx.fill();
 }
