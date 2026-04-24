@@ -195,7 +195,7 @@ input[type=password]::placeholder{color:var(--muted)}
 <div class="toast" id="toast"></div>
 <header class="hdr">
   <div class="logo"><div class="logo-bar"></div>ALLIED THUMBNAILS</div>
-  <div class="hdr-right"><span class="pill">PIPELINE v3.3</span><span>INTERACTIVE TWO-PASS</span></div>
+  <div class="hdr-right"><span class="pill">PIPELINE v3.4</span><span>FULL-FRAME · LABELS ON</span></div>
 </header>
 <div class="layout">
   <div class="side">
@@ -985,12 +985,12 @@ function renderRefThumbs() {
 // ============================================================================
 function getBgDesc(bg) {
   var descs = {
-    COLLISION_MAP: 'Dramatic high-contrast period military map fills the entire background — ' + bg.specific + '. Rendered in a bold YouTube-thumbnail style (NOT washed out, NOT muted): THICK BOLD RED ARROWS (saturated crimson red #c41a00, 12-15 pixels wide with hard dark outlines) sweeping aggressively inward from multiple directions toward a central battle point marked with a bold red circle. THICK BOLD BLUE ARROWS (saturated navy blue) pushing in the opposite direction. Black tank silhouettes and unit markers scattered across the map at battle points — dark, high-contrast shapes that read instantly at thumbnail size. Terrain rendered with visible brown contour lines and darker earth tones in the background layer. Rivers drawn as bold curving blue lines. The map has a subtle vintage paper texture but colors are SATURATED and HIGH-CONTRAST, not faded. Dark vignette around the map edges. NO readable text, NO labels with words, NO stamps — only shapes, arrows, tanks, circles, and terrain. The arrows should dominate the composition as the most eye-catching elements.',
-    LOCATION_MAP: 'Dramatic high-contrast period military map fills the entire background — ' + bg.specific + '. Bold YouTube-thumbnail rendering: saturated colors, thick dark outlines, visible terrain contours with strong brown/green shading, bold blue rivers, black silhouette markers for unit positions. THICK BOLD ARROWS (red and blue, hard-outlined) indicating movement and strategic direction. Dark vignette around edges. High contrast, not washed out. NO readable text, NO place names as words — only shapes, arrows, and terrain.',
-    NEWSPAPER: 'A dramatic aged 1940s broadsheet newspaper fills the entire background — ' + bg.specific + '. High-contrast rendering with warm yellow-sepia tones but BOLD and READABLE from thumbnail distance: large bold masthead shape at top (dark text silhouette, unreadable but visually striking), huge dramatic headline shape (bold black block), column text texture, a large dark photograph rectangle as focal point. Paper has authentic aging, fold marks, and torn edges. Dark vignette around edges. Colors are saturated (warm yellow + deep black), not faded. NO readable words — only the VISUAL WEIGHT of newspaper layout shapes.',
-    DOCUMENT: 'A dramatic aged official military document fills the entire background — ' + bg.specific + '. High-contrast rendering: layered yellowed papers on a dark wooden desk surface with dramatic side lighting, visible typewriter text texture (unreadable but dense and visually interesting), bold letterhead seal/insignia as a dark silhouette, red ink stamps and markings as color accents, fountain pen or brass details. Papers slightly overlapping with torn/worn edges. Dark shadows and strong directional lighting creating depth. High contrast, saturated warm tones. NO readable words — only the visual impression of important paperwork.',
-    BATTLE_ACTION: 'A dramatic ' + bg.specific + ' battlefield scene fills the entire background. CINEMATIC HIGH-CONTRAST composition: massive columns of dark smoke rising, intense orange and red fire glow in mid-distance creating a rim light effect across the scene, soldiers and tanks as dark silhouettes against the flames, explosive shell bursts with bright orange centers, heavy overcast sky with dramatic god-rays breaking through, debris and dust in the air. Saturated orange/red fire tones contrasted against dark blue-gray smoke and silhouettes. The scene should have the visual weight and drama of a war film poster.',
-    ARCHIVE_STACK: 'Dramatic overhead view of stacked period documents fills the entire background — ' + bg.specific + '. HIGH-CONTRAST rendering: yellowed letters, old photographs with dark borders, military memos, folded maps, brass dog tags on chains, a leather-bound journal, a brass desk lamp casting warm directional light from one side creating strong shadows. Items layered at dramatic angles on dark mahogany wood. Torn and worn edges visible. Warm sepia-gold tones with deep shadows. Dark vignette around edges. Photographs should have visible dark-bordered frames. NO readable text — text appears as texture only. The lighting should feel like a detective\'s desk at night.'
+    COLLISION_MAP: 'Dramatic high-contrast period military map fills the entire background — ' + bg.specific + '. Bold YouTube-thumbnail style (NOT washed out): THICK BOLD RED ARROWS (saturated crimson red, 12-15 pixels wide with hard dark outlines) sweeping aggressively inward from multiple directions toward a central battle point marked with a bold red circle. THICK BOLD BLUE ARROWS (saturated navy blue) pushing in the opposite direction. Black tank silhouettes and unit markers scattered across the map at battle points. Terrain rendered with visible brown contour lines. Rivers drawn as bold curving blue lines with clear blue fill. The map includes SHORT PERIOD-STYLE MAP LABELS: place names in small bold black serif type (river names in italic, town names in uppercase bold, the key location name prominently marked near the central circle), campaign dates in a small block in one corner, a brief campaign title in 2-3 words near the key point. Labels look like authentic 1940s-50s military map annotation — compact, clean, legible. Subtle vintage paper texture with saturated colors.',
+    LOCATION_MAP: 'Dramatic high-contrast period military map fills the entire background — ' + bg.specific + '. Bold rendering: saturated colors, thick dark outlines, visible terrain contours with strong brown/green shading, bold blue rivers, black silhouette markers for unit positions. THICK BOLD ARROWS (red and blue, hard-outlined) indicating movement. SHORT period map labels in small bold serif type: river names in italic, town/region names in uppercase bold, one or two date or unit designations. Labels look like 1940s-50s authentic military map annotation.',
+    NEWSPAPER: 'A dramatic aged 1940s broadsheet newspaper fills the entire background — ' + bg.specific + '. High-contrast warm yellow-sepia tones: a bold period masthead at top (newspaper name in bold serif), a HUGE dramatic headline in bold black uppercase serif type across the top half, column text texture below (small print unreadable but dense), a large dark photograph with caption as focal point. Paper has authentic aging, fold marks, torn edges. Saturated colors.',
+    DOCUMENT: 'A dramatic aged official military document fills the entire background — ' + bg.specific + '. Layered yellowed papers on a dark wooden desk with dramatic side lighting. The top document has a bold military LETTERHEAD at top (insignia + a few lines of bold type like "WAR DEPARTMENT" or "GENERAL HEADQUARTERS"), a short TITLE line in uppercase bold ("CLASSIFIED", "OPERATION ORDERS"), paragraphs of typewritten text texture (individual letters blurred), red ink stamp marks as color accents, a bold signature at bottom. Papers slightly overlapping with torn edges. High contrast, saturated warm tones.',
+    BATTLE_ACTION: 'A dramatic ' + bg.specific + ' battlefield scene fills the entire background. CINEMATIC: massive columns of dark smoke rising, intense orange and red fire glow in mid-distance creating rim light, soldiers and tanks as dark silhouettes against the flames, explosive shell bursts, heavy overcast sky with dramatic god-rays, debris and dust. Saturated orange/red fire tones against dark blue-gray smoke. War film poster composition.',
+    ARCHIVE_STACK: 'Dramatic overhead view of stacked period documents fills the entire background — ' + bg.specific + '. Yellowed letters with visible bold headers (unit names, dates in bold type), old photographs with dark borders, typewritten memos with bold headings, folded maps with visible place labels, brass dog tags on chains, a leather-bound journal, a brass desk lamp casting warm directional light. Items layered at dramatic angles on dark mahogany wood. Torn and worn edges. Warm sepia-gold tones with deep shadows. Short period-appropriate headings visible on top documents (e.g. "WAR DEPARTMENT", a date, a unit designation).'
   };
   return descs[bg.type] || bg.specific;
 }
@@ -1029,62 +1029,63 @@ function buildPromptSingle() {
     : '';
 
   return [
-    'YOUTUBE THUMBNAIL — photorealistic digital artwork, widescreen 16:9 composition. Finished standalone artwork. ABSOLUTELY NO text, NO words, NO letters, NO banners, NO captions, NO watermarks rendered anywhere in the image — ALL text will be added in post-production.',
+    'YOUTUBE THUMBNAIL — photorealistic digital artwork, widescreen 16:9 composition. Finished standalone artwork. ABSOLUTELY NO banner text, NO title cards, NO captions, NO watermarks. Period-appropriate map labels or newspaper headlines are OK as part of the background, but no modern graphic text overlays.',
     '',
-    'TWO-LAYER COMPOSITION — this is critical to the style:',
-    'LAYER 1 (left half, behind): The background scene described below, but clearly darkened and receded compared to the figure. Think of it as the environment the figure emerges from.',
-    'LAYER 2 (right half, foreground): The general, sharply lit and brightly separated from the background by a strong WARM AURA GLOW behind him. He should look like he is stepping OUT of the background, not pasted ON it.',
+    'COMPOSITION OVERVIEW:',
+    'The BACKGROUND SCENE fills the ENTIRE frame edge-to-edge. The GENERAL stands in the right half, with a bright warm AURA glow radiating from behind him that separates him from the scene. The background is visible on both sides of the figure (some on the left, some behind through the glow) — it is ONE continuous scene across the full frame.',
     '',
-    'SUBJECT FIGURE (the most prominent, brightest element): ' + refNote + 'Photorealistic portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + EXPRESSIONS[selectedExprIdx] + '.',
+    'SUBJECT FIGURE (the brightest element): ' + refNote + 'Photorealistic portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + EXPRESSIONS[selectedExprIdx] + '.',
     '',
-    'FIGURE PLACEMENT & CROP: The general occupies the RIGHT HALF of the frame, taking up roughly 50-55% of the image width. TIGHT CROP — head and upper chest only, head fills the upper-right portion with only a small margin above the hat/hair. Body visible from upper chest up. The figure should feel LARGE, DOMINANT, and LOOMING.',
+    'FIGURE PLACEMENT & CROP: The general occupies the RIGHT HALF of the frame, taking up roughly 50-55% of the image width. TIGHT CROP — head and upper chest only, head fills the upper-right portion with only a small margin above the hat/hair. Body visible from upper chest up. LARGE, DOMINANT, LOOMING.',
     '',
     '*** AURA SEPARATION — THE MOST IMPORTANT STYLE DETAIL ***',
     'Directly behind the general\'s head and shoulders, paint a strong WARM ORANGE-TO-RED RADIAL GLOW that fades outward. This glow must be BRIGHT and CLEARLY VISIBLE — like a halo of warm sunset light radiating from behind him. The glow should:',
     '1. Make the figure pop off the background with clear visual separation',
     '2. Create a bright ring of warm light around his head and upper torso',
-    '3. Fade into the darker background map/scene at the edges',
-    '4. Cast a subtle warm rim light on his left shoulder and the left side of his face/neck (edge lighting that separates him from the background)',
-    'Think of DIAMONDS-style YouTube thumbnails — the general appears to be lit FROM BEHIND by a warm fire or sunset, creating a glowing silhouette effect that separates him from the map.',
+    '3. Fade softly into the background — NOT create a hard boundary or split the image',
+    '4. Cast a subtle warm rim light on his LEFT shoulder and the left side of his face/neck (edge lighting)',
+    'The background scene should be VISIBLE through the glow where possible — the glow is colored light ON TOP of the background, not a solid wall blocking it.',
+    'Think of DIAMONDS-style YouTube thumbnails — the general is lit FROM BEHIND by a warm fire or sunset, creating a glowing halo that separates him from the map.',
     '',
     'FIGURE LIGHTING:',
-    '- Hard directional key light from upper-front-left at ~45° — his face is brightly lit and sharp',
-    '- Warm rim light on LEFT side of face and shoulders (from the aura glow wrapping around)',
-    '- Face is the BRIGHTEST, SHARPEST, most in-focus element of the entire image — eyes catch light, skin texture visible, pores and stubble detail',
-    '- Teal-and-orange color grading: slightly cool shadows on his right side, warm highlights on his left',
+    '- Hard directional key light from upper-front-left at ~45° — face is brightly lit and sharp',
+    '- Warm rim light on LEFT side of face and shoulders (from the aura glow)',
+    '- Face is the BRIGHTEST, SHARPEST, most in-focus element — eyes catch light, skin texture visible',
+    '- Teal-and-orange color grading',
     '',
-    'BACKGROUND (LEFT HALF, RECEDED AND DARKENED):',
+    'BACKGROUND (FILLS THE ENTIRE FRAME EDGE-TO-EDGE):',
     getBgDesc(selBg),
     '',
-    'BACKGROUND TREATMENT: The background is noticeably DARKER and slightly LESS SATURATED than the figure. A dark vignette surrounds the outer edges of the map/scene. On the RIGHT SIDE of the background (where the figure stands), the background gradually transitions from darker to the warm aura glow, so there\'s no hard-edged pasted-on feeling.',
+    'BACKGROUND TREATMENT: The background extends to ALL FOUR EDGES of the frame — no blank space, no hard diagonal divider. On the LEFT side it is fully visible with cooler natural lighting. Behind the figure on the right, the warm aura glow tints the background orange but does not erase it. Dark vignette around the outer corners frames the whole composition.',
     '',
-    'UNIFORM: Vivid, warm, saturated olive drab or era-appropriate color. All insignia, buckles, straps, helmet, and equipment rendered with high detail and sharp focus. Uniform is brighter and more saturated than the background.',
+    'UNIFORM: Vivid, warm, saturated olive drab or era-appropriate color. All insignia, buckles, straps, helmet, and equipment rendered with high detail and sharp focus.',
     '',
-    'OVERALL STYLE: Photorealistic but GRAPHIC and HIGH-CONTRAST like a theatrical movie poster. Deep blacks. Bright highlights. Cinematic color grading. Must read instantly at small YouTube thumbnail size.',
+    'OVERALL STYLE: Photorealistic but GRAPHIC and HIGH-CONTRAST like a theatrical movie poster. Deep blacks. Bright highlights. Cinematic color grading.',
     '',
-    'NEGATIVE REQUIREMENTS: NO text, NO letters, NO numbers, NO watermarks, NO UI elements, NO play buttons, NO borders, NO insignia text on uniform patches. Leave the lower-left, lower-center, and lower-right areas relatively uncluttered so a banner can be overlaid cleanly in post-production.'
+    'NEGATIVE REQUIREMENTS: NO modern banner text, NO title cards, NO captions, NO watermarks, NO UI elements, NO play buttons, NO borders. Period-accurate map labels are fine. Leave the lower-left, lower-center, and lower-right areas relatively uncluttered so a banner can be overlaid cleanly in post-production.'
   ].join('\n');
 }
 
 // PASS 1: Generate just the background — NO figure. Maximum map detail.
 function buildPromptPass1() {
   return [
-    'PASS 1 OF 2 — BACKGROUND ONLY (no human figure at all).',
+    'PASS 1 OF 2 — BACKGROUND ONLY (no human figure at all). Widescreen 16:9 YouTube thumbnail background.',
     '',
-    'Generate a widescreen 16:9 image. Fill the ENTIRE frame with the background element described below. NO people, NO soldiers, NO faces — just the environment.',
+    'THE BACKGROUND SCENE MUST FILL THE ENTIRE FRAME EDGE-TO-EDGE. The map (or document, or scene) covers 100% of the image — left edge to right edge, top edge to bottom edge. Do NOT leave blank space on any side. Do NOT create a hard diagonal or vertical boundary splitting the image into two halves.',
     '',
     'BACKGROUND SCENE:',
     getBgDesc(selBg),
     '',
-    '*** CRITICAL LIGHTING LAYOUT ***',
-    'The image must have THIS specific lighting gradient from left to right:',
-    '- LEFT HALF: Darker, cooler tones. The main visual detail of the scene lives here (arrows, terrain, etc). Dark vignette in the top-left corner.',
-    '- RIGHT-CENTER AREA: A strong BRIGHT WARM RADIAL GLOW radiating outward — bright orange fading to red at the edges. This glow should look like a rising sun or massive fire just behind the scene, brightest near the right-center and fading at the edges. The glow fills the right 40% of the frame.',
-    '- This is intentional: the right-center glow is the HALO that a figure will appear in front of during Pass 2. It must be clearly visible as a warm orange radial gradient.',
+    '*** WARM ATMOSPHERIC LIGHTING — ON TOP OF THE MAP, NOT REPLACING IT ***',
+    'The entire map is visible across the full frame. A warm orange-to-red atmospheric glow sits ON TOP of the map on the right-center area — like warm late-afternoon sunlight pouring across the scene. The map beneath this glow is STILL VISIBLE (with all its terrain, arrows, and labels) but tinted warm. The glow fades smoothly so there is no hard edge.',
+    '- Left side of the map: normal cooler lighting, full detail, slight dark vignette in corners',
+    '- Right-center of the map: warm orange glow overlay on top of the map details',
+    '- Right edge: slightly darker to frame the glow',
+    'The map is ONE continuous scene across the full frame, with the warm glow acting as colored light across the right half. The map details (arrows, terrain, labels, unit markers) are visible THROUGH the warm glow.',
     '',
-    'RENDERING: HIGH-CONTRAST, SATURATED colors on the left half, BRIGHT WARM GLOW on the right. Deep blacks in corners. Photorealistic. YouTube thumbnail aesthetic.',
+    'RENDERING: HIGH-CONTRAST, SATURATED colors, bold and graphic like a YouTube thumbnail. Photorealistic but stylized. Deep blacks in corners. The map must extend to all four edges of the frame.',
     '',
-    'NEGATIVE: NO human figures, NO people, NO faces, NO soldiers, NO silhouettes of people. NO text, NO letters, NO readable words. NO watermarks. NO borders.'
+    'NEGATIVE: NO human figures, NO people, NO faces, NO soldiers, NO silhouettes of people. NO blank empty areas. NO hard vertical or diagonal line splitting the image in half. NO watermarks, NO UI elements, NO borders.'
   ].join('\n');
 }
 
@@ -1124,7 +1125,7 @@ function buildPromptPass2Template() {
     '',
     'COLOR GRADING: Cinematic teal-and-orange. Deep blacks. Rich saturation. Sharp focus on the face.',
     '',
-    'NEGATIVE: NO text, NO letters, NO banners, NO watermarks, NO borders. Leave the lower portion of the image relatively uncluttered so a banner can be overlaid in post-production.'
+    'NEGATIVE: NO modern banner text, NO title cards, NO watermarks, NO borders, NO UI. Period-appropriate map labels already in the background image must be preserved untouched. Leave the lower portion of the image relatively uncluttered so a banner can be overlaid in post-production.'
   ].join('\n');
 }
 
@@ -1420,26 +1421,31 @@ function compositeWithBanner(baseImg) {
 }
 
 function drawBanner(ctx, W, H, word, style, pos, fontFamily, fontWeight) {
-  // Target ~22% of image height for the TEXT itself (matches DIAMONDS scale)
+  // Target ~22% of image height for the TEXT itself
   var targetFontSize = Math.round(H * 0.22);
-  var maxBannerWidth = W * 0.72; // banner can take up to 72% of width
+  var maxBannerWidth = W * 0.72;
   var fontSize = targetFontSize;
 
   ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
-  // Scale down if word doesn't fit, but don't go below 80px
   while (ctx.measureText(word).width > maxBannerWidth - 60 && fontSize > 80) {
     fontSize -= 4;
     ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
   }
 
-  var textW = ctx.measureText(word).width;
-  var textH = fontSize;
+  // --- Measure actual glyph bounds for true optical centering ---
+  // Montserrat Black has uneven ascent/descent — need TextMetrics to compensate
+  var metrics = ctx.measureText(word);
+  var textW = metrics.width;
+  // actualBoundingBoxAscent/Descent are the tight glyph-bounds pixels from baseline
+  var ascent = metrics.actualBoundingBoxAscent || fontSize * 0.75;
+  var descent = metrics.actualBoundingBoxDescent || fontSize * 0.20;
+  var glyphH = ascent + descent;
 
-  // Tighter padding — text fills banner tightly like the reference thumbnails
-  var padX = Math.round(fontSize * 0.28);
-  var padY = Math.round(fontSize * 0.10);
+  // --- Equal padding — text breathes evenly on all four sides ---
+  var padX = Math.round(fontSize * 0.24);
+  var padY = Math.round(fontSize * 0.16);
   var boxW = textW + padX * 2;
-  var boxH = textH + padY * 2;
+  var boxH = glyphH + padY * 2;
 
   // Position
   var margin = Math.round(W * 0.04);
@@ -1463,13 +1469,12 @@ function drawBanner(ctx, W, H, word, style, pos, fontFamily, fontWeight) {
   ctx.rotate(tilt);
   ctx.translate(-cx, -cy);
 
-  // Heavy drop shadow on the whole banner
-  ctx.shadowColor = 'rgba(0,0,0,0.75)';
-  ctx.shadowBlur = Math.round(fontSize * 0.25);
-  ctx.shadowOffsetX = Math.round(fontSize * 0.06);
-  ctx.shadowOffsetY = Math.round(fontSize * 0.12);
+  // === BANNER SHAPE with soft drop shadow ===
+  ctx.shadowColor = 'rgba(0,0,0,0.55)';
+  ctx.shadowBlur = Math.round(fontSize * 0.22);
+  ctx.shadowOffsetX = Math.round(fontSize * 0.05);
+  ctx.shadowOffsetY = Math.round(fontSize * 0.10);
 
-  // Banner shape — use a slightly darker red edge for depth
   ctx.fillStyle = '#c41a00';
   if (style === 'torn') {
     drawTornRect(ctx, boxX, boxY, boxW, boxH, fontSize);
@@ -1479,35 +1484,40 @@ function drawBanner(ctx, W, H, word, style, pos, fontFamily, fontWeight) {
     ctx.fillRect(boxX, boxY, boxW, boxH);
   }
 
-  // Inner highlight stripe at top for 3D punch
+  // Clear shadow before drawing text so text gets its own softer shadow
   ctx.shadowColor = 'transparent';
   ctx.shadowBlur = 0;
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 0;
-  ctx.fillStyle = 'rgba(255,255,255,0.08)';
-  var stripeH = Math.max(3, Math.round(boxH * 0.08));
-  ctx.fillRect(boxX + 4, boxY + 3, boxW - 8, stripeH);
 
-  // Text
+  // Inner highlight stripe for subtle 3D pop
+  ctx.fillStyle = 'rgba(255,255,255,0.10)';
+  var stripeH = Math.max(3, Math.round(boxH * 0.07));
+  ctx.fillRect(boxX + 6, boxY + 4, boxW - 12, stripeH);
+
+  // === TEXT with true optical centering ===
+  // Use 'alphabetic' baseline + manual y-offset = cy + (ascent-descent)/2
+  // This places the glyph's actual bounding box center at cy
   ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
   ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
+  ctx.textBaseline = 'alphabetic';
+  var textY = cy + (ascent - descent) / 2;
 
-  // Heavy text shadow
-  var tShadow = Math.round(fontSize * 0.05);
-  ctx.fillStyle = 'rgba(0,0,0,0.55)';
-  ctx.fillText(word, cx + tShadow, cy + tShadow);
+  // Soft blurry drop shadow on the text (not an outline — a real shadow)
+  ctx.shadowColor = 'rgba(0,0,0,0.60)';
+  ctx.shadowBlur = Math.round(fontSize * 0.08);
+  ctx.shadowOffsetX = Math.round(fontSize * 0.035);
+  ctx.shadowOffsetY = Math.round(fontSize * 0.055);
 
-  // Black outline around letters for extra punch (like DIAMONDS)
-  ctx.strokeStyle = '#000000';
-  ctx.lineWidth = Math.max(2, Math.round(fontSize * 0.05));
-  ctx.lineJoin = 'round';
-  ctx.miterLimit = 2;
-  ctx.strokeText(word, cx, cy);
-
-  // Main white fill
+  // White text fill with the shadow attached
   ctx.fillStyle = '#ffffff';
-  ctx.fillText(word, cx, cy);
+  ctx.fillText(word, cx, textY);
+
+  // Clear shadow
+  ctx.shadowColor = 'transparent';
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
 
   ctx.restore();
 }
