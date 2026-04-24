@@ -35,8 +35,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
   .hdr{padding:0 14px}
   .hdr-right span:last-child{display:none}
   .bg-grid{grid-template-columns:1fr}
-  .style-grid{grid-template-columns:1fr 1fr}
-  .pos-grid{grid-template-columns:1fr 1fr 1fr}
   .empty-logo{font-size:40px}
   .empty-title{font-size:16px}
   .prompt-out{font-size:10px;max-height:260px}
@@ -168,13 +166,6 @@ input[type=password]::placeholder{color:var(--muted)}
 .expr-name{font-family:var(--display);font-size:12px;letter-spacing:1px}
 .expr-tag{font-family:var(--mono);font-size:8px;color:var(--muted)}
 
-/* banner style + position pickers (in step 6) */
-.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
-.pos-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px}
-.mini-opt{border:1px solid var(--border2);border-radius:4px;padding:6px 8px;cursor:pointer;background:var(--bg3);text-align:center;transition:all 0.15s;font-family:var(--mono);font-size:10px;color:var(--muted2)}
-.mini-opt:hover{border-color:var(--border3);color:var(--text)}
-.mini-opt.sel{border-color:var(--red);background:var(--red-dim);color:#ff6644}
-
 /* cost bar */
 .cost-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;margin:0 16px 8px;font-family:var(--mono);font-size:10px}
 .cost-bar-lbl{color:var(--muted);letter-spacing:1px}
@@ -195,7 +186,7 @@ input[type=password]::placeholder{color:var(--muted)}
 <div class="toast" id="toast"></div>
 <header class="hdr">
   <div class="logo"><div class="logo-bar"></div>ALLIED THUMBNAILS</div>
-  <div class="hdr-right"><span class="pill">PIPELINE v3.5</span><span>8 BANNERS · BIGGER TEXT</span></div>
+  <div class="hdr-right"><span class="pill">PIPELINE v3.6</span><span>CANVA WORKFLOW · RAW OUTPUT</span></div>
 </header>
 <div class="layout">
   <div class="side">
@@ -330,23 +321,6 @@ var EXPRESSIONS = [
   'Intense and furious — brow furrowed, jaw clenched, eyes burning with barely contained rage and determination'
 ];
 
-var BANNER_STYLES = [
-  { id: 'torn',     name: 'TORN EDGES',    desc: 'Rough jagged edges' },
-  { id: 'clean',    name: 'CLEAN BLOCK',   desc: 'Sharp rectangle' },
-  { id: 'tilted',   name: 'TILTED SLAB',   desc: 'Clean at 3° angle' },
-  { id: 'banner',   name: 'RIBBON TAILS',  desc: 'Chevron cuts both ends' },
-  { id: 'double',   name: 'DOUBLE LAYER',  desc: 'Red on black shadow slab' },
-  { id: 'brush',    name: 'BRUSH STROKE',  desc: 'Painted brush marks' },
-  { id: 'stamp',    name: 'STAMP BLOCK',   desc: 'Rough stencil edges' },
-  { id: 'slash',    name: 'SLASH CORNERS', desc: 'Diagonal corner cuts' }
-];
-
-var BANNER_POSITIONS = [
-  { id: 'bl', name: 'BOTTOM LEFT' },
-  { id: 'bc', name: 'BOTTOM CENTER' },
-  { id: 'br', name: 'BOTTOM RIGHT' }
-];
-
 // ============================================================================
 // STATE
 // ============================================================================
@@ -356,8 +330,6 @@ var generalImgs = [];
 var selectedClaudeIdx = 2;   // Opus 4.7 default
 var selectedImgIdx = 1;      // Nano Banana Pro default
 var selectedExprIdx = 0;     // Stern default
-var selectedBannerStyle = 'torn';
-var selectedBannerPos = 'bl';
 var selectedMode = 'single'; // 'single' or 'twopass'
 var selectedResolution = '2K'; // '1K', '2K', or '4K'
 var sessionCost = 0;
@@ -767,7 +739,7 @@ function renderAll() {
       '</div>';
   }
   banHtml += '</div>';
-  body.appendChild(makeCard('Step 4 — Banner Word', 'Click to select · baked onto final image', banHtml));
+  body.appendChild(makeCard('Step 4 — Banner Word (for Canva)', 'Click to copy · add banner manually in Canva', banHtml));
 
   // Reference photos
   body.appendChild(makeCard('Step 5 — General Reference Photos', '1-3 photos for face & uniform likeness',
@@ -780,32 +752,19 @@ function renderAll() {
     '<div class="ref-note">Best: 1 front-facing portrait + 1 in uniform · Sources: archives.gov · Wikipedia Commons</div>'
   ));
 
-  // Final prompt + banner style/position + generate
-  var styleOpts = BANNER_STYLES.map(function(s) {
-    return '<div class="mini-opt' + (s.id === selectedBannerStyle ? ' sel' : '') + '" data-bstyle="' + s.id + '" title="' + s.desc + '">' + s.name + '</div>';
-  }).join('');
-  var posOpts = BANNER_POSITIONS.map(function(p) {
-    return '<div class="mini-opt' + (p.id === selectedBannerPos ? ' sel' : '') + '" data-bpos="' + p.id + '">' + p.name + '</div>';
-  }).join('');
-
   body.appendChild(makeCard('Step 6 — Final Prompt & Generate', GEMINI_MODELS[selectedImgIdx].name + ' · Google AI Studio',
-    '<span class="lbl" style="margin-bottom:2px">Banner Style</span>' +
-    '<div class="style-grid">' + styleOpts + '</div>' +
-    '<span class="lbl" style="margin-top:12px;margin-bottom:2px">Banner Position</span>' +
-    '<div class="pos-grid">' + posOpts + '</div>' +
-    '<span class="lbl" style="margin-top:12px;margin-bottom:2px">Generated Prompt</span>' +
+    '<span class="lbl" style="margin-bottom:2px">Generated Prompt</span>' +
     '<div class="prompt-out awaiting" id="promptOut">Select a background above — prompt builds automatically...</div>' +
     '<div class="act-row" style="margin-top:10px">' +
     '<button class="gen-btn" id="genBtn" disabled style="opacity:0.5">GENERATE THUMBNAIL</button>' +
     '<button class="copy-btn" id="copyPromptBtn">Copy Prompt</button>' +
     '</div>' +
     '<div id="resultWrap" style="display:none;flex-direction:column;gap:10px;margin-top:14px">' +
-    '<div class="div-line">Generated Thumbnail</div>' +
-    '<canvas id="resultCanvas" style="width:100%;border-radius:4px;border:1px solid var(--border2);display:block"></canvas>' +
+    '<div class="div-line">Generated Thumbnail · Banner to add in Canva</div>' +
+    '<img id="resultImg" style="width:100%;border-radius:4px;border:1px solid var(--border2);display:block" />' +
     '<div class="act-row">' +
     '<button class="dl-btn" id="dlBtn">Download PNG</button>' +
     '<button class="regen-btn" id="regenBtn">Regenerate</button>' +
-    '<button class="regen-btn" id="rebannerBtn">Re-apply Banner Only</button>' +
     '</div></div>'
   ));
 
@@ -834,25 +793,12 @@ function bindDynamic() {
     el.addEventListener('click', function() { selectBg(+el.dataset.bg); });
   });
   document.querySelectorAll('[data-ban]').forEach(function(el) {
-    el.addEventListener('click', function() { selectBanner(+el.dataset.ban); });
-  });
-  document.querySelectorAll('[data-bstyle]').forEach(function(el) {
     el.addEventListener('click', function() {
-      selectedBannerStyle = el.dataset.bstyle;
-      document.querySelectorAll('[data-bstyle]').forEach(function(x) {
-        x.classList.toggle('sel', x.dataset.bstyle === selectedBannerStyle);
+      var i = +el.dataset.ban;
+      var word = appData.banners[i].word;
+      navigator.clipboard.writeText(word).then(function() {
+        showToast('Copied "' + word + '" — paste in Canva');
       });
-      // If we already have a result, re-draw banner
-      if (window._baseImg) compositeWithBanner(window._baseImg);
-    });
-  });
-  document.querySelectorAll('[data-bpos]').forEach(function(el) {
-    el.addEventListener('click', function() {
-      selectedBannerPos = el.dataset.bpos;
-      document.querySelectorAll('[data-bpos]').forEach(function(x) {
-        x.classList.toggle('sel', x.dataset.bpos === selectedBannerPos);
-      });
-      if (window._baseImg) compositeWithBanner(window._baseImg);
     });
   });
 
@@ -869,10 +815,6 @@ function bindDynamic() {
   if (dl) dl.addEventListener('click', dlImage);
   var rg = document.getElementById('regenBtn');
   if (rg) rg.addEventListener('click', generateImage);
-  var rb = document.getElementById('rebannerBtn');
-  if (rb) rb.addEventListener('click', function() {
-    if (window._baseImg) compositeWithBanner(window._baseImg);
-  });
 }
 
 // ============================================================================
@@ -899,15 +841,12 @@ function selectBg(i) {
 }
 
 function selectBanner(i) {
-  document.querySelectorAll('[data-ban]').forEach(function(e) { e.classList.remove('sel'); });
-  var el = document.querySelector('[data-ban="' + i + '"]');
-  if (el) el.classList.add('sel');
+  // Click handler now copies to clipboard (see bindDynamic). This function
+  // is kept for auto-select on render and for the step/state flow.
   selBanner = appData.banners[i];
   setStep(4, 'done');
   if (generalImgs.length === 0) setStep(5, 'active');
   else setStep(6, 'active');
-  // Re-apply banner if we already have a base image
-  if (window._baseImg) compositeWithBanner(window._baseImg);
 }
 
 // ============================================================================
@@ -1281,18 +1220,14 @@ function runPass2(gKey, pass1Result) {
 
 function rebuildResultUI() {
   var wrap = document.getElementById('resultWrap');
-  wrap.innerHTML = '<div class="div-line">Generated Thumbnail</div>' +
-    '<canvas id="resultCanvas" style="width:100%;border-radius:4px;border:1px solid var(--border2);display:block"></canvas>' +
+  wrap.innerHTML = '<div class="div-line">Generated Thumbnail · Banner to add in Canva</div>' +
+    '<img id="resultImg" style="width:100%;border-radius:4px;border:1px solid var(--border2);display:block" />' +
     '<div class="act-row">' +
       '<button class="dl-btn" id="dlBtn">Download PNG</button>' +
       '<button class="regen-btn" id="regenBtn">Regenerate</button>' +
-      '<button class="regen-btn" id="rebannerBtn">Re-apply Banner Only</button>' +
     '</div>';
   document.getElementById('dlBtn').addEventListener('click', dlImage);
   document.getElementById('regenBtn').addEventListener('click', generateImage);
-  document.getElementById('rebannerBtn').addEventListener('click', function() {
-    if (window._baseImg) compositeWithBanner(window._baseImg);
-  });
 }
 
 // Single Gemini API call — returns { b64, mime, text }
@@ -1346,25 +1281,25 @@ function callGemini(gKey, parts) {
 
 function loadAndComposite(b64, mime) {
   var src = 'data:' + mime + ';base64,' + b64;
-  var baseImg = new Image();
-  baseImg.onload = function() {
-    window._baseImg = baseImg;
-    // Verify the returned resolution matches what we asked for
-    var actualW = baseImg.naturalWidth;
+  var img = document.getElementById('resultImg');
+  if (!img) return;
+  img.onload = function() {
+    // Verify returned resolution matches what we asked for
+    var actualW = img.naturalWidth;
     var expected = selectedResolution === '4K' ? 5376 : (selectedResolution === '2K' ? 2688 : 1344);
-    // Allow some tolerance for aspect ratio rounding
     if (actualW < expected * 0.85) {
-      showToast('Note: Google returned ' + actualW + 'px wide instead of ' + expected + 'px. Resolution may have been downgraded.', true, 5500);
+      showToast('Note: Google returned ' + actualW + 'px instead of ' + expected + 'px. Resolution may have been downgraded.', true, 5500);
     }
-    compositeWithBanner(baseImg);
     var wrap = document.getElementById('resultWrap');
     wrap.style.display = 'flex';
     wrap.style.flexDirection = 'column';
     setStep(6, 'done');
-    showToast('Thumbnail generated at ' + actualW + '×' + baseImg.naturalHeight);
+    showToast('Thumbnail generated at ' + actualW + '×' + img.naturalHeight);
     wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
-  baseImg.src = src;
+  // Stash for download
+  window._lastImgSrc = src;
+  img.src = src;
 }
 
 function startProgressTimer() {
@@ -1386,300 +1321,13 @@ function handleGenError(err) {
 }
 
 // ============================================================================
-// BANNER RENDERING — rebuilt for proper YouTube-thumbnail punch
-// Load fonts before drawing, use much bigger text, add stroke + shadows
-// ============================================================================
-function compositeWithBanner(baseImg) {
-  var canvas = document.getElementById('resultCanvas');
-  var W = baseImg.naturalWidth || 1280;
-  var H = baseImg.naturalHeight || 720;
-  canvas.width = W;
-  canvas.height = H;
-  var ctx = canvas.getContext('2d');
-
-  ctx.drawImage(baseImg, 0, 0, W, H);
-
-  if (!selBanner || !selBanner.word) {
-    window._lastCanvas = canvas;
-    return;
-  }
-
-  // Ensure fonts are loaded before measuring/drawing text
-  var fontFamily = '"Montserrat","Anton","Arial Black",sans-serif';
-  var fontWeight = '900';
-
-  var doDraw = function() {
-    drawBanner(ctx, W, H, selBanner.word, selectedBannerStyle, selectedBannerPos, fontFamily, fontWeight);
-    window._lastCanvas = canvas;
-  };
-
-  // Force-load the fonts at multiple sizes so metrics are reliable
-  if (document.fonts && document.fonts.load) {
-    Promise.all([
-      document.fonts.load('900 100px "Montserrat"'),
-      document.fonts.load('900 200px "Montserrat"'),
-      document.fonts.load('900 300px "Montserrat"'),
-      document.fonts.load('bold 200px "Anton"')
-    ]).then(function() {
-      // Wait a paint frame to ensure fonts are actually ready for canvas
-      requestAnimationFrame(doDraw);
-    }, doDraw);
-  } else {
-    doDraw();
-  }
-}
-
-function drawBanner(ctx, W, H, word, style, pos, fontFamily, fontWeight) {
-  // Target ~26% of image height for the TEXT (was 22% — bigger like DIAMONDS)
-  var targetFontSize = Math.round(H * 0.26);
-  var maxBannerWidth = W * 0.82; // banner can take up to 82% of frame width (was 72%)
-  var fontSize = targetFontSize;
-
-  ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
-  while (ctx.measureText(word).width > maxBannerWidth - 80 && fontSize > 90) {
-    fontSize -= 4;
-    ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
-  }
-
-  // Measure glyph bounds for proper banner sizing + true optical centering
-  var metrics = ctx.measureText(word);
-  var textW = metrics.width;
-  var ascent = metrics.actualBoundingBoxAscent || fontSize * 0.72;
-  var descent = metrics.actualBoundingBoxDescent || fontSize * 0.23;
-  var glyphH = ascent + descent;
-
-  // Equal padding all sides
-  var padX = Math.round(fontSize * 0.22);
-  var padY = Math.round(fontSize * 0.18);
-  var boxW = textW + padX * 2;
-  var boxH = glyphH + padY * 2;
-
-  // Position
-  var margin = Math.round(W * 0.04);
-  var bottomMargin = Math.round(H * 0.05);
-  var boxX, boxY;
-  if (pos === 'bl')      { boxX = margin; }
-  else if (pos === 'br') { boxX = W - boxW - margin; }
-  else                   { boxX = (W - boxW) / 2; }
-  boxY = H - boxH - bottomMargin;
-
-  // Rotation
-  var tilt = 0;
-  if (style === 'tilted')      tilt = -2.5 * Math.PI / 180;
-  else if (style === 'torn')   tilt = -1.8 * Math.PI / 180;
-  else if (style === 'brush')  tilt = -1.5 * Math.PI / 180;
-
-  ctx.save();
-  var cx = boxX + boxW / 2;
-  var cy = boxY + boxH / 2;
-  ctx.translate(cx, cy);
-  ctx.rotate(tilt);
-  ctx.translate(-cx, -cy);
-
-  // === BANNER SHAPE with soft drop shadow ===
-  ctx.shadowColor = 'rgba(0,0,0,0.55)';
-  ctx.shadowBlur = Math.round(fontSize * 0.22);
-  ctx.shadowOffsetX = Math.round(fontSize * 0.05);
-  ctx.shadowOffsetY = Math.round(fontSize * 0.10);
-  ctx.fillStyle = '#c41a00';
-
-  // Draw the chosen shape
-  drawBannerShape(ctx, boxX, boxY, boxW, boxH, fontSize, style);
-
-  // Clear shadow
-  ctx.shadowColor = 'transparent';
-  ctx.shadowBlur = 0;
-  ctx.shadowOffsetX = 0;
-  ctx.shadowOffsetY = 0;
-
-  // Subtle top highlight stripe for 3D pop (except on brush style)
-  if (style !== 'brush' && style !== 'stamp') {
-    ctx.fillStyle = 'rgba(255,255,255,0.10)';
-    var stripeH = Math.max(3, Math.round(boxH * 0.07));
-    ctx.fillRect(boxX + 6, boxY + 4, boxW - 12, stripeH);
-  }
-
-  // === TEXT — true optical centering ===
-  // Use alphabetic baseline and compute y so that glyph's bbox center = cy
-  // glyph bbox runs from (cy_baseline - ascent) to (cy_baseline + descent)
-  // For glyph center to be at cy: cy_baseline = cy + (ascent - descent) / 2
-  ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'alphabetic';
-  var textY = cy + (ascent - descent) / 2;
-
-  // Text drop shadow (soft, blurry)
-  ctx.shadowColor = 'rgba(0,0,0,0.60)';
-  ctx.shadowBlur = Math.round(fontSize * 0.09);
-  ctx.shadowOffsetX = Math.round(fontSize * 0.04);
-  ctx.shadowOffsetY = Math.round(fontSize * 0.06);
-
-  ctx.fillStyle = '#ffffff';
-  ctx.fillText(word, cx, textY);
-
-  ctx.shadowColor = 'transparent';
-  ctx.shadowBlur = 0;
-  ctx.shadowOffsetX = 0;
-  ctx.shadowOffsetY = 0;
-
-  ctx.restore();
-}
-
-// Dispatch to the right shape drawing function
-function drawBannerShape(ctx, x, y, w, h, fontSize, style) {
-  if (style === 'torn')        return drawTornRect(ctx, x, y, w, h, fontSize);
-  if (style === 'banner')      return drawRibbonRect(ctx, x, y, w, h);
-  if (style === 'double')      return drawDoubleRect(ctx, x, y, w, h, fontSize);
-  if (style === 'brush')       return drawBrushRect(ctx, x, y, w, h, fontSize);
-  if (style === 'stamp')       return drawStampRect(ctx, x, y, w, h, fontSize);
-  if (style === 'slash')       return drawSlashRect(ctx, x, y, w, h);
-  return ctx.fillRect(x, y, w, h); // clean + tilted
-}
-
-// Seeded RNG for consistent shapes across re-draws
-function shapeRnd() {
-  var seed = (selBanner && selBanner.word) ? selBanner.word.length * 137 + selBanner.word.charCodeAt(0) : 42;
-  return function() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
-}
-
-// Torn-edge rectangle — jagged top and bottom
-function drawTornRect(ctx, x, y, w, h, fontSize) {
-  var jag = Math.max(5, Math.round(fontSize * 0.09));
-  var step = Math.max(14, Math.round(fontSize * 0.22));
-  var rnd = shapeRnd();
-  ctx.beginPath();
-  ctx.moveTo(x, y);
-  var i;
-  for (i = step; i < w; i += step) {
-    var dy = rnd() > 0.5 ? -jag * (0.4 + rnd() * 0.6) : -jag * 0.2;
-    ctx.lineTo(x + i - step / 2, y + dy);
-    ctx.lineTo(x + i, y);
-  }
-  ctx.lineTo(x + w, y);
-  ctx.lineTo(x + w, y + h);
-  for (i = w - step; i > 0; i -= step) {
-    var dy2 = rnd() > 0.5 ? jag * (0.4 + rnd() * 0.6) : jag * 0.2;
-    ctx.lineTo(x + i + step / 2, y + h + dy2);
-    ctx.lineTo(x + i, y + h);
-  }
-  ctx.lineTo(x, y + h);
-  ctx.closePath();
-  ctx.fill();
-}
-
-// Ribbon — triangular chevron cuts on both short ends
-function drawRibbonRect(ctx, x, y, w, h) {
-  var tail = Math.round(h * 0.35);
-  ctx.beginPath();
-  ctx.moveTo(x, y);
-  ctx.lineTo(x + w, y);
-  ctx.lineTo(x + w - tail, y + h / 2);
-  ctx.lineTo(x + w, y + h);
-  ctx.lineTo(x, y + h);
-  ctx.lineTo(x + tail, y + h / 2);
-  ctx.closePath();
-  ctx.fill();
-}
-
-// Double layer — red on black offset slab behind
-function drawDoubleRect(ctx, x, y, w, h, fontSize) {
-  var off = Math.round(fontSize * 0.08);
-  var prev = ctx.fillStyle;
-  // Black slab behind, offset down-right
-  ctx.fillStyle = '#000000';
-  ctx.fillRect(x + off, y + off, w, h);
-  // Red slab on top
-  ctx.fillStyle = prev;
-  ctx.fillRect(x, y, w, h);
-}
-
-// Brush stroke — wavy top/bottom with feathered edges
-function drawBrushRect(ctx, x, y, w, h, fontSize) {
-  var wave = Math.max(4, Math.round(fontSize * 0.05));
-  var rnd = shapeRnd();
-  ctx.beginPath();
-  // Top edge — subtle wave
-  ctx.moveTo(x, y + wave * 0.3);
-  var step = Math.max(20, Math.round(fontSize * 0.3));
-  var i;
-  for (i = step; i < w; i += step) {
-    ctx.quadraticCurveTo(
-      x + i - step / 2, y + (rnd() - 0.5) * wave,
-      x + i, y + (rnd() - 0.5) * wave * 0.6
-    );
-  }
-  ctx.lineTo(x + w, y + wave * 0.3);
-  // Right edge — slight taper
-  ctx.lineTo(x + w - wave * 0.5, y + h - wave * 0.3);
-  // Bottom edge — wave back
-  for (i = w - step; i > 0; i -= step) {
-    ctx.quadraticCurveTo(
-      x + i + step / 2, y + h - (rnd() - 0.5) * wave,
-      x + i, y + h - (rnd() - 0.5) * wave * 0.6
-    );
-  }
-  ctx.lineTo(x + wave * 0.5, y + h - wave * 0.3);
-  ctx.closePath();
-  ctx.fill();
-}
-
-// Stamp block — rough ink-stamp edges with missing corners
-function drawStampRect(ctx, x, y, w, h, fontSize) {
-  var rough = Math.max(3, Math.round(fontSize * 0.04));
-  var rnd = shapeRnd();
-  ctx.beginPath();
-  // Top — noisy line
-  ctx.moveTo(x + rough * (rnd() + 0.5), y + rough * rnd());
-  var step = Math.max(8, Math.round(fontSize * 0.08));
-  var i;
-  for (i = step; i < w; i += step) {
-    ctx.lineTo(x + i, y + (rnd() - 0.5) * rough);
-  }
-  ctx.lineTo(x + w - rough * rnd(), y + rough * rnd());
-  // Right
-  ctx.lineTo(x + w - rough * rnd(), y + h - rough * rnd());
-  // Bottom
-  for (i = w - step; i > 0; i -= step) {
-    ctx.lineTo(x + i, y + h - (rnd() - 0.5) * rough);
-  }
-  ctx.lineTo(x + rough * rnd(), y + h - rough * rnd());
-  ctx.closePath();
-  ctx.fill();
-  // Add some ink-spray dots outside the shape for stamp feel
-  for (i = 0; i < 8; i++) {
-    var dotX = x + rnd() * w;
-    var dotY = rnd() > 0.5 ? y - rough * (1 + rnd() * 2) : y + h + rough * (1 + rnd() * 2);
-    var dotR = rough * 0.3 * (0.5 + rnd());
-    ctx.beginPath();
-    ctx.arc(dotX, dotY, dotR, 0, Math.PI * 2);
-    ctx.fill();
-  }
-}
-
-// Slash corners — diagonal cuts on all four corners
-function drawSlashRect(ctx, x, y, w, h) {
-  var cut = Math.round(h * 0.22);
-  ctx.beginPath();
-  ctx.moveTo(x + cut, y);
-  ctx.lineTo(x + w - cut, y);
-  ctx.lineTo(x + w, y + cut);
-  ctx.lineTo(x + w, y + h - cut);
-  ctx.lineTo(x + w - cut, y + h);
-  ctx.lineTo(x + cut, y + h);
-  ctx.lineTo(x, y + h - cut);
-  ctx.lineTo(x, y + cut);
-  ctx.closePath();
-  ctx.fill();
-}
-
-// ============================================================================
 // DOWNLOAD
 // ============================================================================
 function dlImage() {
-  var canvas = window._lastCanvas;
-  if (!canvas) return;
+  var src = window._lastImgSrc;
+  if (!src) return;
   var a = document.createElement('a');
-  a.href = canvas.toDataURL('image/png');
+  a.href = src;
   var lastName = 'thumbnail';
   if (appData && appData.general && appData.general.name) {
     var parts = appData.general.name.split(' ').filter(function(s) { return s.length > 0; });
