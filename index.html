@@ -195,7 +195,7 @@ input[type=password]::placeholder{color:var(--muted)}
 <div class="toast" id="toast"></div>
 <header class="hdr">
   <div class="logo"><div class="logo-bar"></div>ALLIED THUMBNAILS</div>
-  <div class="hdr-right"><span class="pill">PIPELINE v3.2</span><span>OPUS 4.7 · 2K NATIVE</span></div>
+  <div class="hdr-right"><span class="pill">PIPELINE v3.3</span><span>INTERACTIVE TWO-PASS</span></div>
 </header>
 <div class="layout">
   <div class="side">
@@ -907,32 +907,76 @@ function selectBanner(i) {
 }
 
 // ============================================================================
-// REFERENCE IMAGES
+// REFERENCE IMAGES — additive, supports multiple uploads over several clicks
 // ============================================================================
 function handleGeneralRefs(e) {
-  var files = Array.from(e.target.files);
-  generalImgs = [];
-  var row = document.getElementById('generalThumbs');
-  row.innerHTML = '';
-  files.slice(0, 3).forEach(function(file) {
+  var newFiles = Array.from(e.target.files || []);
+  // Reset the input immediately so the user can pick the same files again if needed
+  e.target.value = '';
+
+  var slotsLeft = 3 - generalImgs.length;
+  if (slotsLeft <= 0) {
+    showToast('Maximum 3 reference photos. Remove one to add another.', true);
+    return;
+  }
+
+  newFiles.slice(0, slotsLeft).forEach(function(file) {
     var reader = new FileReader();
     reader.onload = function(ev) {
       generalImgs.push({ data: ev.target.result.split(',')[1], type: file.type });
-      var img = document.createElement('img');
-      img.src = ev.target.result;
-      img.className = 'ref-img';
-      row.appendChild(img);
+      renderRefThumbs();
     };
     reader.readAsDataURL(file);
   });
-  var plus = document.createElement('div');
-  plus.className = 'ref-plus';
-  plus.id = 'refPlus';
-  plus.textContent = '+';
-  plus.addEventListener('click', function() { document.getElementById('refGeneral').click(); });
-  row.appendChild(plus);
-  setStep(5, 'done');
-  setStep(6, 'active');
+
+  if (generalImgs.length + newFiles.length > 0) {
+    setStep(5, 'done');
+    setStep(6, 'active');
+  }
+}
+
+function renderRefThumbs() {
+  var row = document.getElementById('generalThumbs');
+  if (!row) return;
+  row.innerHTML = '';
+  // Render existing thumbnails with remove buttons
+  generalImgs.forEach(function(img, idx) {
+    var wrapper = document.createElement('div');
+    wrapper.style.cssText = 'position:relative;display:inline-block';
+    var thumb = document.createElement('img');
+    thumb.src = 'data:' + img.type + ';base64,' + img.data;
+    thumb.className = 'ref-img';
+    wrapper.appendChild(thumb);
+    var x = document.createElement('div');
+    x.textContent = '×';
+    x.style.cssText = 'position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:#c41a00;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;line-height:1;font-weight:bold';
+    x.addEventListener('click', function(ev) {
+      ev.stopPropagation();
+      generalImgs.splice(idx, 1);
+      renderRefThumbs();
+      if (generalImgs.length === 0) {
+        setStep(5, 'active');
+        setStep(6, '');
+      }
+    });
+    wrapper.appendChild(x);
+    row.appendChild(wrapper);
+  });
+  // Plus button (only if under limit)
+  if (generalImgs.length < 3) {
+    var plus = document.createElement('div');
+    plus.className = 'ref-plus';
+    plus.textContent = '+';
+    plus.addEventListener('click', function() {
+      document.getElementById('refGeneral').click();
+    });
+    row.appendChild(plus);
+  }
+  // Counter
+  var counter = document.createElement('div');
+  counter.style.cssText = 'font-family:var(--mono);font-size:9px;color:var(--muted);margin-left:8px;align-self:center';
+  counter.textContent = generalImgs.length + '/3';
+  row.appendChild(counter);
 }
 
 // ============================================================================
@@ -985,48 +1029,62 @@ function buildPromptSingle() {
     : '';
 
   return [
-    'YOUTUBE THUMBNAIL — photorealistic digital artwork, 1280x720 pixels, widescreen 16:9 composition. Finished standalone artwork. ABSOLUTELY NO text, NO words, NO letters, NO banners, NO captions, NO watermarks rendered anywhere in the image — ALL text will be added in post-production.',
+    'YOUTUBE THUMBNAIL — photorealistic digital artwork, widescreen 16:9 composition. Finished standalone artwork. ABSOLUTELY NO text, NO words, NO letters, NO banners, NO captions, NO watermarks rendered anywhere in the image — ALL text will be added in post-production.',
     '',
-    'SUBJECT FIGURE (the most prominent element): ' + refNote + 'Photorealistic portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + EXPRESSIONS[selectedExprIdx] + '.',
+    'TWO-LAYER COMPOSITION — this is critical to the style:',
+    'LAYER 1 (left half, behind): The background scene described below, but clearly darkened and receded compared to the figure. Think of it as the environment the figure emerges from.',
+    'LAYER 2 (right half, foreground): The general, sharply lit and brightly separated from the background by a strong WARM AURA GLOW behind him. He should look like he is stepping OUT of the background, not pasted ON it.',
     '',
-    'COMPOSITION: The general occupies the RIGHT HALF of the frame, taking up roughly 50-55% of the image width. TIGHT CROP — head and upper chest only, head fills the upper-right portion, with only a small margin above the hat/hair. Body visible from upper chest up. The figure should feel LARGE, DOMINANT, and LOOMING — like he is stepping out of the frame toward the viewer.',
+    'SUBJECT FIGURE (the most prominent, brightest element): ' + refNote + 'Photorealistic portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + EXPRESSIONS[selectedExprIdx] + '.',
     '',
-    'LIGHTING ON FIGURE — CRITICAL FOR THUMBNAIL PUNCH:',
-    '- Strong HARD rim light on the left side of face/shoulders (bright highlight edge separating him from background)',
-    '- Warm orange/red glow on right side of face and shoulders (motivated by the background — like fire or warm studio light)',
-    '- Face is the BRIGHTEST, SHARPEST, most in-focus element of the entire image — eyes catch light, skin texture visible',
-    '- Dramatic directional key light from upper-left at a ~45° angle, hard shadows under jaw and helmet brim',
-    '- Subtle color grading: slightly cool shadows, warm highlights (teal-and-orange look)',
+    'FIGURE PLACEMENT & CROP: The general occupies the RIGHT HALF of the frame, taking up roughly 50-55% of the image width. TIGHT CROP — head and upper chest only, head fills the upper-right portion with only a small margin above the hat/hair. Body visible from upper chest up. The figure should feel LARGE, DOMINANT, and LOOMING.',
     '',
-    'BACKDROP AURA BEHIND FIGURE — CRITICAL FOR POP:',
-    'Behind the figure\'s head and shoulders, add a subtle radial gradient glow (warm orange/red fading outward into darker tones) that creates clear visual separation between the figure and the background map/scene. The general should appear LIT FROM BEHIND by this glow — like he is standing in front of a sunset or fire. This backdrop aura is what makes the figure "pop off" the background.',
+    '*** AURA SEPARATION — THE MOST IMPORTANT STYLE DETAIL ***',
+    'Directly behind the general\'s head and shoulders, paint a strong WARM ORANGE-TO-RED RADIAL GLOW that fades outward. This glow must be BRIGHT and CLEARLY VISIBLE — like a halo of warm sunset light radiating from behind him. The glow should:',
+    '1. Make the figure pop off the background with clear visual separation',
+    '2. Create a bright ring of warm light around his head and upper torso',
+    '3. Fade into the darker background map/scene at the edges',
+    '4. Cast a subtle warm rim light on his left shoulder and the left side of his face/neck (edge lighting that separates him from the background)',
+    'Think of DIAMONDS-style YouTube thumbnails — the general appears to be lit FROM BEHIND by a warm fire or sunset, creating a glowing silhouette effect that separates him from the map.',
     '',
-    'BACKGROUND: ' + getBgDesc(selBg),
+    'FIGURE LIGHTING:',
+    '- Hard directional key light from upper-front-left at ~45° — his face is brightly lit and sharp',
+    '- Warm rim light on LEFT side of face and shoulders (from the aura glow wrapping around)',
+    '- Face is the BRIGHTEST, SHARPEST, most in-focus element of the entire image — eyes catch light, skin texture visible, pores and stubble detail',
+    '- Teal-and-orange color grading: slightly cool shadows on his right side, warm highlights on his left',
     '',
-    'BACKGROUND COMPOSITION: The background occupies the LEFT HALF and fills the area behind the figure, but is slightly darkened on the right side (where the figure stands) to let the figure pop. Dark vignette around all four corners of the final image.',
+    'BACKGROUND (LEFT HALF, RECEDED AND DARKENED):',
+    getBgDesc(selBg),
     '',
-    'UNIFORM: Vivid, warm, saturated olive drab or era-appropriate color. All insignia, buckles, straps, and equipment rendered with high detail and sharp focus.',
+    'BACKGROUND TREATMENT: The background is noticeably DARKER and slightly LESS SATURATED than the figure. A dark vignette surrounds the outer edges of the map/scene. On the RIGHT SIDE of the background (where the figure stands), the background gradually transitions from darker to the warm aura glow, so there\'s no hard-edged pasted-on feeling.',
     '',
-    'OVERALL RENDERING STYLE: Photorealistic but GRAPHIC and HIGH-CONTRAST like a theatrical movie poster. Saturated colors. Deep blacks. Bright highlights. Cinematic color grading. The image should read instantly at small YouTube thumbnail size — the general\'s face should be identifiable and emotionally legible even at 200px wide.',
+    'UNIFORM: Vivid, warm, saturated olive drab or era-appropriate color. All insignia, buckles, straps, helmet, and equipment rendered with high detail and sharp focus. Uniform is brighter and more saturated than the background.',
     '',
-    'NEGATIVE REQUIREMENTS: NO text, NO letters, NO numbers, NO watermarks, NO UI elements, NO play buttons, NO borders. Leave the lower-left, lower-center, and lower-right areas relatively uncluttered so a banner can be overlaid cleanly in post-production.'
+    'OVERALL STYLE: Photorealistic but GRAPHIC and HIGH-CONTRAST like a theatrical movie poster. Deep blacks. Bright highlights. Cinematic color grading. Must read instantly at small YouTube thumbnail size.',
+    '',
+    'NEGATIVE REQUIREMENTS: NO text, NO letters, NO numbers, NO watermarks, NO UI elements, NO play buttons, NO borders, NO insignia text on uniform patches. Leave the lower-left, lower-center, and lower-right areas relatively uncluttered so a banner can be overlaid cleanly in post-production.'
   ].join('\n');
 }
 
 // PASS 1: Generate just the background — NO figure. Maximum map detail.
 function buildPromptPass1() {
   return [
-    'PASS 1 OF 2 — BACKGROUND ONLY (no human figure).',
+    'PASS 1 OF 2 — BACKGROUND ONLY (no human figure at all).',
     '',
-    'Generate a 1280x720 pixel widescreen 16:9 image. Fill the ENTIRE frame with the background element described below — no human figures, no people, just the environment.',
+    'Generate a widescreen 16:9 image. Fill the ENTIRE frame with the background element described below. NO people, NO soldiers, NO faces — just the environment.',
     '',
-    'BACKGROUND: ' + getBgDesc(selBg),
+    'BACKGROUND SCENE:',
+    getBgDesc(selBg),
     '',
-    'LIGHTING: Dramatic directional lighting. Warm orange/red tones on the right-center area of the frame (as if lit by fire or warm light from that direction) transitioning to cooler darker tones on the left. This lighting gradient is intentional — the right-center area will become the backdrop for a figure in Pass 2.',
+    '*** CRITICAL LIGHTING LAYOUT ***',
+    'The image must have THIS specific lighting gradient from left to right:',
+    '- LEFT HALF: Darker, cooler tones. The main visual detail of the scene lives here (arrows, terrain, etc). Dark vignette in the top-left corner.',
+    '- RIGHT-CENTER AREA: A strong BRIGHT WARM RADIAL GLOW radiating outward — bright orange fading to red at the edges. This glow should look like a rising sun or massive fire just behind the scene, brightest near the right-center and fading at the edges. The glow fills the right 40% of the frame.',
+    '- This is intentional: the right-center glow is the HALO that a figure will appear in front of during Pass 2. It must be clearly visible as a warm orange radial gradient.',
     '',
-    'RENDERING: HIGH-CONTRAST, SATURATED colors, deep blacks. Photorealistic but with graphic YouTube-thumbnail punch. Dark vignette around all four edges.',
+    'RENDERING: HIGH-CONTRAST, SATURATED colors on the left half, BRIGHT WARM GLOW on the right. Deep blacks in corners. Photorealistic. YouTube thumbnail aesthetic.',
     '',
-    'NEGATIVE: NO human figures, NO people, NO soldiers visible in this image. NO text, NO letters, NO readable words of any kind. NO watermarks.'
+    'NEGATIVE: NO human figures, NO people, NO faces, NO soldiers, NO silhouettes of people. NO text, NO letters, NO readable words. NO watermarks. NO borders.'
   ].join('\n');
 }
 
@@ -1034,34 +1092,39 @@ function buildPromptPass1() {
 function buildPromptPass2Template() {
   var g = appData.general;
   var refNote = generalImgs.length > 0
-    ? 'CRITICAL: Match the face in the provided reference photo EXACTLY — same skin tone, face shape, jawline, eyes, hair, uniform details. Do not invent a different face. '
+    ? 'CRITICAL: Match the face in the provided reference photo(s) EXACTLY — same skin tone, face shape, jawline, eyes, hair, uniform details. Do not invent a different face. '
     : '';
 
   return [
-    'PASS 2 OF 2 — COMPOSITE the general onto the provided background image.',
+    'PASS 2 OF 2 — COMPOSITE the general onto the provided background image, preserving the background\'s warm right-side glow as an AURA behind the figure.',
     '',
-    'You are given: (1) a background image from Pass 1, (2) reference photo(s) of the general.',
+    'You are given: (1) a background image from Pass 1 (which already has a warm orange glow on its right side), (2) reference photo(s) of the general.',
     '',
-    'TASK: Add a photorealistic portrait of ' + g.name + ' onto the RIGHT HALF of the background image. ' + refNote,
+    'TASK: Add a photorealistic portrait of ' + g.name + ' into the RIGHT HALF of the background image, positioned so that the EXISTING WARM ORANGE GLOW in the background appears as a HALO radiating from behind him. ' + refNote,
     '',
     'FIGURE DETAILS: Full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + EXPRESSIONS[selectedExprIdx] + '.',
     '',
-    'PLACEMENT: Right half of the frame, taking up roughly 50-55% of image width. TIGHT CROP — head and upper chest only. Head fills the upper-right area with small margin above. Figure should feel LARGE, DOMINANT, LOOMING.',
+    'PLACEMENT: Right half of the frame, taking up roughly 50-55% of image width. TIGHT CROP — head and upper chest only. Head fills the upper-right area. Figure should feel LARGE, DOMINANT, LOOMING. Position him so the EXISTING WARM GLOW in the background sits directly behind his head and shoulders.',
     '',
-    'LIGHTING ON FIGURE (CRITICAL):',
-    '- Strong HARD rim light on the LEFT side of face/shoulders (bright edge highlight separating figure from background)',
-    '- Warm orange/red glow on the RIGHT side of face and shoulders motivated by the background\'s warm lighting',
-    '- Face is the BRIGHTEST, SHARPEST element of the entire image',
-    '- Hard directional key light from upper-left at ~45°, hard shadows under jaw and helmet brim',
-    '- The figure\'s lighting must MATCH the direction and color temperature of the background\'s lighting',
+    '*** AURA SEPARATION — CRITICAL ***',
+    'The general MUST have strong visual separation from the background:',
+    '1. The warm orange/red glow from the background should radiate OUT from behind his head — like a halo',
+    '2. On his LEFT side (the side facing the background), add a warm rim light — a bright warm edge wrapping around his shoulder, neck, and cheek from the glow',
+    '3. On his RIGHT side (outer frame edge), a cooler darker shadow so the figure has depth',
+    '4. The area DIRECTLY behind his body should be slightly darker than the glow — creating the "halo" effect',
+    '5. DO NOT paste him flat onto the background — blend edges with light and shadow so he emerges naturally from the scene',
     '',
-    'BACKDROP AURA: Add/enhance a subtle radial gradient glow directly behind the figure\'s head and shoulders (warm orange/red fading outward) to make the figure POP off the background. This is the "aura" effect that makes YouTube thumbnails read at small sizes.',
+    'LIGHTING ON THE FIGURE:',
+    '- Hard directional key light from upper-front-left at ~45°',
+    '- Warm orange rim light wrapping around his LEFT side (motivated by the background glow)',
+    '- Face brightly lit and sharp — the BRIGHTEST element in the frame',
+    '- Hard shadows under jaw and helmet brim',
     '',
-    'INTEGRATION: The figure must look naturally embedded in the scene — not pasted on. Soft shadow where figure meets background. Edge light that matches background light sources. The background\'s left-half detail should remain visible and un-obstructed.',
+    'INTEGRATION: The figure must look naturally embedded — NOT pasted on. Edge light and color temperature must match the background\'s warm glow. The background\'s left-half detail (map, arrows, etc) must remain visible and undisturbed.',
     '',
-    'COLOR GRADING: Cinematic teal-and-orange — cool shadows, warm highlights. High saturation. Deep blacks. Dark vignette around edges.',
+    'COLOR GRADING: Cinematic teal-and-orange. Deep blacks. Rich saturation. Sharp focus on the face.',
     '',
-    'NEGATIVE: NO text, NO letters, NO banners, NO watermarks. Leave the lower portion of the image relatively uncluttered so a banner can be overlaid in post-production.'
+    'NEGATIVE: NO text, NO letters, NO banners, NO watermarks, NO borders. Leave the lower portion of the image relatively uncluttered so a banner can be overlaid in post-production.'
   ].join('\n');
 }
 
@@ -1103,7 +1166,7 @@ function runSinglePass(gKey, btn) {
   var progress = startProgressTimer();
   var prompt = buildPromptSingle();
   var parts = [{ text: prompt }];
-  generalImgs.slice(0, 2).forEach(function(img) {
+  generalImgs.slice(0, 3).forEach(function(img) {
     parts.push({ inlineData: { mimeType: img.type, data: img.data } });
   });
 
@@ -1131,37 +1194,99 @@ function runTwoPass(gKey, btn) {
   var parts1 = [{ text: prompt1 }];
 
   callGemini(gKey, parts1).then(function(result1) {
+    clearInterval(progress);
+    showOverlay(false);
     if (!result1.b64) throw new Error('Pass 1 failed: ' + (result1.text || 'No image returned'));
     updateCost(getImageCost());
-
-    // PASS 2 — composite general onto pass 1 output
+    // Store pass 1 result and show approval UI
+    window._pass1Result = result1;
+    window._pass1GKey = gKey;
+    showPass1Approval(result1);
+    btn.disabled = false;
+    btn.textContent = 'GENERATE THUMBNAIL';
+  }).catch(function(err) {
     clearInterval(progress);
-    showOverlay(true, 'PASS 2 OF 2', 'Compositing general onto background...');
-    progress = startProgressTimer();
+    showOverlay(false);
+    handleGenError(err);
+    btn.disabled = false;
+    btn.textContent = 'GENERATE THUMBNAIL';
+  });
+}
 
-    var prompt2 = buildPromptPass2Template();
-    var parts2 = [{ text: prompt2 }];
-    // Pass 1 image first (the "background to edit")
-    parts2.push({ inlineData: { mimeType: result1.mime, data: result1.b64 } });
-    // Then reference photos of the general
-    generalImgs.slice(0, 2).forEach(function(img) {
-      parts2.push({ inlineData: { mimeType: img.type, data: img.data } });
-    });
+function showPass1Approval(result1) {
+  var wrap = document.getElementById('resultWrap');
+  wrap.style.display = 'flex';
+  wrap.style.flexDirection = 'column';
+  wrap.innerHTML = '<div class="div-line">Pass 1 — Background Preview · Approve to continue</div>' +
+    '<img id="pass1Preview" style="width:100%;border-radius:4px;border:1px solid var(--border2);display:block" />' +
+    '<div class="act-row">' +
+      '<button class="gen-btn" id="approveP1" style="background:var(--green)">✓ APPROVE &amp; RUN PASS 2</button>' +
+      '<button class="regen-btn" id="regenP1">↻ Regenerate Pass 1</button>' +
+    '</div>' +
+    '<div style="font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.7">Review the background before running Pass 2. Pass 2 will composite the general into the warm glow zone on the right side. Regenerating Pass 1 costs ~$' + getImageCost().toFixed(3) + '.</div>';
 
-    return callGemini(gKey, parts2);
-  }).then(function(result2) {
+  document.getElementById('pass1Preview').src = 'data:' + result1.mime + ';base64,' + result1.b64;
+
+  document.getElementById('approveP1').addEventListener('click', function() {
+    runPass2(window._pass1GKey, window._pass1Result);
+  });
+  document.getElementById('regenP1').addEventListener('click', function() {
+    wrap.innerHTML = '';
+    wrap.style.display = 'none';
+    window._pass1Result = null;
+    var btn = document.getElementById('genBtn');
+    btn.disabled = true;
+    btn.textContent = 'GENERATING...';
+    runTwoPass(window._pass1GKey, btn);
+  });
+
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  showToast('Pass 1 ready — approve or regenerate below');
+}
+
+function runPass2(gKey, pass1Result) {
+  var btn = document.getElementById('approveP1');
+  if (btn) { btn.disabled = true; btn.textContent = 'RUNNING PASS 2...'; }
+
+  showOverlay(true, 'PASS 2 OF 2', 'Compositing general onto background...');
+  var progress = startProgressTimer();
+
+  var prompt2 = buildPromptPass2Template();
+  var parts2 = [{ text: prompt2 }];
+  parts2.push({ inlineData: { mimeType: pass1Result.mime, data: pass1Result.b64 } });
+  generalImgs.slice(0, 3).forEach(function(img) {
+    parts2.push({ inlineData: { mimeType: img.type, data: img.data } });
+  });
+
+  callGemini(gKey, parts2).then(function(result2) {
     clearInterval(progress);
     showOverlay(false);
     updateCost(getImageCost());
     if (!result2.b64) throw new Error('Pass 2 failed: ' + (result2.text || 'No image returned'));
+    // Replace the approval UI with the final result UI
+    rebuildResultUI();
     loadAndComposite(result2.b64, result2.mime);
   }).catch(function(err) {
     clearInterval(progress);
     showOverlay(false);
     handleGenError(err);
-  }).finally(function() {
-    btn.disabled = false;
-    btn.textContent = 'GENERATE THUMBNAIL';
+    if (btn) { btn.disabled = false; btn.textContent = '✓ APPROVE & RUN PASS 2'; }
+  });
+}
+
+function rebuildResultUI() {
+  var wrap = document.getElementById('resultWrap');
+  wrap.innerHTML = '<div class="div-line">Generated Thumbnail</div>' +
+    '<canvas id="resultCanvas" style="width:100%;border-radius:4px;border:1px solid var(--border2);display:block"></canvas>' +
+    '<div class="act-row">' +
+      '<button class="dl-btn" id="dlBtn">Download PNG</button>' +
+      '<button class="regen-btn" id="regenBtn">Regenerate</button>' +
+      '<button class="regen-btn" id="rebannerBtn">Re-apply Banner Only</button>' +
+    '</div>';
+  document.getElementById('dlBtn').addEventListener('click', dlImage);
+  document.getElementById('regenBtn').addEventListener('click', generateImage);
+  document.getElementById('rebannerBtn').addEventListener('click', function() {
+    if (window._baseImg) compositeWithBanner(window._baseImg);
   });
 }
 
@@ -1295,15 +1420,14 @@ function compositeWithBanner(baseImg) {
 }
 
 function drawBanner(ctx, W, H, word, style, pos, fontFamily, fontWeight) {
-  // BIGGER font — target ~14-18% of image height, like the reference thumbnails
-  // DIAMONDS banner is ~18-20% of height. Let's aim for 16% of height base.
-  var targetFontSize = Math.round(H * 0.16);
-  var maxBannerWidth = W * 0.60; // banner can take up to 60% of width
+  // Target ~22% of image height for the TEXT itself (matches DIAMONDS scale)
+  var targetFontSize = Math.round(H * 0.22);
+  var maxBannerWidth = W * 0.72; // banner can take up to 72% of width
   var fontSize = targetFontSize;
 
   ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
-  // Scale down if word doesn't fit, but don't go below 60px
-  while (ctx.measureText(word).width > maxBannerWidth - 80 && fontSize > 60) {
+  // Scale down if word doesn't fit, but don't go below 80px
+  while (ctx.measureText(word).width > maxBannerWidth - 60 && fontSize > 80) {
     fontSize -= 4;
     ctx.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
   }
@@ -1311,9 +1435,9 @@ function drawBanner(ctx, W, H, word, style, pos, fontFamily, fontWeight) {
   var textW = ctx.measureText(word).width;
   var textH = fontSize;
 
-  // Bigger padding for more visual weight
-  var padX = Math.round(fontSize * 0.50);
-  var padY = Math.round(fontSize * 0.22);
+  // Tighter padding — text fills banner tightly like the reference thumbnails
+  var padX = Math.round(fontSize * 0.28);
+  var padY = Math.round(fontSize * 0.10);
   var boxW = textW + padX * 2;
   var boxH = textH + padY * 2;
 
