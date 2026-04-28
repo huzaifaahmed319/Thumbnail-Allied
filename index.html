@@ -3,1340 +3,1777 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Allied Thumbnails — Pipeline v3</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=Montserrat:wght@700;800;900&family=Anton&display=swap" rel="stylesheet">
+<title>American Brass — Thumbnail Pipeline</title>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0e0d0b;--bg2:#161512;--bg3:#1f1e1a;--bg4:#272520;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);--border3:rgba(255,255,255,0.22);
-  --red:#c41a00;--red2:#d42000;--red-dim:rgba(196,26,0,0.1);
-  --accent:#c8a96e;--accent-dim:rgba(200,169,110,0.1);
-  --text:#e4dfd0;--muted:#6a6558;--muted2:#9c9788;
-  --green:#2a5e36;--green2:#357a45;
-  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--display:'Bebas Neue',sans-serif;
+:root[data-theme="dark"] {
+  --bg: #0a0e15;
+  --bg-elevated: #111720;
+  --bg-input: #161d28;
+  --bg-hover: #1c2532;
+  --border: #1f2a38;
+  --border-strong: #2a3849;
+  --text: #e0e6ee;
+  --text-muted: #6c7888;
+  --text-faint: #3a4554;
+  --accent: #4a6e88;
+  --accent-hover: #5a8aa8;
+  --accent-soft: rgba(74, 110, 136, 0.15);
+  --steel: #3a5870;
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.12);
+  --success: #4caf50;
+  --warning: #ff9800;
 }
-body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;font-size:13px;overflow-x:hidden}
-.hdr{height:50px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;background:var(--bg);z-index:300}
-.logo{font-family:var(--display);font-size:19px;letter-spacing:3px;display:flex;align-items:center;gap:8px}
-.logo-bar{width:3px;height:16px;background:var(--red)}
-.hdr-right{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1.5px;display:flex;align-items:center;gap:12px}
-.pill{background:var(--bg3);border:1px solid var(--border2);padding:3px 8px;border-radius:3px}
-.layout{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - 50px)}
-.side{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
-.side-block{padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
-
-/* Mobile layout — stack sidebar on top, scroll naturally */
-@media (max-width: 768px) {
-  .layout{grid-template-columns:1fr;height:auto;min-height:calc(100vh - 50px)}
-  .side{border-right:none;border-bottom:1px solid var(--border);max-height:none;overflow-y:visible}
-  .main{min-height:70vh}
-  .main-body{padding:16px}
-  .hdr{padding:0 14px}
-  .hdr-right span:last-child{display:none}
-  .bg-grid{grid-template-columns:1fr}
-  .empty-logo{font-size:40px}
-  .empty-title{font-size:16px}
-  .prompt-out{font-size:10px;max-height:260px}
-  textarea{height:120px;font-size:12px}
-  .analyze-btn{font-size:14px}
-  .gen-btn{font-size:13px}
-  body{font-size:12px;overflow-x:hidden}
+:root[data-theme="light"] {
+  --bg: #f4f6fa;
+  --bg-elevated: #ffffff;
+  --bg-input: #f0f3f7;
+  --bg-hover: #e6ebf1;
+  --border: #d8dde5;
+  --border-strong: #b8c0cc;
+  --text: #1a2838;
+  --text-muted: #5a6878;
+  --text-faint: #a0a8b4;
+  --accent: #3a5870;
+  --accent-hover: #2a4258;
+  --accent-soft: rgba(58, 88, 112, 0.08);
+  --steel: #3a5870;
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.08);
+  --success: #2e7d32;
+  --warning: #ed6c02;
 }
-.lbl{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;display:block}
-textarea{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:11px;line-height:1.75;padding:10px 11px;resize:none;height:150px;outline:none;transition:border-color 0.2s}
-textarea:focus{border-color:var(--border3)}
-textarea::placeholder{color:var(--muted)}
-.pdf-btn{margin-top:6px;width:100%;background:transparent;border:1px dashed var(--border2);border-radius:4px;color:var(--muted);font-family:var(--mono);font-size:9px;letter-spacing:1.5px;padding:8px;cursor:pointer;transition:all 0.2s;text-align:center;display:block}
-.pdf-btn:hover{border-color:var(--border3);color:var(--muted2)}
-input[type=file]{display:none}
-.key-stack{display:flex;flex-direction:column;gap:8px}
-.key-row{display:flex;flex-direction:column;gap:5px}
-input[type=password]{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:11px;padding:8px 10px;outline:none;transition:border-color 0.2s}
-input[type=password]:focus{border-color:var(--border3)}
-input[type=password]::placeholder{color:var(--muted)}
-.analyze-btn{margin:12px 16px;background:var(--red);border:none;border-radius:4px;color:#fff;font-family:var(--display);font-size:16px;letter-spacing:2px;padding:10px;cursor:pointer;width:calc(100% - 32px);display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.15s,transform 0.1s}
-.analyze-btn:hover{background:var(--red2)}
-.analyze-btn:active{transform:scale(0.98)}
-.analyze-btn:disabled{background:var(--bg3);color:var(--muted);cursor:not-allowed;transform:none}
-.steps{padding:12px 16px;display:flex;flex-direction:column;gap:5px;flex-shrink:0}
-.stp{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:4px;border:1px solid transparent;transition:all 0.25s}
-.stp.active{border-color:rgba(200,169,110,0.2);background:var(--accent-dim)}
-.stp.done{border-color:rgba(42,94,54,0.3);background:rgba(42,94,54,0.08)}
-.stp-n{font-family:var(--mono);font-size:9px;width:16px;height:16px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--muted);transition:all 0.25s}
-.stp.active .stp-n{border-color:var(--accent);color:var(--accent)}
-.stp.done .stp-n{border-color:var(--green2);color:var(--green2)}
-.stp-t{font-size:11px;color:var(--muted)}
-.stp.active .stp-t{color:var(--text)}
-.stp.done .stp-t{color:var(--muted2)}
-.main{display:flex;flex-direction:column;overflow:hidden}
-.main-hdr{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.main-title{font-family:var(--display);font-size:17px;letter-spacing:1.5px}
-.main-meta{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px}
-.main-body{flex:1;overflow-y:auto;overflow-x:hidden;padding:22px 24px;display:flex;flex-direction:column;gap:18px}
-.empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center}
-.empty-logo{font-family:var(--display);font-size:56px;letter-spacing:6px;color:var(--bg3)}
-.empty-title{font-family:var(--display);font-size:20px;letter-spacing:2px;color:var(--muted)}
-.empty-desc{font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.9;max-width:280px}
-.card{background:var(--bg2);border:1px solid var(--border2);border-radius:5px;overflow:visible}
-.card-hdr{padding:8px 13px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;border-radius:5px 5px 0 0}
-.card-lbl{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
-.card-sub{font-family:var(--mono);font-size:9px;color:var(--muted)}
-.card-body{padding:13px}
-.intel-text{font-family:var(--mono);font-size:11px;color:var(--muted2);line-height:1.85;font-style:italic}
-.intel-row{margin-top:9px;padding-top:9px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.7}
-.intel-row b{color:var(--text);font-weight:500}
-.opt-list{display:flex;flex-direction:column;gap:7px}
-.opt-item{border:1px solid var(--border2);border-radius:4px;padding:10px 12px;cursor:pointer;transition:all 0.18s;background:var(--bg3);position:relative}
-.opt-item:hover{border-color:var(--border3)}
-.opt-item.sel{border-color:var(--accent);background:var(--accent-dim)}
-.opt-formula{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:4px}
-.opt-text{font-size:13px;font-weight:500;color:var(--text);line-height:1.45}
-.opt-item.sel .opt-text{color:var(--accent)}
-.opt-why{font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:4px;line-height:1.5}
-.opt-check{position:absolute;top:9px;right:9px;width:14px;height:14px;border-radius:50%;background:var(--accent);display:none;align-items:center;justify-content:center;font-size:8px;color:#000;font-weight:bold}
-.opt-item.sel .opt-check{display:flex}
-.bg-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.bg-opt{border:1px solid var(--border2);border-radius:4px;padding:10px 12px;cursor:pointer;transition:all 0.18s;background:var(--bg3);position:relative}
-.bg-opt:hover{border-color:var(--border3)}
-.bg-opt.sel{border-color:var(--accent);background:var(--accent-dim)}
-.bg-type{font-family:var(--display);font-size:13px;letter-spacing:1px;margin-bottom:3px}
-.bg-why{font-family:var(--mono);font-size:9px;color:var(--muted2);line-height:1.6}
-.bg-rec{position:absolute;top:7px;right:7px;font-family:var(--mono);font-size:8px;background:var(--red);color:#fff;padding:1px 5px;border-radius:2px;letter-spacing:1px}
-.bg-check{position:absolute;top:7px;right:7px;width:13px;height:13px;border-radius:50%;background:var(--accent);display:none;align-items:center;justify-content:center;font-size:8px;color:#000;font-weight:bold}
-.bg-opt.sel .bg-check{display:flex}
-.bg-opt.sel .bg-rec{display:none}
-.banner-wrap{display:flex;flex-wrap:wrap;gap:7px}
-.ban-opt{border:1px solid var(--border2);border-radius:4px;padding:8px 13px;cursor:pointer;transition:all 0.18s;background:var(--bg3);min-width:100px;position:relative}
-.ban-opt:hover{border-color:var(--border3)}
-.ban-opt.sel{border-color:var(--red);background:var(--red-dim)}
-.ban-word{font-family:var(--display);font-size:19px;letter-spacing:2px}
-.ban-opt.sel .ban-word{color:#ff6644}
-.ban-cat{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-top:1px}
-.ban-why{font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.5;margin-top:3px;max-width:220px}
-.ban-check{position:absolute;top:6px;right:6px;width:13px;height:13px;border-radius:50%;background:var(--red);display:none;align-items:center;justify-content:center;font-size:8px;color:#fff;font-weight:bold}
-.ban-opt.sel .ban-check{display:flex}
-.ref-drop{border:1px dashed var(--border2);border-radius:4px;padding:11px;transition:border-color 0.2s}
-.ref-drop:hover{border-color:var(--border3)}
-.ref-thumbs{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
-.ref-img{width:54px;height:54px;border-radius:3px;object-fit:cover;border:1px solid var(--border2)}
-.ref-plus{width:54px;height:54px;border-radius:3px;border:1px dashed var(--border2);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--muted);cursor:pointer}
-.ref-plus:hover{border-color:var(--border3);color:var(--muted2)}
-.ref-hint{font-family:var(--mono);font-size:9px;color:var(--muted);text-align:center;letter-spacing:1px}
-.ref-note{font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.65;margin-top:8px}
-.prompt-out{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;font-family:var(--mono);font-size:11px;line-height:1.8;padding:13px;white-space:pre-wrap;word-break:break-word;min-height:80px;color:var(--text);max-height:400px;overflow-y:auto}
-.prompt-out.awaiting{color:var(--muted);font-style:italic}
-.act-row{display:flex;gap:7px;flex-wrap:wrap}
-.gen-btn{flex:1;min-width:140px;background:var(--red);border:none;border-radius:4px;color:#fff;font-family:var(--display);font-size:15px;letter-spacing:2px;padding:11px;cursor:pointer;transition:background 0.15s,transform 0.1s}
-.gen-btn:hover{background:var(--red2)}
-.gen-btn:active{transform:scale(0.98)}
-.gen-btn:disabled{background:var(--bg3);color:var(--muted);cursor:not-allowed;transform:none}
-.copy-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--muted2);font-family:var(--mono);font-size:10px;padding:11px 14px;cursor:pointer;transition:all 0.18s}
-.copy-btn:hover{border-color:var(--border3);color:var(--text)}
-.result-img{width:100%;border-radius:4px;border:1px solid var(--border2);display:block}
-.dl-btn{background:var(--green);border:none;border-radius:4px;color:#fff;font-family:var(--mono);font-size:10px;padding:9px 16px;cursor:pointer;transition:background 0.15s}
-.dl-btn:hover{background:var(--green2)}
-.regen-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--muted2);font-family:var(--mono);font-size:10px;padding:9px 14px;cursor:pointer;transition:all 0.18s}
-.regen-btn:hover{border-color:var(--border3);color:var(--text)}
-.div-line{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;display:flex;align-items:center;gap:10px;margin:4px 0}
-.div-line::before,.div-line::after{content:'';flex:1;height:1px;background:var(--border)}
-.overlay{display:none;position:fixed;inset:0;background:rgba(14,13,11,0.9);z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:14px}
-.overlay.show{display:flex}
-.spin{width:30px;height:30px;border:2px solid rgba(255,255,255,0.06);border-top-color:var(--red);border-radius:50%;animation:sp 0.75s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
-.ov-title{font-family:var(--display);font-size:18px;letter-spacing:3px;color:var(--muted2)}
-.ov-sub{font-family:var(--mono);font-size:10px;color:var(--muted)}
-.toast{position:fixed;bottom:20px;right:20px;background:var(--bg4);border:1px solid var(--border2);border-radius:4px;padding:8px 13px;font-family:var(--mono);font-size:11px;color:var(--text);z-index:900;opacity:0;transform:translateY(6px);transition:all 0.22s;pointer-events:none;max-width:340px;line-height:1.5}
-.toast.on{opacity:1;transform:translateY(0)}
-.toast.err{color:#ff7755;border-color:rgba(196,26,0,0.35)}
-::-webkit-scrollbar{width:3px}
-::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 14px; }
+body {
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', 'Courier New', monospace;
+  background: var(--bg); color: var(--text); min-height: 100vh;
+  -webkit-font-smoothing: antialiased; letter-spacing: -0.01em;
+}
+button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 
-/* model picker */
-.model-opt{border:1px solid var(--border2);border-radius:4px;padding:8px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--bg2);transition:all 0.15s}
-.model-opt.sel{border-color:var(--red);background:var(--red-dim)}
-.model-name{font-family:var(--display);font-size:12px;letter-spacing:1px;color:var(--text)}
-.model-meta{font-family:var(--mono);font-size:9px;color:var(--muted)}
-.model-cost{font-family:var(--mono);font-size:10px;color:var(--muted)}
-.model-opt.sel .model-cost{color:var(--red)}
+.header {
+  height: 56px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 24px;
+  background: var(--bg); position: sticky; top: 0; z-index: 50;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; }
+.brand-bar {
+  width: 3px; height: 16px;
+  background: linear-gradient(180deg, var(--steel) 0%, var(--steel) 50%, var(--danger) 50%, var(--danger) 100%);
+}
+.brand-name { text-transform: uppercase; }
+.header-nav {
+  margin-left: auto; display: flex; align-items: center; gap: 24px;
+  font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted);
+}
+.nav-item { cursor: pointer; padding: 4px 0; border-bottom: 1px solid transparent; transition: all 0.15s ease; }
+.nav-item:hover { color: var(--text); }
+.nav-item.active { color: var(--text); border-bottom-color: var(--accent); }
+.nav-pill { background: var(--bg-input); border: 1px solid var(--border); padding: 5px 10px; font-size: 10px; color: var(--text); }
+.theme-toggle {
+  background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+  padding: 6px 10px; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.15s ease;
+}
+.theme-toggle:hover { border-color: var(--text-muted); color: var(--text); }
 
-/* expression picker */
-.expr-opt{border:1px solid var(--border2);border-radius:4px;padding:7px 9px;cursor:pointer;background:var(--bg2);text-align:center;transition:all 0.15s}
-.expr-opt.sel{border-color:var(--red);background:var(--red-dim)}
-.expr-name{font-family:var(--display);font-size:12px;letter-spacing:1px}
-.expr-tag{font-family:var(--mono);font-size:8px;color:var(--muted)}
+.app { display: grid; grid-template-columns: 320px 1fr; min-height: calc(100vh - 56px); }
+.sidebar { border-right: 1px solid var(--border); padding: 28px 24px 32px; overflow-y: auto; }
+.main { padding: 28px 36px 60px; position: relative; }
 
-/* cost bar */
-.cost-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;margin:0 16px 8px;font-family:var(--mono);font-size:10px}
-.cost-bar-lbl{color:var(--muted);letter-spacing:1px}
-.cost-bar-val{color:var(--accent)}
+.section { margin-bottom: 24px; }
+.section-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; font-weight: 500; }
 
-/* title char pill */
-.char-pill{font-family:var(--mono);font-size:9px;margin-top:3px;padding:2px 6px;border-radius:2px;display:inline-block}
-.char-ok{background:rgba(42,94,54,0.3);color:#4a9a5c}
-.char-bad{background:rgba(196,26,0,0.2);color:#ff6644}
+.upload-zone {
+  border: 1px dashed var(--border-strong); background: var(--bg-input);
+  padding: 12px; text-align: center; cursor: pointer; font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+  transition: all 0.15s ease; margin-bottom: 8px; word-break: break-all;
+}
+.upload-zone:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.upload-zone.has-file { border-style: solid; border-color: var(--success); color: var(--success); }
+
+.script-textarea {
+  width: 100%; background: var(--bg-input); border: 1px solid var(--border);
+  color: var(--text); padding: 12px; font-size: 12px; resize: none;
+  min-height: 140px; outline: none; transition: border-color 0.15s ease; line-height: 1.5;
+}
+.script-textarea:focus { border-color: var(--accent); }
+.script-textarea::placeholder { color: var(--text-faint); }
+
+.api-input {
+  width: 100%; background: var(--bg-input); border: 1px solid var(--border);
+  color: var(--text); padding: 11px 12px; font-size: 12px; outline: none;
+  transition: border-color 0.15s ease; letter-spacing: 0.1em;
+}
+.api-input:focus { border-color: var(--accent); }
+.api-input::placeholder { color: var(--text-faint); letter-spacing: normal; }
+
+.option-stack { display: flex; flex-direction: column; gap: 4px; }
+.option-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px; background: var(--bg-input); border: 1px solid var(--border);
+  cursor: pointer; transition: all 0.12s ease;
+}
+.option-row:hover { border-color: var(--border-strong); background: var(--bg-hover); }
+.option-row.active { border-color: var(--accent); background: var(--accent-soft); }
+.option-row.active .option-price { color: var(--accent); }
+.option-meta { display: flex; flex-direction: column; gap: 2px; }
+.option-name { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.option-detail { font-size: 10px; color: var(--text-muted); }
+.option-price { font-size: 10px; color: var(--text-muted); font-weight: 600; }
+
+.btn-primary {
+  width: 100%; background: var(--accent); color: white; border: none;
+  padding: 13px; font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; cursor: pointer; transition: background 0.15s ease;
+  margin-top: 4px; position: relative;
+}
+.btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+.btn-primary:disabled { background: var(--bg-input); color: var(--text-faint); cursor: not-allowed; }
+.btn-primary.loading { color: transparent; }
+.btn-primary.loading::after {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  width: 14px; height: 14px; margin: -7px 0 0 -7px;
+  border: 2px solid rgba(255,255,255,0.3); border-top-color: white;
+  border-radius: 50%; animation: spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.spend-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px; background: var(--bg-input); border: 1px solid var(--border);
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-muted); margin-top: 8px;
+}
+.spend-amount { color: var(--success); font-weight: 700; }
+
+.main-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding-bottom: 18px; border-bottom: 1px solid var(--border); margin-bottom: 28px;
+}
+.main-title { font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.main-hint { font-size: 10px; color: var(--text-muted); letter-spacing: 0.08em; }
+
+.empty-state {
+  min-height: 60vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; padding: 40px 20px;
+}
+.empty-logo {
+  font-size: 80px; font-weight: 800; letter-spacing: 0.05em;
+  color: var(--text-faint); margin-bottom: 24px; line-height: 1;
+}
+.empty-title { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; font-weight: 600; }
+.empty-body { max-width: 460px; font-size: 12px; line-height: 1.7; color: var(--text-muted); }
+
+.analyzing-state {
+  min-height: 60vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; padding: 40px 20px;
+}
+.analyzing-logo {
+  font-size: 80px; font-weight: 800; letter-spacing: 0.05em;
+  color: var(--accent); margin-bottom: 24px; line-height: 1;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+.analyzing-title { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text); margin-bottom: 14px; font-weight: 600; }
+.analyzing-body { max-width: 460px; font-size: 12px; line-height: 1.7; color: var(--text-muted); }
+.analyzing-stages {
+  margin-top: 24px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start;
+  font-size: 11px; color: var(--text-muted); letter-spacing: 0.05em;
+}
+.stage-item { display: flex; align-items: center; gap: 10px; opacity: 0.4; transition: opacity 0.3s ease; }
+.stage-item.active { opacity: 1; color: var(--accent); }
+.stage-item.done { opacity: 1; color: var(--success); }
+.stage-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+.error-banner {
+  background: var(--danger-soft); border: 1px solid var(--danger);
+  padding: 14px 16px; margin-bottom: 20px; font-size: 12px;
+  color: var(--text); display: flex; align-items: center; gap: 12px;
+}
+.error-banner-icon { color: var(--danger); font-size: 16px; }
+.error-banner-msg { flex: 1; line-height: 1.5; }
+.error-banner-close {
+  background: transparent; border: none; color: var(--text-muted);
+  cursor: pointer; padding: 4px 8px; font-size: 14px;
+}
+
+.workflow { display: none; flex-direction: column; gap: 32px; }
+.workflow.visible { display: flex; }
+.step { opacity: 0.35; transition: opacity 0.3s ease; pointer-events: none; }
+.step.active, .step.completed { opacity: 1; pointer-events: auto; }
+.step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.step-num { font-size: 10px; letter-spacing: 0.15em; color: var(--text-muted); }
+.step-title { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.step-status {
+  margin-left: auto; font-size: 9px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+.step.completed .step-status { color: var(--success); }
+.step.active .step-status { color: var(--accent); }
+
+.analysis-summary {
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  padding: 16px; font-size: 12px; line-height: 1.6;
+}
+.analysis-row { display: flex; gap: 12px; margin-bottom: 10px; }
+.analysis-row:last-child { margin-bottom: 0; }
+.analysis-key {
+  flex-shrink: 0; min-width: 140px; font-size: 10px;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); padding-top: 1px;
+}
+.analysis-value { color: var(--text); flex: 1; }
+.analysis-value .triggers { display: flex; flex-wrap: wrap; gap: 6px; }
+.trigger-chip {
+  display: inline-block; background: var(--accent-soft); color: var(--accent);
+  padding: 2px 8px; font-size: 10px; letter-spacing: 0.05em;
+  text-transform: uppercase; border: 1px solid var(--accent);
+}
+.tier-pill {
+  display: inline-block; padding: 2px 10px; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+}
+.tier-pill.tier-s { background: var(--accent); color: white; }
+.tier-pill.tier-a { background: var(--bg-hover); color: var(--text); border: 1px solid var(--border-strong); }
+.tier-pill.tier-b { background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border); }
+
+.options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 1280px) { .options-grid { grid-template-columns: 1fr; } }
+.option-card {
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  padding: 16px; cursor: pointer; transition: all 0.15s ease; position: relative;
+}
+.option-card:hover { border-color: var(--border-strong); background: var(--bg-hover); }
+.option-card.selected { border-color: var(--accent); background: var(--accent-soft); }
+.option-card.selected::before {
+  content: '✓'; position: absolute; top: 8px; right: 8px; width: 22px; height: 22px;
+  background: var(--accent); color: white; display: flex; align-items: center;
+  justify-content: center; font-size: 12px; font-weight: 700;
+}
+
+.tier-badge {
+  display: inline-block; font-size: 9px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; font-weight: 700;
+}
+.tier-badge.tier-s { color: var(--accent); }
+.tier-badge.tier-a { color: var(--text); }
+.tier-badge.tier-b { color: var(--text-muted); }
+
+.title-char-count {
+  display: inline-block; font-size: 9px; padding: 1px 6px;
+  background: var(--bg-input); border: 1px solid var(--border);
+  color: var(--text-muted); margin-left: 8px; letter-spacing: 0.05em;
+}
+.title-char-count.optimal { color: var(--success); border-color: var(--success); }
+.title-char-count.suboptimal { color: var(--warning); border-color: var(--warning); }
+
+.option-banner-preview {
+  font-size: 12px; font-weight: 800; color: var(--danger);
+  letter-spacing: 0.06em; margin-bottom: 8px; text-transform: uppercase;
+}
+.option-banners-list {
+  font-size: 9px; color: var(--text-muted); margin-top: 4px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.option-title-text { font-size: 12px; line-height: 1.5; color: var(--text); margin-bottom: 12px; }
+.option-rationale {
+  font-size: 10px; color: var(--text-muted); line-height: 1.5;
+  padding-top: 10px; border-top: 1px solid var(--border); font-style: italic;
+}
+
+.banner-options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
+@media (max-width: 1280px) { .banner-options-grid { grid-template-columns: 1fr; } }
+.banner-card {
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  padding: 14px 16px; cursor: pointer; transition: all 0.15s ease; position: relative;
+  text-align: center;
+}
+.banner-card:hover { border-color: var(--border-strong); background: var(--bg-hover); }
+.banner-card.selected { border-color: var(--accent); background: var(--accent-soft); }
+.banner-card.selected::before {
+  content: '✓'; position: absolute; top: 6px; right: 6px; width: 18px; height: 18px;
+  background: var(--accent); color: white; display: flex; align-items: center;
+  justify-content: center; font-size: 10px; font-weight: 700;
+}
+.banner-card-word {
+  font-size: 16px; font-weight: 800; color: var(--danger);
+  letter-spacing: 0.08em; margin-bottom: 6px; text-transform: uppercase;
+}
+.banner-card-category {
+  font-size: 8px; color: var(--accent); margin-bottom: 4px;
+  letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700;
+}
+.banner-card-angle {
+  font-size: 9px; color: var(--text-muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+.banner-edit-row {
+  display: flex; gap: 8px; align-items: center; padding: 12px 14px;
+  background: var(--bg-elevated); border: 1px solid var(--border);
+}
+.banner-edit-label {
+  font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text-muted); flex-shrink: 0;
+}
+.banner-edit-input {
+  flex: 1; background: var(--bg-input); border: 1px solid var(--border);
+  color: var(--danger); padding: 8px 10px; font-size: 13px; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase; outline: none;
+}
+.banner-edit-input:focus { border-color: var(--accent); }
+
+.styles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 1280px) { .styles-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) { .styles-grid { grid-template-columns: 1fr; } }
+.style-card {
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  cursor: pointer; transition: all 0.15s ease; overflow: hidden; position: relative;
+}
+.style-card:hover { border-color: var(--border-strong); }
+.style-card.selected { border-color: var(--accent); }
+.style-card.selected::before {
+  content: '✓'; position: absolute; top: 8px; right: 8px; width: 22px; height: 22px;
+  background: var(--accent); color: white; display: flex; align-items: center;
+  justify-content: center; font-size: 12px; font-weight: 700; z-index: 2;
+}
+.style-card.recommended::after {
+  content: 'RECOMMENDED'; position: absolute; top: 8px; left: 8px;
+  background: var(--accent); color: white; padding: 2px 8px;
+  font-size: 8px; letter-spacing: 0.15em; font-weight: 700; z-index: 2;
+}
+.style-preview {
+  width: 100%; aspect-ratio: 16/9; background: var(--bg-input);
+  display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.style-preview img { width: 100%; height: 100%; object-fit: cover; }
+.style-preview-text { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-faint); text-align: center; line-height: 1.6; padding: 12px; }
+.style-info { padding: 12px 14px; }
+.style-name { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+.style-desc { font-size: 10px; color: var(--text-muted); line-height: 1.5; }
+
+.refs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.ref-slot {
+  aspect-ratio: 1; background: var(--bg-input); border: 1px dashed var(--border-strong);
+  cursor: pointer; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 6px; font-size: 9px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--text-muted); transition: all 0.15s ease;
+  position: relative; overflow: hidden;
+}
+.ref-slot:hover { border-color: var(--accent); color: var(--accent); }
+.ref-slot.has-image { border-style: solid; border-color: var(--success); padding: 0; }
+.ref-slot.has-image img { width: 100%; height: 100%; object-fit: cover; }
+.ref-icon { font-size: 18px; font-weight: 300; }
+.ref-note {
+  margin-top: 12px; padding: 10px 12px; background: var(--accent-soft);
+  border: 1px solid var(--accent); font-size: 10px; line-height: 1.6; color: var(--text);
+}
+
+.toggle-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 0; margin-top: 16px; border-top: 1px solid var(--border);
+}
+.toggle-info-name { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.toggle-info-desc { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+.switch {
+  position: relative; width: 38px; height: 20px; background: var(--bg-input);
+  border: 1px solid var(--border); cursor: pointer; transition: all 0.2s ease;
+}
+.switch::after {
+  content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px;
+  background: var(--text-faint); transition: all 0.2s ease;
+}
+.switch.on { border-color: var(--accent); background: var(--accent-soft); }
+.switch.on::after { left: 20px; background: var(--accent); }
+
+.output-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+@media (max-width: 1280px) { .output-grid { grid-template-columns: 1fr; } }
+.output-tile {
+  aspect-ratio: 16/9; background: var(--bg-input); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.output-tile.empty { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-faint); }
+.output-tile.loading {
+  font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+.output-tile.error {
+  font-size: 10px; color: var(--danger); padding: 16px; text-align: center;
+  letter-spacing: 0.1em; text-transform: uppercase; line-height: 1.4;
+}
+.output-tile img { width: 100%; height: 100%; object-fit: cover; }
+.output-tile-label {
+  position: absolute; bottom: 8px; left: 8px;
+  background: rgba(10,14,21,0.85); color: white;
+  padding: 4px 8px; font-size: 9px;
+  letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700;
+}
+.output-tile-actions {
+  position: absolute; top: 8px; right: 8px;
+  display: flex; gap: 6px; opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.output-tile:hover .output-tile-actions { opacity: 1; }
+.tile-action {
+  background: rgba(10,14,21,0.85); color: white; border: none;
+  padding: 6px 10px; font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; cursor: pointer;
+}
+.tile-action:hover { background: var(--accent); }
+
+.seo-block {
+  margin-top: 24px; padding: 18px; background: var(--bg-elevated); border: 1px solid var(--border);
+}
+.seo-section { margin-bottom: 16px; }
+.seo-section:last-child { margin-bottom: 0; }
+.seo-label {
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 8px; font-weight: 700;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.copy-btn {
+  background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+  padding: 3px 8px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.15s ease;
+}
+.copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+.copy-btn.copied { color: var(--success); border-color: var(--success); }
+.seo-content { font-size: 12px; line-height: 1.6; color: var(--text); white-space: pre-wrap; }
+.seo-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.seo-tag {
+  background: var(--bg-input); border: 1px solid var(--border);
+  padding: 3px 8px; font-size: 10px; color: var(--text-muted);
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+@media (max-width: 1024px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+}
 </style>
 </head>
 <body>
-<div class="overlay" id="overlay">
-  <div class="spin"></div>
-  <div class="ov-title" id="ovTitle">ANALYZING</div>
-  <div class="ov-sub" id="ovSub">Reading script...</div>
-</div>
-<div class="toast" id="toast"></div>
-<header class="hdr">
-  <div class="logo"><div class="logo-bar"></div>ALLIED THUMBNAILS</div>
-  <div class="hdr-right"><span class="pill">PIPELINE v3.6</span><span>CANVA WORKFLOW · RAW OUTPUT</span></div>
-</header>
-<div class="layout">
-  <div class="side">
-    <div class="side-block">
-      <span class="lbl">Script Input</span>
-      <label class="pdf-btn" for="pdfFile">📄 UPLOAD PDF SCRIPT</label>
-      <input type="file" id="pdfFile" accept=".pdf">
-      <textarea id="scriptInput" placeholder="Or paste script text here..."></textarea>
-    </div>
-    <div class="side-block">
-      <div class="key-stack">
-        <div class="key-row"><span class="lbl">Anthropic API Key</span><input type="password" id="anthropicKey" placeholder="sk-ant-..."></div>
-        <div class="key-row"><span class="lbl">Google AI Studio Key</span><input type="password" id="googleKey" placeholder="AIza..."></div>
-      </div>
-      <div style="margin-top:10px">
-        <span class="lbl">Analysis Model (Claude)</span>
-        <div style="display:flex;flex-direction:column;gap:5px" id="claudePicker">
-          <div class="model-opt" data-claude="0">
-            <div><div class="model-name">HAIKU 4.5</div><div class="model-meta">Fast draft</div></div>
-            <div class="model-cost">~$0.014</div>
-          </div>
-          <div class="model-opt" data-claude="1">
-            <div><div class="model-name">SONNET 4.6</div><div class="model-meta">Balanced</div></div>
-            <div class="model-cost">~$0.040</div>
-          </div>
-          <div class="model-opt sel" data-claude="2">
-            <div><div class="model-name">OPUS 4.7</div><div class="model-meta">Best quality</div></div>
-            <div class="model-cost">~$0.092</div>
-          </div>
-        </div>
-      </div>
-      <div style="margin-top:10px">
-        <span class="lbl">Image Model (Google)</span>
-        <div style="display:flex;flex-direction:column;gap:5px" id="imgPicker">
-          <div class="model-opt" data-img="0">
-            <div><div class="model-name">NANO BANANA</div><div class="model-meta">2.5 Flash Image · Fast</div></div>
-            <div class="model-cost">~$0.039</div>
-          </div>
-          <div class="model-opt sel" data-img="1">
-            <div><div class="model-name">NANO BANANA PRO</div><div class="model-meta">3 Pro Image · Best</div></div>
-            <div class="model-cost">~$0.134</div>
-          </div>
-        </div>
-      </div>
-      <div style="margin-top:10px">
-        <span class="lbl">Output Resolution</span>
-        <div style="display:flex;flex-direction:column;gap:5px" id="resPicker">
-          <div class="model-opt" data-res="1K">
-            <div><div class="model-name">1K</div><div class="model-meta">1344×768 · Fast</div></div>
-            <div class="model-cost">~$0.134</div>
-          </div>
-          <div class="model-opt sel" data-res="2K">
-            <div><div class="model-name">2K</div><div class="model-meta">2688×1536 · Recommended</div></div>
-            <div class="model-cost">~$0.134</div>
-          </div>
-          <div class="model-opt" data-res="4K">
-            <div><div class="model-name">4K</div><div class="model-meta">5376×3072 · Max detail</div></div>
-            <div class="model-cost">~$0.24</div>
-          </div>
-        </div>
-      </div>
-      <div style="margin-top:10px">
-        <span class="lbl">Generation Mode</span>
-        <div style="display:flex;flex-direction:column;gap:5px" id="modePicker">
-          <div class="model-opt sel" data-mode="single">
-            <div><div class="model-name">SINGLE PASS</div><div class="model-meta">One generation · Fast</div></div>
-            <div class="model-cost">1x cost</div>
-          </div>
-          <div class="model-opt" data-mode="twopass">
-            <div><div class="model-name">TWO-PASS</div><div class="model-meta">Map → composite general</div></div>
-            <div class="model-cost">2x cost</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="side-block">
-      <span class="lbl">Commander Expression</span>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px" id="exprPicker">
-        <div class="expr-opt sel" data-expr="0"><div class="expr-name">STERN</div><div class="expr-tag">Commanding</div></div>
-        <div class="expr-opt" data-expr="1"><div class="expr-name">CALM</div><div class="expr-tag">Composed</div></div>
-        <div class="expr-opt" data-expr="2"><div class="expr-name">SMIRKY</div><div class="expr-tag">Confident</div></div>
-        <div class="expr-opt" data-expr="3"><div class="expr-name">INTENSE</div><div class="expr-tag">Furious</div></div>
-      </div>
-    </div>
-    <button class="analyze-btn" id="analyzeBtn"><span id="analyzeTxt">ANALYZE SCRIPT</span></button>
-    <div class="cost-bar"><span class="cost-bar-lbl">SESSION SPEND</span><span class="cost-bar-val" id="costBar">$0.000</span></div>
-    <div class="steps">
-      <div class="stp" id="stp1"><div class="stp-n">1</div><div class="stp-t">Script analysis</div></div>
-      <div class="stp" id="stp2"><div class="stp-n">2</div><div class="stp-t">Select title</div></div>
-      <div class="stp" id="stp3"><div class="stp-n">3</div><div class="stp-t">Select background</div></div>
-      <div class="stp" id="stp4"><div class="stp-n">4</div><div class="stp-t">Select banner word</div></div>
-      <div class="stp" id="stp5"><div class="stp-n">5</div><div class="stp-t">Upload reference images</div></div>
-      <div class="stp" id="stp6"><div class="stp-n">6</div><div class="stp-t">Generate thumbnail</div></div>
-    </div>
-  </div>
-  <div class="main">
-    <div class="main-hdr">
-      <div class="main-title" id="mainTitle">AWAITING SCRIPT</div>
-      <div class="main-meta" id="mainMeta">Paste or upload script then hit analyze</div>
-    </div>
-    <div class="main-body" id="mainBody">
-      <div class="empty">
-        <div class="empty-logo">AT</div>
-        <div class="empty-title">NO INTEL YET</div>
-        <div class="empty-desc">Paste your script on the left and hit ANALYZE SCRIPT. The system extracts the emotional core, generates title options, recommends backgrounds and banner words, then builds your Nano Banana prompt and bakes the red banner onto the final image.</div>
-      </div>
-    </div>
-  </div>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const savedTheme = localStorage.getItem('ab-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+</script>
 
-// ============================================================================
-// CONSTANTS
-// ============================================================================
-var CLAUDE_MODELS = [
-  { id: 'claude-haiku-4-5-20251001', name: 'Haiku 4.5',  inPrice: 1, outPrice: 5  },
-  { id: 'claude-sonnet-4-6',          name: 'Sonnet 4.6', inPrice: 3, outPrice: 15 },
-  { id: 'claude-opus-4-7',            name: 'Opus 4.7',   inPrice: 5, outPrice: 25 }
-];
+<header class="header">
+  <div class="brand">
+    <div class="brand-bar"></div>
+    <span class="brand-name">American Brass</span>
+  </div>
+  <nav class="header-nav">
+    <span class="nav-pill">Pipeline v1.0</span>
+    <span class="nav-item active">Pipeline</span>
+    <button class="theme-toggle" id="themeToggle">☾ Dark</button>
+  </nav>
+</header>
 
-var GEMINI_MODELS = [
-  { id: 'gemini-2.5-flash-image-preview', name: 'Nano Banana',     cost: 0.039 },
-  { id: 'gemini-3-pro-image-preview',     name: 'Nano Banana Pro', cost: 0.134 }
-];
+<div class="app">
+  <aside class="sidebar">
+    <div class="section">
+      <div class="section-label">Script Input</div>
+      <div class="upload-zone" id="uploadBtn">📄  Upload PDF Script</div>
+      <input type="file" id="pdfInput" accept="application/pdf" style="display:none;">
+      <textarea class="script-textarea" id="scriptInput" placeholder="Or paste script text here..."></textarea>
+    </div>
+    <div class="section">
+      <div class="section-label">Anthropic API Key</div>
+      <input type="password" class="api-input" id="anthropicKey" placeholder="sk-ant-...">
+    </div>
+    <div class="section">
+      <div class="section-label">Google AI Studio Key</div>
+      <input type="password" class="api-input" id="googleKey" placeholder="AIza...">
+    </div>
+    <div class="section">
+      <div class="section-label">Analysis Model (Claude)</div>
+      <div class="option-stack" id="claudeModels">
+        <div class="option-row" data-model="haiku" data-cost="0.02">
+          <div class="option-meta"><span class="option-name">Haiku 4.5</span><span class="option-detail">Fast Draft</span></div>
+          <span class="option-price">~$0.02</span>
+        </div>
+        <div class="option-row" data-model="sonnet" data-cost="0.05">
+          <div class="option-meta"><span class="option-name">Sonnet 4.6</span><span class="option-detail">Balanced</span></div>
+          <span class="option-price">~$0.05</span>
+        </div>
+        <div class="option-row active" data-model="opus" data-cost="0.15">
+          <div class="option-meta"><span class="option-name">Opus 4.7</span><span class="option-detail">Best Quality</span></div>
+          <span class="option-price">~$0.15</span>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-label">Image Model (Google)</div>
+      <div class="option-stack" id="imageModels">
+        <div class="option-row" data-model="nano-banana" data-cost="0.039">
+          <div class="option-meta"><span class="option-name">Nano Banana</span><span class="option-detail">2.5 Flash · Fast</span></div>
+          <span class="option-price">~$0.039</span>
+        </div>
+        <div class="option-row active" data-model="nano-banana-pro" data-cost="0.134">
+          <div class="option-meta"><span class="option-name">Nano Banana Pro</span><span class="option-detail">3 Pro · Best</span></div>
+          <span class="option-price">~$0.134</span>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" id="analyzeBtn">Analyze Script</button>
+    <div class="spend-row">
+      <span>Session Spend</span>
+      <span class="spend-amount" id="sessionSpend">$0.000</span>
+    </div>
+  </aside>
 
-var EXPRESSIONS = [
-  'Stern and authoritative — hard jaw set, cold eyes locked on camera, the look of a man who has sent men to die and would do it again',
-  'Calm and composed — relaxed jaw, steady measured gaze, quiet confidence of a man in total control',
-  'Slight knowing smirk — one corner of mouth barely raised, eyes narrowed with quiet satisfaction, the look of someone who already knows they won',
-  'Intense and furious — brow furrowed, jaw clenched, eyes burning with barely contained rage and determination'
-];
+  <main class="main">
+    <div id="errorContainer"></div>
 
-// ============================================================================
-// STATE
-// ============================================================================
-var appData = null;
-var selTitle = null, selBg = null, selBanner = null;
-var generalImgs = [];
-var selectedClaudeIdx = 2;   // Opus 4.7 default
-var selectedImgIdx = 1;      // Nano Banana Pro default
-var selectedExprIdx = 0;     // Stern default
-var selectedMode = 'single'; // 'single' or 'twopass'
-var selectedResolution = '2K'; // '1K', '2K', or '4K'
-var sessionCost = 0;
+    <div class="main-header">
+      <h2 class="main-title" id="mainTitle">Awaiting Script</h2>
+      <span class="main-hint" id="mainHint">Paste or upload script then hit analyze</span>
+    </div>
 
-// Nano Banana Pro cost varies by resolution; Nano Banana only supports 1K
-// 1K & 2K = 1120 tokens = $0.134; 4K = 2000 tokens = $0.24
-function getImageCost() {
-  var model = GEMINI_MODELS[selectedImgIdx];
-  if (model.id.indexOf('flash') >= 0) return 0.039; // Nano Banana flash is flat
-  // Nano Banana Pro
-  if (selectedResolution === '4K') return 0.24;
-  return 0.134; // 1K or 2K
+    <div class="empty-state" id="emptyState">
+      <div class="empty-logo">AB</div>
+      <div class="empty-title">No Intel Yet</div>
+      <p class="empty-body">
+        American Brass — the WWII American generals thumbnail pipeline.
+        Paste a script and hit ANALYZE SCRIPT. The brain extracts the central irony,
+        generates 3 title options each with 3 fresh banner choices, recommends visual
+        styles, then builds your Nano Banana prompts for up to 5 thumbnail variants
+        in steel blue documentary aesthetic.
+      </p>
+    </div>
+
+    <div class="analyzing-state" id="analyzingState" style="display: none;">
+      <div class="analyzing-logo">AB</div>
+      <div class="analyzing-title">Brain Engaged</div>
+      <p class="analyzing-body">Claude is analyzing your general's story for institutional injustice, stolen credit, and contrarian angles.</p>
+      <div class="analyzing-stages" id="analyzingStages">
+        <div class="stage-item active" data-stage="reading"><span class="stage-dot"></span>Reading script</div>
+        <div class="stage-item" data-stage="extracting"><span class="stage-dot"></span>Extracting story DNA</div>
+        <div class="stage-item" data-stage="matching"><span class="stage-dot"></span>Matching High Command pattern library</div>
+        <div class="stage-item" data-stage="generating"><span class="stage-dot"></span>Generating fresh banners</div>
+        <div class="stage-item" data-stage="seo"><span class="stage-dot"></span>Drafting SEO content</div>
+      </div>
+    </div>
+
+    <div class="workflow" id="workflow">
+      <div class="step" id="step1">
+        <div class="step-header">
+          <span class="step-num">01</span>
+          <span class="step-title">Script Analysis</span>
+          <span class="step-status">Pending</span>
+        </div>
+        <div class="analysis-summary" id="analysisSummary">
+          <div style="color: var(--text-muted);">Brain output will appear here</div>
+        </div>
+      </div>
+
+      <div class="step" id="step2">
+        <div class="step-header">
+          <span class="step-num">02</span>
+          <span class="step-title">Select Title</span>
+          <span class="step-status">Pending</span>
+        </div>
+        <div class="options-grid" id="titleOptions"></div>
+      </div>
+
+      <div class="step" id="step3">
+        <div class="step-header">
+          <span class="step-num">03</span>
+          <span class="step-title">Select Banner Word</span>
+          <span class="step-status">Pending</span>
+        </div>
+        <div class="banner-options-grid" id="bannerOptions"></div>
+        <div class="banner-edit-row" id="bannerEditRow" style="display: none;">
+          <span class="banner-edit-label">Custom:</span>
+          <input type="text" class="banner-edit-input" id="bannerEditInput" maxlength="20" placeholder="OR TYPE YOUR OWN...">
+        </div>
+      </div>
+
+      <div class="step" id="step4">
+        <div class="step-header">
+          <span class="step-num">04</span>
+          <span class="step-title">Select Image Styles</span>
+          <span class="step-status">Toggle 1-5</span>
+        </div>
+        <div class="styles-grid" id="stylesGrid">
+          <div class="style-card selected" data-style="portrait-hero">
+            <div class="style-preview"><img src="https://raw.githubusercontent.com/huzaifaahmed319/Thumbnail-Allied/main/style-portrait-hero.jpg" alt="Portrait Hero" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=style-preview-text>Portrait Hero<br>Reference</span>';"></div>
+            <div class="style-info">
+              <div class="style-name">Portrait Hero</div>
+              <div class="style-desc">Single dominant general portrait, magazine-cover quality, dramatic backlight.</div>
+            </div>
+          </div>
+          <div class="style-card" data-style="battle-map">
+            <div class="style-preview"><img src="https://raw.githubusercontent.com/huzaifaahmed319/Thumbnail-Allied/main/style-battle-map.jpg" alt="Battle Map" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=style-preview-text>Battle Map<br>Reference</span>';"></div>
+            <div class="style-info">
+              <div class="style-name">Battle Map Composite</div>
+              <div class="style-desc">General + tactical map split with arrows and unit positions.</div>
+            </div>
+          </div>
+          <div class="style-card" data-style="period-archive">
+            <div class="style-preview"><img src="https://raw.githubusercontent.com/huzaifaahmed319/Thumbnail-Allied/main/style-period-archive.jpg" alt="Period Archive" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=style-preview-text>Period Archive<br>Reference</span>';"></div>
+            <div class="style-info">
+              <div class="style-name">Period Archive</div>
+              <div class="style-desc">General + overlapping period newspapers and documents.</div>
+            </div>
+          </div>
+          <div class="style-card" data-style="battlefield-command">
+            <div class="style-preview"><img src="https://raw.githubusercontent.com/huzaifaahmed319/Thumbnail-Allied/main/style-battlefield-command.jpg" alt="Battlefield Command" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=style-preview-text>Battlefield Command<br>Reference</span>';"></div>
+            <div class="style-info">
+              <div class="style-name">Battlefield Command</div>
+              <div class="style-desc">General at the front with combat vehicles in atmospheric haze.</div>
+            </div>
+          </div>
+          <div class="style-card" data-style="rivalry">
+            <div class="style-preview"><img src="https://raw.githubusercontent.com/huzaifaahmed319/Thumbnail-Allied/main/style-rivalry.jpg" alt="Rivalry" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=style-preview-text>Rivalry<br>Reference</span>';"></div>
+            <div class="style-info">
+              <div class="style-name">Rivalry / Multi-Subject</div>
+              <div class="style-desc">Two opposing commanders with tactical element between them.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" id="step5">
+        <div class="step-header">
+          <span class="step-num">05</span>
+          <span class="step-title">Upload General Reference Photos</span>
+          <span class="step-status">1-3 photos</span>
+        </div>
+        <div class="refs-grid">
+          <div class="ref-slot" data-slot="0"><span class="ref-icon">+</span><span>Reference 1</span></div>
+          <div class="ref-slot" data-slot="1"><span class="ref-icon">+</span><span>Reference 2</span></div>
+          <div class="ref-slot" data-slot="2"><span class="ref-icon">+</span><span>Reference 3</span></div>
+        </div>
+        <div class="ref-note" id="refNote">
+          Upload portrait photos of the general for face/uniform likeness. Best sources: Wikipedia Commons, archives.gov, Library of Congress.
+        </div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-info-name">Auto-Generate Banner</div>
+            <div class="toggle-info-desc">AI bakes red banner with selected word into thumbnail (~50-70% success rate)</div>
+          </div>
+          <div class="switch" id="overlayToggle"></div>
+        </div>
+      </div>
+
+      <div class="step" id="step6">
+        <div class="step-header">
+          <span class="step-num">06</span>
+          <span class="step-title">Generate Thumbnails</span>
+          <span class="step-status">Ready</span>
+        </div>
+        <button class="btn-primary" id="generateBtn">Generate Thumbnails</button>
+      </div>
+
+      <div class="step" id="stepOutput">
+        <div class="step-header">
+          <span class="step-num">07</span>
+          <span class="step-title">Output</span>
+          <span class="step-status">Awaiting</span>
+        </div>
+        <div class="output-grid" id="outputGrid"></div>
+        <div class="seo-block" id="seoBlock" style="display: none;">
+          <div class="seo-section">
+            <div class="seo-label">
+              SEO Description
+              <button class="copy-btn" data-copy="description">Copy</button>
+            </div>
+            <div class="seo-content" id="seoDescription">—</div>
+          </div>
+          <div class="seo-section">
+            <div class="seo-label">
+              Tags · 15
+              <button class="copy-btn" data-copy="tags">Copy</button>
+            </div>
+            <div class="seo-tags" id="seoTags"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const REPO_BASE = 'https://raw.githubusercontent.com/huzaifaahmed319/Thumbnail-Allied/main';
+
+const STYLE_REFS = {
+  'portrait-hero':       [`${REPO_BASE}/style-portrait-hero.jpg`],
+  'battle-map':          [`${REPO_BASE}/style-battle-map.jpg`],
+  'period-archive':      [`${REPO_BASE}/style-period-archive.jpg`],
+  'battlefield-command': [`${REPO_BASE}/style-battlefield-command.jpg`],
+  'rivalry':             [`${REPO_BASE}/style-rivalry.jpg`]
+};
+
+const STYLE_NAMES = {
+  'portrait-hero':       'Portrait Hero',
+  'battle-map':          'Battle Map Composite',
+  'period-archive':      'Period Archive',
+  'battlefield-command': 'Battlefield Command',
+  'rivalry':             'Rivalry'
+};
+
+const PALETTE_INSTRUCTIONS = `
+COLOR PALETTE — STEEL BLUE (CRITICAL — DO NOT USE RED BACKGROUND):
+The reference image uses a RED gradient background. You MUST replace this with a STEEL BLUE gradient.
+
+Background colors:
+- Top of frame: Steel blue (#3a5870) — cool desaturated blue-gray
+- Center of frame: Slightly darker steel blue (#2a4258)
+- Bottom of frame and edges: Near-black navy (#1a2838 to #0a0e15)
+- Strong dark vignette in all four corners fading to almost black
+
+The radial glow behind the general's head (which is RED in the reference) must instead be a brighter STEEL BLUE (#4a6e88) — cool light, NOT warm.
+
+OVERALL MOOD: Documentary investigation, somber serious, cold institutional. NOT pulpy action poster. Think "60 Minutes investigation piece" not "war movie poster."
+
+NO RED ANYWHERE in the background or aura. The only red allowed in the final image is on the banner text overlay (if user enables it).
+`;
+
+const FACE_INSTRUCTIONS = `
+FACE & LIKENESS (CRITICAL):
+- Use the user-uploaded reference photos of the general as the EXACT facial likeness
+- Match skin tone, face shape, jawline, eyes, hair, and uniform details PRECISELY
+- Do NOT invent a different face
+- The general's face is the BRIGHTEST, SHARPEST, most in-focus element in the frame
+- Eyes catch light, skin texture visible, every wrinkle and detail rendered
+- Cinematic film-stock quality on the face
+`;
+
+const NEGATIVE_REQUIREMENTS = `
+NEGATIVE REQUIREMENTS (DO NOT INCLUDE):
+- NO modern banner text overlays unless explicitly instructed
+- NO title cards, NO captions, NO watermarks, NO play buttons, NO YouTube UI elements
+- NO borders or frames around the image
+- NO red gradient backgrounds (this is critical — we use steel blue)
+- Period-appropriate map labels, newspaper headlines, document text are ALLOWED
+- Leave lower-center area uncluttered for banner overlay in post-production
+`;
+
+const STYLE_PROMPTS = {
+'portrait-hero': `Create a cinematic 16:9 YouTube thumbnail in PORTRAIT HERO style — a single dominant general portrait with a steel blue documentary aesthetic.
+
+REFERENCE IMAGE INTERPRETATION:
+The provided reference image (Bradley) shows COMPOSITION you must match: tight portrait of a general, head and upper chest, helmet visible, dramatic backlight halo. BUT swap the RED background for STEEL BLUE per palette rules below.
+
+User-uploaded images = the SUBJECT (the actual general we're rendering).
+
+COMPOSITION:
+- Three-quarter view from slightly low angle for authority
+- General's head and upper chest fills the frame (head occupies upper-third)
+- General positioned slightly right of center (~55% from left)
+- Tight crop — top of helmet/hair has 5-10% margin from frame top
+- Full era-appropriate uniform visible: collar, insignia, medals, helmet or cap
+- Negative space on LEFT side (atmospheric, blue-tinted)
+- Bottom-center area open for banner placement
+
+LIGHTING:
+- Hard directional key light from upper-front-left at ~45°
+- Strong cool rim light wrapping the LEFT side of face/shoulders
+- Face brightly lit and sharp — the BRIGHTEST element in frame
+- Hard shadows under jaw and helmet brim
+- Cinematic teal-and-cool color grading
+
+AURA / GLOW:
+- Behind the general's head and shoulders: bright STEEL BLUE radial glow (NOT red)
+- Glow fades outward smoothly, creates clear halo separation
+- Glow color: cool blue-white (#4a6e88 to #6a8aa8), NOT warm
+
+UNIFORM:
+- Authentic period US Army or USMC uniform appropriate to era
+- Olive drab green for US Army, faded sage for USMC
+- All insignia, rank stars, medals rendered with sharp detail
+- Slight weathering — combat-worn but readable
+
+${PALETTE_INSTRUCTIONS}
+${FACE_INSTRUCTIONS}
+${NEGATIVE_REQUIREMENTS}
+
+OUTPUT: Photorealistic 3D render, 16:9 widescreen, hyper-detailed face, magazine-cover quality.`,
+
+'battle-map': `Create a cinematic 16:9 YouTube thumbnail in BATTLE MAP COMPOSITE style — a general portrait paired with a tactical battle map, steel blue palette.
+
+REFERENCE IMAGE INTERPRETATION:
+The provided reference (Manstein) shows COMPOSITION: tactical map fills LEFT 50%, general portrait fills RIGHT 50%. BUT swap RED background for STEEL BLUE per palette rules.
+
+User-uploaded images = SUBJECT (actual general to render).
+
+COMPOSITION:
+- LEFT HALF (50%): Tactical battle map for the script's campaign
+- RIGHT HALF (50%): General's portrait, three-quarter view, head fills upper half
+- Tight crop on general — head and upper chest only
+- General positioned right of center (~75% from left)
+- Map and portrait separated by soft gradient, not hard edge
+
+THE BATTLE MAP (LEFT):
+- Style: Period military operations map, slightly stylized
+- Background: Steel blue tones (#3a5870 to #1a2838)
+- Land: Slightly darker blue-gray; Water: slightly lighter blue
+- THICK BOLD ARROWS — saturated red for friendly forces, dark blue for enemy. 12-15 pixels wide. Sweeping inward.
+- Unit markers: Black tank silhouettes, infantry icons at battle points
+- Place name LABELS: small bold serif type, white/pale yellow ink. Cities uppercase ("STALINGRAD"), rivers italic, regions small caps
+- Date/operation header in upper-left of map: e.g., "AUG 1942 — MAKIN ATOLL"
+- Authentic 1940s military map annotation feel
+
+GENERAL PORTRAIT (RIGHT):
+- Three-quarter view from slightly low angle
+- Head fills upper-right with 5-10% margin from top
+- Body visible from upper chest up
+- Strong directional key light from front-left
+- Cool rim light on LEFT side of face from map glow
+- Steel blue radial glow behind head as halo
+
+LIGHTING & MOOD:
+- Cool documentary lighting
+- Map slightly desaturated (faded military document feel)
+- Portrait slightly brighter and sharper to draw the eye
+- Subtle dark vignette in corners
+
+${PALETTE_INSTRUCTIONS}
+(Exception: red arrows on map stay red for tactical clarity. Background stays steel blue.)
+${FACE_INSTRUCTIONS}
+${NEGATIVE_REQUIREMENTS}
+
+OUTPUT: Photorealistic 3D render with stylized map, 16:9, sharp face, clear readable map.`,
+
+'period-archive': `Create a cinematic 16:9 YouTube thumbnail in PERIOD ARCHIVE style — general portrait surrounded by overlapping period newspapers, documents, photographs in steel blue documentary aesthetic.
+
+REFERENCE IMAGE INTERPRETATION:
+The provided reference (Rommel) shows COMPOSITION: multiple overlapping period newspapers tiled across LEFT 60%, general portrait on RIGHT 40%. BUT swap RED background for STEEL BLUE per palette rules.
+
+User-uploaded images = SUBJECT.
+
+COMPOSITION:
+- LEFT 55-60%: Overlapping period newspapers, magazine covers, documents, small vintage photo
+- RIGHT 40-45%: General's portrait, three-quarter view
+- Documents overlap into portrait area at bottom (no hard edge)
+- General's head and upper chest fills upper-right
+
+THE ARCHIVE STACK (LEFT):
+- 3-5 overlapping period newspapers/magazines at slight angles (5-15°)
+- Each newspaper has:
+  - Bold period MASTHEAD in heavy serif type — e.g., "THE NEW YORK TIMES", "STARS AND STRIPES", "LIFE", "TIME"
+  - HUGE dramatic HEADLINE in bold uppercase serif — relevant to story
+  - Smaller subheadline in bold type
+  - Column text below as dense gray texture (don't make individual letters readable)
+  - Sometimes a small period photograph
+- Pages: Aged warm yellow-cream paper texture (against cool background)
+- Authentic fold marks, torn edges, subtle stains
+- One or two sheets are official military documents:
+  - Letterhead with insignia
+  - Typewritten text texture
+  - "CONFIDENTIAL" or "CLASSIFIED" stamp in red ink
+  - Bold signature at bottom
+- One small period photograph embedded in stack
+
+GENERAL PORTRAIT (RIGHT):
+- Three-quarter view from slightly low angle
+- Tight crop — head and upper chest
+- Steel blue radial glow behind head
+- Cool rim light on LEFT side of face
+- Sharp focus on face, eyes catching light
+- General appears to "emerge" from behind the document stack
+
+LIGHTING:
+- Documents lit from upper-left, casting subtle shadows
+- Portrait lit cinematically with hard key from front-left
+- Warm-cool contrast: papers warm yellow-cream, background/figure cool steel blue
+- Strong dark vignette in corners
+
+MOOD: "Investigation board" — evidence wall in a documentary about historical injustice.
+
+${PALETTE_INSTRUCTIONS}
+(Exception: aged paper retains warm yellow-cream tone for period authenticity. Red ink stamps allowed.)
+${FACE_INSTRUCTIONS}
+${NEGATIVE_REQUIREMENTS}
+
+OUTPUT: Photorealistic 3D render with detailed period print materials, 16:9, sharp face, layered documents.`,
+
+'battlefield-command': `Create a cinematic 16:9 YouTube thumbnail in BATTLEFIELD COMMAND style — general at the front with combat vehicles in atmospheric haze, steel blue palette.
+
+REFERENCE IMAGE INTERPRETATION:
+The provided reference (Collins "LIGHTNING JOE") shows COMPOSITION: general's head dead-center, military vehicles flanking on both sides at three-quarter angles in atmospheric mist, period road signs at edges. BUT swap warm desaturated background for STEEL BLUE per palette rules.
+
+User-uploaded images = SUBJECT.
+
+COMPOSITION:
+- General's head dead-center, upper-half of frame
+- Tight crop showing head and upper chest with full uniform
+- Military vehicles flanking the general:
+  - LEFT: 1-2 tanks/armored vehicles at three-quarter angle, slightly receding
+  - RIGHT: Jeep, halftrack, or similar at three-quarter angle, slightly receding
+  - Era-appropriate: Pacific = LVT amphtracs, Marine equipment; European = Sherman tanks, M3 halftracks; Korea = M26 Pershings
+- Atmospheric haze creates depth between subject and vehicles
+- Vehicles fade into haze as they recede
+
+ENVIRONMENT (matches script setting):
+- Pacific/Marines: tropical palms, beach sand, surf line, palm silhouettes
+- European: muddy roads, hedgerows, distant ruins, foggy atmosphere
+- Korea: mountainous terrain, frozen ground, sparse trees
+- Period road signs in correct languages
+- Atmospheric haze unifies the scene
+
+VEHICLES:
+- Photorealistic with weathering: dust, mud splatter, paint wear
+- Soldiers visible inside/on vehicles as background figures
+- Subtle motion: vehicles in formation but not blurred
+- Era-accurate markings: white US Army stars, unit numbers
+
+GENERAL PORTRAIT:
+- Three-quarter view from slightly low angle
+- Head and upper chest only
+- Sharp focus, brightest element in frame
+- Strong cinematic lighting from front-left
+- Cool rim light on LEFT from steel blue background
+- Steel blue radial glow behind head
+
+LIGHTING & MOOD:
+- Cool documentary daylight (overcast/atmospheric)
+- Strong directional key light on general
+- Vehicles lit consistently
+- Atmospheric haze adds depth
+- Dark vignette in corners
+
+${PALETTE_INSTRUCTIONS}
+${FACE_INSTRUCTIONS}
+${NEGATIVE_REQUIREMENTS}
+
+OUTPUT: Photorealistic cinematic 3D render, 16:9, sharp face, atmospheric battlefield depth.`,
+
+'rivalry': `Create a cinematic 16:9 YouTube thumbnail in RIVALRY style — TWO generals facing each other with a tactical context element between them, steel blue palette.
+
+REFERENCE IMAGE INTERPRETATION:
+The provided reference (Rommel vs Rundstedt) shows COMPOSITION: TWO generals' portraits, left and right, with tactical map floating in center between them. BUT swap RED background for STEEL BLUE per palette rules.
+
+User-uploaded images = SUBJECTS (should be 2 distinct generals).
+
+COMPOSITION (only use this style if script has TWO opposing/contrasting commanders):
+- LEFT GENERAL: occupies left third, head and upper chest, three-quarter view facing slightly inward
+- RIGHT GENERAL: occupies right third, head and upper chest, three-quarter view facing slightly inward
+- CENTER: Tactical map/document/symbolic element floats between them at chest height, slightly tilted
+- Both generals' heads at roughly same height for balance
+- Strong dark vignette around outer edges
+
+CENTER ELEMENT:
+- Tactical battle map showing the campaign of their conflict
+- Stylized period military map with arrows, unit markers, place names
+- Sized ~25-30% of frame width, ~50% of frame height
+- Floats with slight 3D tilt
+- Date label in corner: e.g., "6 JUIN 1944"
+
+THE TWO GENERALS:
+- Each is tight portrait, head and upper chest only
+- Three-quarter views, slightly angled toward each other
+- Different uniforms if from different services/sides
+- Both lit cinematically from front-left (consistent direction)
+- Both have steel blue rim light on inner shoulder (the side facing the other)
+- The space between their faces is where the eye lands
+- Facial expressions imply tension: stern looks, hard jaws, narrowed eyes
+- Both faces equally sharp and detailed (neither is "the loser")
+
+LIGHTING:
+- Hard key light from upper-front-left for both figures
+- Cool steel blue rim light on inner sides (creating "collision" feel)
+- Map element backlit slightly so it pops
+- Strong dark vignette in corners
+
+MOOD: "Showdown" or "argument" — two professionals in opposition. Documentary tone, NOT cartoon WWE-style face-off.
+
+${PALETTE_INSTRUCTIONS}
+(Exception: map arrows can be red/blue for tactical clarity. Background stays steel blue.)
+${FACE_INSTRUCTIONS}
+(Apply to BOTH generals — match BOTH reference photos precisely.)
+${NEGATIVE_REQUIREMENTS}
+
+OUTPUT: Photorealistic cinematic 3D render, 16:9, sharp faces on both generals, clear tactical center element.`
+};
+
+const state = {
+  claudeModel: 'opus',
+  imageModel: 'nano-banana-pro',
+  selectedStyles: new Set(['portrait-hero']),
+  overlayEnabled: false,
+  selectedTitleIdx: null,
+  selectedBannerIdx: null,
+  customBanner: '',
+  scriptText: '',
+  scriptPdfBase64: null,
+  scriptSource: 'text',
+  references: [null, null, null],
+  sessionSpend: 0,
+  brainResult: null
+};
+
+const themeToggle = document.getElementById('themeToggle');
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('ab-theme', theme);
+  themeToggle.textContent = theme === 'dark' ? '☾ Dark' : '☀ Light';
 }
+themeToggle.addEventListener('click', () => {
+  applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+applyTheme(document.documentElement.getAttribute('data-theme'));
 
-// ============================================================================
-// INIT
-// ============================================================================
-window.addEventListener('load', function() {
-  loadKeys();
-  bindUI();
+function setupOptionStack(containerId, stateKey, dataKey) {
+  document.querySelectorAll(`#${containerId} .option-row`).forEach(row => {
+    row.addEventListener('click', () => {
+      document.querySelectorAll(`#${containerId} .option-row`).forEach(r => r.classList.remove('active'));
+      row.classList.add('active');
+      state[stateKey] = row.dataset[dataKey];
+    });
+  });
+}
+setupOptionStack('claudeModels', 'claudeModel', 'model');
+setupOptionStack('imageModels', 'imageModel', 'model');
+
+const anthropicKeyInput = document.getElementById('anthropicKey');
+const googleKeyInput = document.getElementById('googleKey');
+anthropicKeyInput.value = localStorage.getItem('ab-anthropic-key') || '';
+googleKeyInput.value = localStorage.getItem('ab-google-key') || '';
+anthropicKeyInput.addEventListener('blur', () => { if (anthropicKeyInput.value) localStorage.setItem('ab-anthropic-key', anthropicKeyInput.value); });
+googleKeyInput.addEventListener('blur', () => { if (googleKeyInput.value) localStorage.setItem('ab-google-key', googleKeyInput.value); });
+
+document.getElementById('scriptInput').addEventListener('input', (e) => {
+  state.scriptText = e.target.value;
+  if (state.scriptText) {
+    state.scriptSource = 'text';
+    state.scriptPdfBase64 = null;
+    const ub = document.getElementById('uploadBtn');
+    if (ub.classList.contains('has-file')) { ub.classList.remove('has-file'); ub.textContent = '📄  Upload PDF Script'; }
+  }
 });
 
-function bindUI() {
-  document.getElementById('anthropicKey').addEventListener('input', saveKeys);
-  document.getElementById('googleKey').addEventListener('input', saveKeys);
-  document.getElementById('pdfFile').addEventListener('change', loadPDF);
-  document.getElementById('analyzeBtn').addEventListener('click', analyzeScript);
-
-  document.querySelectorAll('[data-claude]').forEach(function(el) {
-    el.addEventListener('click', function() { selectClaude(+el.dataset.claude); });
-  });
-  document.querySelectorAll('[data-img]').forEach(function(el) {
-    el.addEventListener('click', function() { selectImg(+el.dataset.img); });
-  });
-  document.querySelectorAll('[data-expr]').forEach(function(el) {
-    el.addEventListener('click', function() { selectExpr(+el.dataset.expr); });
-  });
-  document.querySelectorAll('[data-mode]').forEach(function(el) {
-    el.addEventListener('click', function() { selectMode(el.dataset.mode); });
-  });
-  document.querySelectorAll('[data-res]').forEach(function(el) {
-    el.addEventListener('click', function() { selectResolution(el.dataset.res); });
-  });
-}
-
-function selectResolution(r) {
-  selectedResolution = r;
-  document.querySelectorAll('[data-res]').forEach(function(el) {
-    el.classList.toggle('sel', el.dataset.res === r);
-  });
-  // Warn user on the expensive option
-  if (r === '4K') {
-    showToast('4K mode — ~$0.24/image, 30s+ slower per pass', false, 4500);
-  }
-}
-
-function selectMode(m) {
-  selectedMode = m;
-  document.querySelectorAll('[data-mode]').forEach(function(el) {
-    el.classList.toggle('sel', el.dataset.mode === m);
-  });
-  if (selBg && appData) buildPrompt();
-}
-
-// ============================================================================
-// KEYS
-// ============================================================================
-function saveKeys() {
-  try {
-    localStorage.setItem('at_anthropic_key', document.getElementById('anthropicKey').value);
-    localStorage.setItem('at_google_key', document.getElementById('googleKey').value);
-  } catch(e) {}
-}
-
-function loadKeys() {
-  try {
-    var ak = localStorage.getItem('at_anthropic_key');
-    var gk = localStorage.getItem('at_google_key');
-    if (ak) document.getElementById('anthropicKey').value = ak;
-    if (gk) document.getElementById('googleKey').value = gk;
-  } catch(e) {}
-}
-
-// ============================================================================
-// UI HELPERS
-// ============================================================================
-function showToast(msg, isErr, ms) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast on' + (isErr ? ' err' : '');
-  clearTimeout(t._t);
-  t._t = setTimeout(function() { t.classList.remove('on'); }, ms || 3500);
-}
-
-function showOverlay(on, title, sub) {
-  document.getElementById('overlay').classList.toggle('show', on);
-  if (on) {
-    document.getElementById('ovTitle').textContent = title || 'ANALYZING';
-    document.getElementById('ovSub').textContent = sub || '';
-  }
-}
-
-function setStep(n, state) {
-  var el = document.getElementById('stp' + n);
-  if (!el) return;
-  el.classList.remove('active', 'done');
-  if (state) el.classList.add(state);
-}
-
-function updateCost(amount) {
-  sessionCost += amount;
-  document.getElementById('costBar').textContent = '$' + sessionCost.toFixed(3);
-}
-
-// ============================================================================
-// MODEL PICKERS
-// ============================================================================
-function selectClaude(i) {
-  selectedClaudeIdx = i;
-  document.querySelectorAll('[data-claude]').forEach(function(el) {
-    el.classList.toggle('sel', +el.dataset.claude === i);
-  });
-}
-
-function selectImg(i) {
-  selectedImgIdx = i;
-  document.querySelectorAll('[data-img]').forEach(function(el) {
-    el.classList.toggle('sel', +el.dataset.img === i);
-  });
-}
-
-function selectExpr(i) {
-  selectedExprIdx = i;
-  document.querySelectorAll('[data-expr]').forEach(function(el) {
-    el.classList.toggle('sel', +el.dataset.expr === i);
-  });
-  buildPrompt();
-}
-
-// ============================================================================
-// PDF LOADING
-// ============================================================================
-function loadPDF(e) {
-  var file = e.target.files[0];
+const pdfInput = document.getElementById('pdfInput');
+const uploadBtn = document.getElementById('uploadBtn');
+uploadBtn.addEventListener('click', () => pdfInput.click());
+pdfInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
   if (!file) return;
-  var btn = document.querySelector('label[for="pdfFile"]');
-  btn.textContent = '📄 ' + file.name;
-  showOverlay(true, 'READING PDF', 'Extracting text...');
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    pdfjsLib.getDocument({ data: ev.target.result }).promise.then(function(pdf) {
-      var texts = [];
-      function getPage(idx) {
-        if (idx > pdf.numPages) {
-          document.getElementById('scriptInput').value = texts.join('\n');
-          showOverlay(false);
-          showToast('PDF loaded — ' + pdf.numPages + ' pages');
-          return;
-        }
-        pdf.getPage(idx).then(function(pg) {
-          pg.getTextContent().then(function(ct) {
-            texts.push(ct.items.map(function(s) { return s.str; }).join(' '));
-            getPage(idx + 1);
-          });
-        });
-      }
-      getPage(1);
-    }).catch(function(err) {
-      showOverlay(false);
-      showToast('PDF error: ' + err.message, true);
-    });
+  if (file.type !== 'application/pdf') { showError('Please upload a PDF file'); return; }
+  if (file.size > 10 * 1024 * 1024) { showError('PDF must be smaller than 10 MB'); return; }
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    state.scriptPdfBase64 = ev.target.result.split(',')[1];
+    state.scriptSource = 'pdf';
+    state.scriptText = '';
+    document.getElementById('scriptInput').value = '';
+    uploadBtn.classList.add('has-file');
+    uploadBtn.textContent = `✓  ${file.name}`;
   };
-  reader.readAsArrayBuffer(file);
+  reader.readAsDataURL(file);
+});
+
+document.querySelectorAll('.style-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const style = card.dataset.style;
+    if (state.selectedStyles.has(style)) {
+      if (state.selectedStyles.size > 1) { state.selectedStyles.delete(style); card.classList.remove('selected'); }
+    } else { state.selectedStyles.add(style); card.classList.add('selected'); }
+  });
+});
+
+document.querySelectorAll('.ref-slot').forEach(slot => {
+  slot.addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const idx = parseInt(slot.dataset.slot);
+        state.references[idx] = ev.target.result;
+        slot.classList.add('has-image');
+        slot.innerHTML = `<img src="${ev.target.result}" alt="Reference">`;
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  });
+});
+
+document.getElementById('overlayToggle').addEventListener('click', (e) => {
+  e.currentTarget.classList.toggle('on');
+  state.overlayEnabled = e.currentTarget.classList.contains('on');
+});
+
+function showError(message) {
+  document.getElementById('errorContainer').innerHTML = `
+    <div class="error-banner">
+      <span class="error-banner-icon">⚠</span>
+      <span class="error-banner-msg">${message}</span>
+      <button class="error-banner-close" onclick="this.parentElement.remove()">×</button>
+    </div>`;
+}
+function clearError() { document.getElementById('errorContainer').innerHTML = ''; }
+
+const PATTERN_LIBRARY = `# YOU ARE THE AMERICAN BRASS THUMBNAIL & TITLE BRAIN
+
+You analyze video scripts about American WWII generals and generate data-driven title and thumbnail recommendations for the American Brass YouTube channel — focused on lesser-known American WWII generals, institutional injustices, stolen credit, contrarian truths, and rivalries.
+
+## CHANNEL CONTEXT
+- Channel name: American Brass
+- Niche: American WWII generals (Korea occasionally)
+- Strategy: Discovery angle — favor lesser-known generals over Patton/Eisenhower retreads
+- Audience: American military history enthusiasts who already know the famous names
+- They click on: specific named obscure generals + revisionist contrarian takes
+
+## REFERENCE CHANNEL DATA (HIGH COMMAND — WW2)
+
+### S-TIER PERFORMERS (170k+):
+- "The Only WWII General to Carry an M1 and Jump With His Men" (172k) — JUMPING GENERAL
+
+### A-TIER PERFORMERS (60-100k):
+- "The 'GI General' Myth. What Bradley's Own Officers Said About Him." (96k) — THE MYTH
+- "The General Who Won Every Campaign MacArthur Claimed as His Own." (86k) — ERASED
+- "The Allen and Roosevelt Firing. Eisenhower's Most Political Decision in WWII" (67k) — SACRIFICED
+
+### B-TIER (15-40k):
+- "Terry Allen Was Too Good at His Job — Marshall Fired Him for It" (37k)
+- "The Fastest Corps Commander in Europe..." (21k) — LIGHTNING JOE
+- "Bradley Fired His Best Corps Commander at Normandy. He Was..." (19k) — WRONG CALL
+- "Lucian Truscott Saved Anzio. Mark Clark Flew In for the Photos." (15k) — STOLEN GLORY
+
+## CRITICAL: BANNER FRESHNESS RULES
+
+FORBIDDEN BANNERS (used by reference channel — DO NOT use these or close variants):
+THE MYTH, ERASED, JUMPING GENERAL, SACRIFICED, LIGHTNING JOE, WRONG CALL, STOLEN GLORY, SMITH vs SMITH, AMERICA'S ROMMEL, GENIUS?, FRAUD, MY OATH, DIAMONDS, ALL LIES, FINALLY, BETRAYED, IGNORED, UNBREAKABLE, GUNG HO, TIGER JACK
+
+FORBIDDEN VARIATIONS:
+- ERASED used → DON'T use BURIED, WIPED, or DELETED (too close)
+- THE MYTH used → DON'T use THE LIE, THE TRUTH, or LEGENDS
+- WRONG CALL used → DON'T use BAD CALL or WRONG MOVE
+- STOLEN GLORY used → DON'T use STOLEN CREDIT, STOLEN FAME
+
+Treat past banners as PSYCHOLOGICAL HOOKS to emulate, not phrases to copy.
+
+## TITLE STRUCTURES THAT WIN
+
+### Structure A: Two-Sentence Ironic Twist (HIGHEST PERFORMING)
+[Statement of fact]. [Ironic counterpoint that reframes everything].
+Example: "He Founded American Special Operations. The Marine Corps Buried His Name for Fifty Years."
+
+### Structure B: Named Person + Unexpected Action
+[Named General] [unexpected dramatic thing] [while/when/because X].
+Example: "Terry Allen Was Too Good at His Job. Marshall Fired Him for It."
+
+### Structure C: Question Format (Contrarian)
+"Why Did X..." / "How Did Y..." for revisionist takes.
+Example: "Why Did the Allies Let War Criminals Rebuild the German Army?"
+
+### Structure D: Negation Hook (Disputed Quoted Word)
+[Subject] Was 'Never' [disputed claim]. [Authority] Said That.
+Example: "Manstein Wrote a 'Bestseller' About WW2. Almost None of It Was True."
+
+## TITLE LENGTH RULE (CRITICAL)
+Every title MUST be 75-90 characters INCLUDING SPACES.
+- Sweet spot: 80-85 chars
+- Count characters before output. Rewrite if outside range.
+
+## TITLE CONTENT RULES
+1. NEVER use vague filler: "story", "tale", "incredible", "amazing", "remarkable", "untold", "secret", "shocking"
+2. USE specific names, numbers, dates, places, exact actions
+3. NO question marks at end of declarative titles (questions only for Structure C)
+4. NO colons, em-dashes, or stylized punctuation
+5. Use SINGLE QUOTES around disputed words ('Genius', 'Hero', 'Coward')
+6. Plain declarative past-tense beats dramatic adjectives
+7. Specificity > intensity (specific number > "many", specific place > "battlefield")
+
+## BANNER WORD STRATEGY
+
+Categories to mix across the 3 banner options per title:
+
+CATEGORY 1: INSTITUTIONAL ACTION
+Fresh examples: DISOWNED, BENCHED, BLACKLISTED, SHELVED, REWRITTEN, REDACTED, GAGGED, MUZZLED, SCRUBBED, DEMOTED, CASHIERED, BRANDED
+
+CATEGORY 2: PERSONAL FAILURE
+Fresh: HE QUIT, HE BROKE, COLLAPSED, LOST IT, FOLDED, SURRENDERED, RAN
+
+CATEGORY 3: CONTRARIAN VERDICT
+Fresh: LIES, FAKE, OVERRATED, HOLLOW, INVENTED, UNDESERVED, COSTUME
+
+CATEGORY 4: SPECIFIC NUMBER/QUANTIFIER
+Generate based on script: "2,000 MILES", "50 YEARS", "19 DEAD", "ONE NIGHT", "3 A.M."
+
+CATEGORY 5: HISTORICAL QUOTE
+Use exact quoted words from script if dramatic enough.
+Example: "HE MAY BE RED" (Shoup's quote about Carlson)
+
+CATEGORY 6: CODE NAME / IDENTITY
+Real WWII nicknames if intriguing.
+Fresh ideas: IRON GUT, BLOODY GEORGE, OLD ARGYLL, THE PROFESSOR
+
+CATEGORY 7: RIVALRY (X vs Y)
+Format: "[NAME] vs [NAME]" — only when script has two opposing commanders
+
+Banner length: 1-3 words MAX. Punchy, readable. ALL CAPS.
+
+What FAILS: Generic positive (HERO, BRILLIANT, GREAT), vague abstract nouns (TRUTH, COURAGE), long phrases.
+
+## STYLE RECOMMENDATION LOGIC
+
+Map script tone to one of 5 styles:
+- portrait-hero: Single-character deep-dive, character study, biographical
+- battle-map: Strategy analysis, campaign breakdown, tactical decision
+- period-archive: Cover-up story, MYTH/LIES angle, multiple sources, institutional erasure
+- battlefield-command: Combat narrative, action moment, operational story
+- rivalry: Two commanders in conflict, comparison, "X vs Y" framing
+
+## SEO DESCRIPTION REQUIREMENTS (300-400 WORDS)
+
+Structure:
+1. HOOK (~30 words) — Open with the most cinematic moment from script
+2. CONTEXT (50-80 words) — Historical scene, name general, era/theater
+3. KEY FACTS (200-250 words) — Main story beats. Mention general's name 3-5 times for SEO
+4. EMOTIONAL HOOK (30-50 words) — The "must watch" moment without spoiling
+5. CTA (final sentence) — Subscribe to American Brass + engagement question
+
+Required SEO keywords:
+- General's name (multiple times)
+- Era keywords: WWII, World War 2, World War II, 1940s, specific year, Pacific Theater / European Theater
+- Faction keywords: US Marines, US Army, American, Allied
+- Niche keywords: military history, generals, command, commanders, American Brass
+
+## OUTPUT FORMAT — STRICT JSON
+
+Return STRICTLY VALID JSON. NO markdown fences, NO preamble.
+
+{
+  "general": {
+    "name": "Full rank and name",
+    "physical": "Age, build, face, hair, uniform details, signature items from script",
+    "era": "WWII Pacific / WWII European / Korea / etc",
+    "service_branch": "USMC / US Army / USAAF"
+  },
+  "analysis": {
+    "central_contradiction": "The core irony in 1-2 sentences",
+    "dramatic_moment": "The cinematic peak with date and place",
+    "key_actors": ["array of 2-5 names"],
+    "emotional_triggers": ["2-3 from: institutional_erasure, stolen_credit, personal_failure, rivalry, vindication, cover_up, betrayal, contrarian_truth"],
+    "specific_anchors": ["array of 4-6 concrete numbers/dates/places"],
+    "predicted_tier": "S | A | B"
+  },
+  "options": [
+    {
+      "tier": "S | A | B",
+      "title": "Title 75-90 chars with proper structure",
+      "title_chars": 82,
+      "structure": "A | B | C | D",
+      "rationale": "Why this angle wins for the niche",
+      "background_recommendation": "portrait-hero | battle-map | period-archive | battlefield-command | rivalry",
+      "banners": [
+        { "word": "FRESH BANNER 1", "category": "INSTITUTIONAL_ACTION | PERSONAL_FAILURE | CONTRARIAN | SPECIFIC_NUMBER | HISTORICAL_QUOTE | CODE_NAME | RIVALRY", "angle": "primary emotional hook" },
+        { "word": "FRESH BANNER 2", "category": "category", "angle": "alternate angle" },
+        { "word": "FRESH BANNER 3", "category": "category", "angle": "third variation" }
+      ]
+    }
+  ],
+  "seo": {
+    "description": "300-400 word YouTube description following structure rules",
+    "tags": ["array of exactly 15 tags"]
+  }
 }
 
-// ============================================================================
-// CLAUDE SYSTEM PROMPT
-// ============================================================================
-function buildSystemPrompt() {
-  return [
-    'You are a YouTube title and thumbnail strategist for a WWII/Korean War military history channel that gets 50k–170k views per video. Analyze scripts and return structured JSON only.',
-    '',
-    'TITLE FORMULA — study these REAL titles from successful channels in the niche:',
-    '- He Founded American Special Operations. The Marine Corps Buried His Name for Fifty Years.',
-    '- The General Who Won Every Campaign MacArthur Claimed as His Own.',
-    '- Marshall Built the Army That Won the War. Roosevelt Would Not Let Him Lead It.',
-    '- Eisenhower Let Patton STARVE for Fuel While Montgomery Got Everything.',
-    '- Two Generals the Army Could Not Tolerate Together. They Won North Africa Anyway.',
-    '- Bradley Fired His Best Corps Commander at Normandy. He Was Right to Do It.',
-    '- The Only WWII General to Carry an M1 and Jump With His Men.',
-    '- A Marine General Fired an Army General on Saipan. It Nearly Split the Military.',
-    '- The Best Panzer Commander of WW2 Wasn\'t Rommel or Guderian.',
-    '- Why Did the Allies Let War Criminals Rebuild the German Army?',
-    '- Manstein Wrote a \'Bestseller\' About WW2. Almost None of It Was True.',
-    '- Rommel Was \'Never\' a Military Genius. His Own Officers Said That.',
-    '- Why Germany\'s \'Greatest General\' Lost Every Campaign That Mattered.',
-    '- They Sent Rommel to Hold a Defensive Line. He Launched an Offensive That Failed.',
-    '',
-    'TITLE RULES — READ CAREFULLY:',
-    '1. Plain declarative past-tense sentences OR a direct question. No colons. No em dashes.',
-    '2. Structure A: [Specific thing that happened]. [Consequence or twist.] — two sentences joined.',
-    '3. Structure B: [Person] [did specific dramatic thing] [while/when/because X].',
-    '4. Structure C: Question format — "Why Did X..." / "How Did Y..." — for contrarian takes.',
-    '5. Structure D: Negation hook — "X Wasn\'t Y" / "Y Was \'Never\' Z" — quotes around disputed words.',
-    '6. NEVER use vague filler: story, tale, incredible, amazing, remarkable, forgotten, untold, secret.',
-    '7. Use SPECIFIC names, numbers, places, exact actions.',
-    '8. Every title MUST be between 70 and 90 characters. Count every character including spaces and punctuation. This is a HARD REQUIREMENT — titles outside this window will be rejected.',
-    '',
-    'BANNER WORDS — 2-3 word punches baked onto red banners in thumbnails. Study these examples:',
-    '- ERASED, BETRAYED, IGNORED, UNBREAKABLE, DIAMONDS, THE MYTH, ALL LIES, GENIUS?, FINALLY',
-    '- WRONG CALL, STOLEN GLORY, NO FUEL, SACRIFICED, MASTERMIND, HE WALKED 140 MILES',
-    '- TIGER JACK, JUMPING GENERAL, SMITH vs SMITH, WORST ENEMIES, HE ATTACKED',
-    'Banner categories: NICKNAME (Tiger Jack, Iron Tits), BETRAYAL (Betrayed, Erased), RESILIENCE (Unbreakable, Survived), ACTION (He Attacked, Walked 140 Miles), CONTRARIAN (All Lies, The Myth, Genius?), REVERSAL (Wrong Call, Finally).',
-    '',
-    'BACKGROUND TYPES:',
-    '- COLLISION_MAP: tactical map with two forces colliding (best for battles)',
-    '- LOCATION_MAP: geographic map showing campaign area',
-    '- NEWSPAPER: 1940s newspaper front page',
-    '- DOCUMENT: aged military orders or memos on yellowed paper',
-    '- BATTLE_ACTION: combat scene with smoke and fire',
-    '- ARCHIVE_STACK: stacked period documents, letters, photographs',
-    '',
-    'Return ONLY valid JSON with this exact schema:',
-    '{',
-    '  "general": {"name": "Full rank and name", "physical": "Age, build, face, hair, uniform details, any signature items", "era": "WWII European/Pacific/Korean War/etc"},',
-    '  "hook": "3-4 sentences on the central injustice or irony — build tension",',
-    '  "dramatic_moment": "The most cinematic peak moment with specific date and place",',
-    '  "tone": "cold_betrayal/furious_injustice/tragic_irony/dark_mystery/triumphant_irony/contrarian_reveal",',
-    '  "lighting": "Specific cinematic lighting description",',
-    '  "titles": [{"text": "Title between 70-90 chars", "formula": "Structure A/B/C/D", "why": "Why this drives clicks", "chars": 78}],',
-    '  "backgrounds": [{"type": "TYPE", "label": "Name", "specific": "Exact visual details — geographic features, arrows, terrain only. NO stamps, NO readable text, NO labels with words, NO watermarks.", "recommended": true}],',
-    '  "banners": [{"word": "WORD", "category": "NICKNAME/BETRAYAL/RESILIENCE/ACTION/CONTRARIAN/REVERSAL", "why": "CTR reason"}],',
-    '  "description": "4-5 sentence YouTube description, 400-500 characters. Open with a hook sentence that teases the central irony or injustice. Add historical context in 1-2 sentences. Tease the resolution without giving it away. End with a soft CTA or question.",',
-    '  "tags": "tag1, tag2, tag3, tag4, tag5, tag6, tag7, tag8, tag9, tag10, tag11, tag12, tag13, tag14, tag15"',
-    '}',
-    '',
-    'Generate: 4 titles (STRICT 70-90 chars each — verify count before returning), 3-4 backgrounds, 5 banner words, 4-5 sentence description (400-500 chars), 15 tags. IMPORTANT: In background "specific" fields, never include stamps, seals, text overlays, watermarks, or anything that forces the image AI to render readable text — the AI struggles with text, so describe only shapes, terrain, arrows, and colors.'
-  ].join('\n');
-}
+## VALIDATION CHECKLIST (BEFORE OUTPUT)
 
-// ============================================================================
-// ANALYZE SCRIPT
-// ============================================================================
-function analyzeScript() {
-  var script = document.getElementById('scriptInput').value.trim();
-  var aKey = document.getElementById('anthropicKey').value.trim();
-  if (!script) return showToast('Paste a script or upload a PDF first', true);
-  if (!aKey) return showToast('Enter your Anthropic API key', true);
+1. ✓ 3 title options across DIFFERENT emotional angles
+2. ✓ Each option has 3 FRESH banner choices (NOT on forbidden list)
+3. ✓ Every title between 75-90 chars (count includes spaces)
+4. ✓ No vague filler words in any title
+5. ✓ Used proper quoted-adjective format where applicable
+6. ✓ NO question marks at end (except Structure C)
+7. ✓ SEO description is 300-400 words with general's name x3-5
+8. ✓ JSON is valid (no trailing commas, no markdown fences)
 
-  document.getElementById('analyzeBtn').disabled = true;
-  document.getElementById('analyzeTxt').textContent = 'ANALYZING...';
-  var model = CLAUDE_MODELS[selectedClaudeIdx];
-  showOverlay(true, 'ANALYZING', 'Running ' + model.name + '...');
-  setStep(1, 'active');
+If any title is outside 75-90 char range, REWRITE before outputting.
+If any banner is on forbidden list, INVENT new one before outputting.
+If any title has filler words, REWRITE without them.
 
-  fetch('https://api.anthropic.com/v1/messages', {
+Return ONLY the JSON object — no preamble, no commentary.`;
+
+const MODEL_MAP = {
+  haiku: 'claude-haiku-4-5-20251001',
+  sonnet: 'claude-sonnet-4-6',
+  opus: 'claude-opus-4-7'
+};
+
+async function callClaude(scriptContent, scriptType, model, apiKey) {
+  const messages = [];
+  if (scriptType === 'pdf') {
+    messages.push({
+      role: 'user',
+      content: [
+        { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: scriptContent } },
+        { type: 'text', text: 'Analyze this video script. Return only the JSON specified.' }
+      ]
+    });
+  } else {
+    messages.push({
+      role: 'user',
+      content: `Analyze this video script. Return only the JSON specified.\n\n--- SCRIPT BEGINS ---\n\n${scriptContent}\n\n--- SCRIPT ENDS ---`
+    });
+  }
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': aKey,
+      'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
       'anthropic-dangerous-direct-browser-access': 'true'
     },
     body: JSON.stringify({
-      model: model.id,
-      max_tokens: 3000,
-      system: buildSystemPrompt(),
-      messages: [{ role: 'user', content: 'Analyze this script:\n\n' + script }]
+      model: MODEL_MAP[model],
+      max_tokens: 6000,
+      system: PATTERN_LIBRARY,
+      messages: messages
     })
-  }).then(function(res) {
-    return res.json().then(function(json) {
-      if (!res.ok) throw new Error(json.error && json.error.message ? json.error.message : 'API error ' + res.status);
-      return json;
-    });
-  }).then(function(json) {
-    // Track cost
-    if (json.usage) {
-      var cost = (json.usage.input_tokens / 1e6) * model.inPrice + (json.usage.output_tokens / 1e6) * model.outPrice;
-      updateCost(cost);
-    }
+  });
 
-    var raw = json.content[0].text.trim();
-    var jsonStart = raw.indexOf('{');
-    var jsonEnd = raw.lastIndexOf('}');
-    if (jsonStart >= 0 && jsonEnd >= 0) raw = raw.substring(jsonStart, jsonEnd + 1);
-    raw = raw.replace(/```json|```/g, '').trim();
-    try {
-      appData = JSON.parse(raw);
-    } catch(parseErr) {
-      raw = raw.replace(/,(\s*[}\]])/g, '$1');
-      appData = JSON.parse(raw);
-    }
-    showOverlay(false);
-    setStep(1, 'done');
-    setStep(2, 'active');
-    renderAll();
-  }).catch(function(err) {
-    showOverlay(false);
-    setStep(1, '');
-    showToast('Error: ' + err.message, true, 7000);
-    document.getElementById('analyzeBtn').disabled = false;
-    document.getElementById('analyzeTxt').textContent = 'ANALYZE SCRIPT';
+  if (!response.ok) {
+    const errText = await response.text();
+    let errMsg = `API error (${response.status})`;
+    try { const errJson = JSON.parse(errText); errMsg = errJson.error?.message || errMsg; } catch (e) {}
+    throw new Error(errMsg);
+  }
+
+  const data = await response.json();
+  const text = data.content[0].text;
+  let jsonText = text.trim();
+  if (jsonText.startsWith('```')) {
+    jsonText = jsonText.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+  }
+  let result;
+  try { result = JSON.parse(jsonText); }
+  catch (e) {
+    console.error('Brain JSON parse failed:', text);
+    throw new Error('Brain returned invalid JSON. Try again or switch models.');
+  }
+  return { result, usage: data.usage };
+}
+
+const STAGES = ['reading', 'extracting', 'matching', 'generating', 'seo'];
+function setStage(currentStage) {
+  STAGES.forEach(stage => {
+    const el = document.querySelector(`[data-stage="${stage}"]`);
+    if (!el) return;
+    el.classList.remove('active', 'done');
+    const idx = STAGES.indexOf(stage);
+    const currentIdx = STAGES.indexOf(currentStage);
+    if (idx < currentIdx) el.classList.add('done');
+    else if (idx === currentIdx) el.classList.add('active');
   });
 }
-
-// ============================================================================
-// RENDER
-// ============================================================================
-function makeCard(label, meta, inner) {
-  var c = document.createElement('div');
-  c.className = 'card';
-  c.innerHTML = '<div class="card-hdr"><span class="card-lbl">' + label + '</span><span class="card-sub">' + meta + '</span></div><div class="card-body">' + inner + '</div>';
-  return c;
-}
-
-function bgIcon(type) {
-  var icons = { COLLISION_MAP:'⚔', LOCATION_MAP:'🗺', NEWSPAPER:'📰', DOCUMENT:'📋', BATTLE_ACTION:'💥', ARCHIVE_STACK:'🗂' };
-  return icons[type] || '◼';
-}
-
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, function(c) {
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
-  });
-}
-
-function renderAll() {
-  document.getElementById('analyzeBtn').disabled = false;
-  document.getElementById('analyzeTxt').textContent = 'RE-ANALYZE';
-  document.getElementById('mainTitle').textContent = (appData.general.name || 'UNKNOWN').toUpperCase();
-  document.getElementById('mainMeta').textContent = (appData.general.era || '').toUpperCase();
-
-  var body = document.getElementById('mainBody');
-  body.innerHTML = '';
-
-  // Intel card
-  body.appendChild(makeCard('Intel — Emotional Core', escapeHtml(appData.general.era || ''),
-    '<div class="intel-text">' + escapeHtml(appData.hook) + '</div>' +
-    '<div class="intel-row"><b>Dramatic moment —</b> ' + escapeHtml(appData.dramatic_moment) + '</div>' +
-    '<div class="intel-row"><b>Tone —</b> ' + escapeHtml((appData.tone || '').replace(/_/g, ' ')) + ' &nbsp;·&nbsp; <b>Lighting —</b> ' + escapeHtml(appData.lighting) + '</div>'
-  ));
-
-  // Description
-  if (appData.description) {
-    window._desc = appData.description;
-    var dLen = appData.description.length;
-    var descCard = makeCard('Video Description', dLen + ' chars · Copy for YouTube',
-      '<div id="descText" style="font-family:var(--mono);font-size:11px;color:var(--muted2);line-height:1.8;margin-bottom:10px"></div>' +
-      '<button class="copy-btn" onclick="copyDescription()">Copy Description</button>'
-    );
-    body.appendChild(descCard);
-    document.getElementById('descText').textContent = appData.description;
-  }
-
-  // Tags
-  if (appData.tags) {
-    window._tags = appData.tags;
-    var tagsCard = makeCard('Video Tags', 'Copy for YouTube',
-      '<div id="tagsText" style="font-family:var(--mono);font-size:11px;color:var(--muted2);line-height:1.8;margin-bottom:10px"></div>' +
-      '<button class="copy-btn" onclick="copyTags()">Copy Tags</button>'
-    );
-    body.appendChild(tagsCard);
-    document.getElementById('tagsText').textContent = appData.tags;
-  }
-
-  // Titles — 70-90 enforcement
-  var titleHtml = '<div class="opt-list">';
-  for (var i = 0; i < appData.titles.length; i++) {
-    var t = appData.titles[i];
-    var L = t.text.length;
-    var ok = L >= 70 && L <= 90;
-    var pillText = ok ? L + '/90 ✓ good length' : (L < 70 ? L + '/90 ✗ too short' : L + '/90 ✗ too long');
-    titleHtml += '<div class="opt-item" data-title="' + i + '">' +
-      '<div class="opt-check">✓</div>' +
-      '<div class="opt-formula">' + escapeHtml((t.formula || '').toUpperCase()) + '</div>' +
-      '<div class="opt-text">' + escapeHtml(t.text) + '</div>' +
-      '<div class="char-pill ' + (ok ? 'char-ok' : 'char-bad') + '">' + pillText + '</div>' +
-      '<div class="opt-why">' + escapeHtml(t.why || '') + '</div>' +
-      '</div>';
-  }
-  titleHtml += '</div>';
-  body.appendChild(makeCard('Step 2 — Video Title', '70–90 chars · Select one', titleHtml));
-
-  // Backgrounds
-  var bgHtml = '<div class="bg-grid">';
-  for (var j = 0; j < appData.backgrounds.length; j++) {
-    var b = appData.backgrounds[j];
-    bgHtml += '<div class="bg-opt" data-bg="' + j + '">' +
-      (b.recommended ? '<div class="bg-rec">REC</div>' : '') +
-      '<div class="bg-check">✓</div>' +
-      '<div class="bg-type">' + bgIcon(b.type) + ' ' + escapeHtml(b.label) + '</div>' +
-      '<div class="bg-why">' + escapeHtml(b.specific) + '</div>' +
-      '</div>';
-  }
-  bgHtml += '</div>';
-  body.appendChild(makeCard('Step 3 — Background Type', 'Select one', bgHtml));
-
-  // Banner words
-  var banHtml = '<div class="banner-wrap">';
-  for (var k = 0; k < appData.banners.length; k++) {
-    var bn = appData.banners[k];
-    banHtml += '<div class="ban-opt" data-ban="' + k + '">' +
-      '<div class="ban-check">✓</div>' +
-      '<div class="ban-word">' + escapeHtml(bn.word) + '</div>' +
-      '<div class="ban-cat">' + escapeHtml((bn.category || '').toUpperCase()) + '</div>' +
-      '<div class="ban-why">' + escapeHtml(bn.why || '') + '</div>' +
-      '</div>';
-  }
-  banHtml += '</div>';
-  body.appendChild(makeCard('Step 4 — Banner Word (for Canva)', 'Click to copy · add banner manually in Canva', banHtml));
-
-  // Reference photos
-  body.appendChild(makeCard('Step 5 — General Reference Photos', '1-3 photos for face & uniform likeness',
-    '<div style="font-family:var(--mono);font-size:9px;color:var(--muted2);margin-bottom:8px;line-height:1.6">Portrait reference for <strong style="color:var(--text)">' + escapeHtml(appData.general.name) + '</strong><br>' + escapeHtml(appData.general.physical) + '</div>' +
-    '<div class="ref-drop">' +
-    '<input type="file" id="refGeneral" accept="image/*" multiple>' +
-    '<div class="ref-thumbs" id="generalThumbs"><div class="ref-plus" id="refPlus">+</div></div>' +
-    '<div class="ref-hint">FACE · UNIFORM · 1-3 PHOTOS</div>' +
-    '</div>' +
-    '<div class="ref-note">Best: 1 front-facing portrait + 1 in uniform · Sources: archives.gov · Wikipedia Commons</div>'
-  ));
-
-  body.appendChild(makeCard('Step 6 — Final Prompt & Generate', GEMINI_MODELS[selectedImgIdx].name + ' · Google AI Studio',
-    '<span class="lbl" style="margin-bottom:2px">Generated Prompt</span>' +
-    '<div class="prompt-out awaiting" id="promptOut">Select a background above — prompt builds automatically...</div>' +
-    '<div class="act-row" style="margin-top:10px">' +
-    '<button class="gen-btn" id="genBtn" disabled style="opacity:0.5">GENERATE THUMBNAIL</button>' +
-    '<button class="copy-btn" id="copyPromptBtn">Copy Prompt</button>' +
-    '</div>' +
-    '<div id="resultWrap" style="display:none;flex-direction:column;gap:10px;margin-top:14px">' +
-    '<div class="div-line">Generated Thumbnail · Banner to add in Canva</div>' +
-    '<img id="resultImg" style="width:100%;border-radius:4px;border:1px solid var(--border2);display:block" />' +
-    '<div class="act-row">' +
-    '<button class="dl-btn" id="dlBtn">Download PNG</button>' +
-    '<button class="regen-btn" id="regenBtn">Regenerate</button>' +
-    '</div></div>'
-  ));
-
-  // Bind all dynamic elements AFTER insertion
-  bindDynamic();
-
-  // Auto-select recommended background
-  var recIdx = -1;
-  for (var r = 0; r < appData.backgrounds.length; r++) {
-    if (appData.backgrounds[r].recommended) { recIdx = r; break; }
-  }
-  if (recIdx < 0 && appData.backgrounds.length > 0) recIdx = 0;
-  if (recIdx >= 0) setTimeout(function() { selectBg(recIdx); }, 300);
-
-  // Auto-select first banner
-  if (appData.banners && appData.banners.length > 0) {
-    setTimeout(function() { selectBanner(0); }, 400);
-  }
-}
-
-function bindDynamic() {
-  document.querySelectorAll('[data-title]').forEach(function(el) {
-    el.addEventListener('click', function() { selectTitle(+el.dataset.title); });
-  });
-  document.querySelectorAll('[data-bg]').forEach(function(el) {
-    el.addEventListener('click', function() { selectBg(+el.dataset.bg); });
-  });
-  document.querySelectorAll('[data-ban]').forEach(function(el) {
-    el.addEventListener('click', function() {
-      var i = +el.dataset.ban;
-      var word = appData.banners[i].word;
-      navigator.clipboard.writeText(word).then(function() {
-        showToast('Copied "' + word + '" — paste in Canva');
+function advanceStages() {
+  let idx = 0;
+  setStage(STAGES[0]);
+  return setInterval(() => {
+    idx++;
+    if (idx >= STAGES.length) {
+      STAGES.forEach(s => {
+        const el = document.querySelector(`[data-stage="${s}"]`);
+        if (el) { el.classList.remove('active'); el.classList.add('done'); }
       });
-    });
-  });
-
-  var refInput = document.getElementById('refGeneral');
-  if (refInput) refInput.addEventListener('change', handleGeneralRefs);
-  var refPlus = document.getElementById('refPlus');
-  if (refPlus) refPlus.addEventListener('click', function() { refInput.click(); });
-
-  var genBtn = document.getElementById('genBtn');
-  if (genBtn) genBtn.addEventListener('click', generateImage);
-  var cpBtn = document.getElementById('copyPromptBtn');
-  if (cpBtn) cpBtn.addEventListener('click', copyPrompt);
-  var dl = document.getElementById('dlBtn');
-  if (dl) dl.addEventListener('click', dlImage);
-  var rg = document.getElementById('regenBtn');
-  if (rg) rg.addEventListener('click', generateImage);
+    } else { setStage(STAGES[idx]); }
+  }, 1000);
 }
 
-// ============================================================================
-// SELECTIONS
-// ============================================================================
-function selectTitle(i) {
-  document.querySelectorAll('[data-title]').forEach(function(e) { e.classList.remove('sel'); });
-  var el = document.querySelector('[data-title="' + i + '"]');
-  if (el) el.classList.add('sel');
-  selTitle = appData.titles[i];
-  setStep(2, 'done');
-  if (!selBg) setStep(3, 'active');
-  buildPrompt();
-}
+document.getElementById('analyzeBtn').addEventListener('click', async () => {
+  clearError();
+  const apiKey = document.getElementById('anthropicKey').value.trim();
+  if (!apiKey) { showError('Anthropic API key required'); return; }
+  if (!apiKey.startsWith('sk-ant-')) { showError('Invalid Anthropic key format'); return; }
 
-function selectBg(i) {
-  document.querySelectorAll('[data-bg]').forEach(function(e) { e.classList.remove('sel'); });
-  var el = document.querySelector('[data-bg="' + i + '"]');
-  if (el) el.classList.add('sel');
-  selBg = appData.backgrounds[i];
-  setStep(3, 'done');
-  if (!selBanner) setStep(4, 'active');
-  buildPrompt();
-}
-
-function selectBanner(i) {
-  // Click handler now copies to clipboard (see bindDynamic). This function
-  // is kept for auto-select on render and for the step/state flow.
-  selBanner = appData.banners[i];
-  setStep(4, 'done');
-  if (generalImgs.length === 0) setStep(5, 'active');
-  else setStep(6, 'active');
-}
-
-// ============================================================================
-// REFERENCE IMAGES — additive, supports multiple uploads over several clicks
-// ============================================================================
-function handleGeneralRefs(e) {
-  var newFiles = Array.from(e.target.files || []);
-  // Reset the input immediately so the user can pick the same files again if needed
-  e.target.value = '';
-
-  var slotsLeft = 3 - generalImgs.length;
-  if (slotsLeft <= 0) {
-    showToast('Maximum 3 reference photos. Remove one to add another.', true);
-    return;
-  }
-
-  newFiles.slice(0, slotsLeft).forEach(function(file) {
-    var reader = new FileReader();
-    reader.onload = function(ev) {
-      generalImgs.push({ data: ev.target.result.split(',')[1], type: file.type });
-      renderRefThumbs();
-    };
-    reader.readAsDataURL(file);
-  });
-
-  if (generalImgs.length + newFiles.length > 0) {
-    setStep(5, 'done');
-    setStep(6, 'active');
-  }
-}
-
-function renderRefThumbs() {
-  var row = document.getElementById('generalThumbs');
-  if (!row) return;
-  row.innerHTML = '';
-  // Render existing thumbnails with remove buttons
-  generalImgs.forEach(function(img, idx) {
-    var wrapper = document.createElement('div');
-    wrapper.style.cssText = 'position:relative;display:inline-block';
-    var thumb = document.createElement('img');
-    thumb.src = 'data:' + img.type + ';base64,' + img.data;
-    thumb.className = 'ref-img';
-    wrapper.appendChild(thumb);
-    var x = document.createElement('div');
-    x.textContent = '×';
-    x.style.cssText = 'position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:#c41a00;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;line-height:1;font-weight:bold';
-    x.addEventListener('click', function(ev) {
-      ev.stopPropagation();
-      generalImgs.splice(idx, 1);
-      renderRefThumbs();
-      if (generalImgs.length === 0) {
-        setStep(5, 'active');
-        setStep(6, '');
-      }
-    });
-    wrapper.appendChild(x);
-    row.appendChild(wrapper);
-  });
-  // Plus button (only if under limit)
-  if (generalImgs.length < 3) {
-    var plus = document.createElement('div');
-    plus.className = 'ref-plus';
-    plus.textContent = '+';
-    plus.addEventListener('click', function() {
-      document.getElementById('refGeneral').click();
-    });
-    row.appendChild(plus);
-  }
-  // Counter
-  var counter = document.createElement('div');
-  counter.style.cssText = 'font-family:var(--mono);font-size:9px;color:var(--muted);margin-left:8px;align-self:center';
-  counter.textContent = generalImgs.length + '/3';
-  row.appendChild(counter);
-}
-
-// ============================================================================
-// BACKGROUND DESCRIPTIONS (for the image prompt)
-// Rewritten for MAXIMUM visual punch — thick arrows, dark outlines, high sat.
-// ============================================================================
-function getBgDesc(bg) {
-  var descs = {
-    COLLISION_MAP: 'Dramatic high-contrast period military map fills the entire background — ' + bg.specific + '. Bold YouTube-thumbnail style (NOT washed out): THICK BOLD RED ARROWS (saturated crimson red, 12-15 pixels wide with hard dark outlines) sweeping aggressively inward from multiple directions toward a central battle point marked with a bold red circle. THICK BOLD BLUE ARROWS (saturated navy blue) pushing in the opposite direction. Black tank silhouettes and unit markers scattered across the map at battle points. Terrain rendered with visible brown contour lines. Rivers drawn as bold curving blue lines with clear blue fill. The map includes SHORT PERIOD-STYLE MAP LABELS: place names in small bold black serif type (river names in italic, town names in uppercase bold, the key location name prominently marked near the central circle), campaign dates in a small block in one corner, a brief campaign title in 2-3 words near the key point. Labels look like authentic 1940s-50s military map annotation — compact, clean, legible. Subtle vintage paper texture with saturated colors.',
-    LOCATION_MAP: 'Dramatic high-contrast period military map fills the entire background — ' + bg.specific + '. Bold rendering: saturated colors, thick dark outlines, visible terrain contours with strong brown/green shading, bold blue rivers, black silhouette markers for unit positions. THICK BOLD ARROWS (red and blue, hard-outlined) indicating movement. SHORT period map labels in small bold serif type: river names in italic, town/region names in uppercase bold, one or two date or unit designations. Labels look like 1940s-50s authentic military map annotation.',
-    NEWSPAPER: 'Full-frame newspaper collage fills the ENTIRE background — NOT on a desk, NOT with a lamp, NOT sitting on any surface. The image is 100% covered with MULTIPLE overlapping period newspaper clippings and magazine covers layered like a war-era propaganda collage — ' + bg.specific + '. Visible elements: 3-5 different period newspapers/magazines overlapping at slight angles covering the entire frame edge-to-edge, each with a bold period masthead in heavy serif type (authentic 1940s newspaper names), each with a HUGE dramatic headline in bold black uppercase type, subheadlines in smaller bold type, column text below as dense texture, one prominent period photograph with caption as focal point. Pages are warm yellowed aged paper with authentic fold marks, torn edges, and subtle brown stains. High-contrast rendering — saturated warm yellow-sepia tones with deep black ink. Bold red accent marks (circles drawn around key headlines, underlines in red ink). The composition has the visual weight of a wartime propaganda wall or evidence board — overlapping documents filling every pixel of the frame.',
-    DOCUMENT: 'A dramatic aged official military document fills the entire background — ' + bg.specific + '. Layered yellowed papers on a dark wooden desk with dramatic side lighting. The top document has a bold military LETTERHEAD at top (insignia + a few lines of bold type like "WAR DEPARTMENT" or "GENERAL HEADQUARTERS"), a short TITLE line in uppercase bold ("CLASSIFIED", "OPERATION ORDERS"), paragraphs of typewritten text texture (individual letters blurred), red ink stamp marks as color accents, a bold signature at bottom. Papers slightly overlapping with torn edges. High contrast, saturated warm tones.',
-    BATTLE_ACTION: 'A dramatic ' + bg.specific + ' battlefield scene fills the entire background. CINEMATIC: massive columns of dark smoke rising, intense orange and red fire glow in mid-distance creating rim light, soldiers and tanks as dark silhouettes against the flames, explosive shell bursts, heavy overcast sky with dramatic god-rays, debris and dust. Saturated orange/red fire tones against dark blue-gray smoke. War film poster composition.',
-    ARCHIVE_STACK: 'Full-frame document collage — overlapping period papers, photographs, and memos cover the ENTIRE background edge-to-edge (NOT on a desk, NOT with a lamp, NOT on a wood surface — just overlapping documents filling every pixel). ' + bg.specific + '. Yellowed letters with visible bold headers (unit names, dates in bold type), old photographs with dark borders, typewritten memos with bold headings ("WAR DEPARTMENT", "CLASSIFIED", "OPERATION ORDERS"), folded military maps with visible place labels, red ink stamps as color accents, torn edges on the papers at the frame boundaries. Items layered at dramatic angles. Warm sepia-gold tones with deep black ink. High contrast. Dark vignette at outer edges. The composition looks like a wartime evidence wall or investigation board.'
-  };
-  return descs[bg.type] || bg.specific;
-}
-
-// ============================================================================
-// BUILD PROMPT — REWRITTEN for aura, rim lights, bold composition
-// ============================================================================
-function buildPrompt() {
-  if (!selBg || !appData) return;
-  try {
-    var box = document.getElementById('promptOut');
-    if (!box) return;
-    if (selectedMode === 'twopass') {
-      box.textContent = buildPromptPass1() + '\n\n' +
-        '══════════════════════════════════════\n' +
-        'PASS 2 (sent automatically after Pass 1):\n' +
-        '══════════════════════════════════════\n\n' +
-        buildPromptPass2Template();
-    } else {
-      box.textContent = buildPromptSingle();
-    }
-    box.classList.remove('awaiting');
-    var genBtn = document.getElementById('genBtn');
-    if (genBtn) { genBtn.disabled = false; genBtn.style.opacity = '1'; }
-  } catch(err) {
-    console.error('buildPrompt error:', err);
-    showToast('Prompt build error: ' + err.message, true);
-  }
-}
-
-// The original single-pass prompt, but rewritten for bigger punch
-function buildPromptSingle() {
-  var g = appData.general;
-  var refNote = generalImgs.length > 0
-    ? 'CRITICAL: Use the provided reference photos of ' + g.name + ' as the EXACT facial likeness — match skin tone, face shape, jawline, eyes, hair, and uniform details precisely. Do not invent a different face. '
-    : '';
-
-  return [
-    'YOUTUBE THUMBNAIL — photorealistic digital artwork, widescreen 16:9 composition. Finished standalone artwork. ABSOLUTELY NO banner text, NO title cards, NO captions, NO watermarks. Period-appropriate map labels or newspaper headlines are OK as part of the background, but no modern graphic text overlays.',
-    '',
-    'COMPOSITION OVERVIEW:',
-    'The BACKGROUND SCENE fills the ENTIRE frame edge-to-edge. The GENERAL stands in the right half, with a bright warm AURA glow radiating from behind him that separates him from the scene. The background is visible on both sides of the figure (some on the left, some behind through the glow) — it is ONE continuous scene across the full frame.',
-    '',
-    'SUBJECT FIGURE (the brightest element): ' + refNote + 'Photorealistic portrait of ' + g.name + ' in full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + EXPRESSIONS[selectedExprIdx] + '.',
-    '',
-    'FIGURE PLACEMENT & CROP: The general occupies the RIGHT HALF of the frame, taking up roughly 50-55% of the image width. TIGHT CROP — head and upper chest only, head fills the upper-right portion with only a small margin above the hat/hair. Body visible from upper chest up. LARGE, DOMINANT, LOOMING.',
-    '',
-    '*** AURA SEPARATION — THE MOST IMPORTANT STYLE DETAIL ***',
-    'Directly behind the general\'s head and shoulders, paint a strong WARM ORANGE-TO-RED RADIAL GLOW that fades outward. This glow must be BRIGHT and CLEARLY VISIBLE — like a halo of warm sunset light radiating from behind him. The glow should:',
-    '1. Make the figure pop off the background with clear visual separation',
-    '2. Create a bright ring of warm light around his head and upper torso',
-    '3. Fade softly into the background — NOT create a hard boundary or split the image',
-    '4. Cast a subtle warm rim light on his LEFT shoulder and the left side of his face/neck (edge lighting)',
-    'The background scene should be VISIBLE through the glow where possible — the glow is colored light ON TOP of the background, not a solid wall blocking it.',
-    'Think of DIAMONDS-style YouTube thumbnails — the general is lit FROM BEHIND by a warm fire or sunset, creating a glowing halo that separates him from the map.',
-    '',
-    'FIGURE LIGHTING:',
-    '- Hard directional key light from upper-front-left at ~45° — face is brightly lit and sharp',
-    '- Warm rim light on LEFT side of face and shoulders (from the aura glow)',
-    '- Face is the BRIGHTEST, SHARPEST, most in-focus element — eyes catch light, skin texture visible',
-    '- Teal-and-orange color grading',
-    '',
-    'BACKGROUND (FILLS THE ENTIRE FRAME EDGE-TO-EDGE):',
-    getBgDesc(selBg),
-    '',
-    'BACKGROUND TREATMENT: The background extends to ALL FOUR EDGES of the frame — no blank space, no hard diagonal divider. On the LEFT side it is fully visible with cooler natural lighting. Behind the figure on the right, the warm aura glow tints the background orange but does not erase it. Dark vignette around the outer corners frames the whole composition.',
-    '',
-    'UNIFORM: Vivid, warm, saturated olive drab or era-appropriate color. All insignia, buckles, straps, helmet, and equipment rendered with high detail and sharp focus.',
-    '',
-    'OVERALL STYLE: Photorealistic but GRAPHIC and HIGH-CONTRAST like a theatrical movie poster. Deep blacks. Bright highlights. Cinematic color grading.',
-    '',
-    'NEGATIVE REQUIREMENTS: NO modern banner text, NO title cards, NO captions, NO watermarks, NO UI elements, NO play buttons, NO borders. Period-accurate map labels are fine. Leave the lower-left, lower-center, and lower-right areas relatively uncluttered so a banner can be overlaid cleanly in post-production.'
-  ].join('\n');
-}
-
-// PASS 1: Generate just the background — NO figure. Maximum map detail.
-function buildPromptPass1() {
-  return [
-    'PASS 1 OF 2 — BACKGROUND ONLY (no human figure at all). Widescreen 16:9 YouTube thumbnail background.',
-    '',
-    'THE BACKGROUND SCENE MUST FILL THE ENTIRE FRAME EDGE-TO-EDGE. The map (or document, or scene) covers 100% of the image — left edge to right edge, top edge to bottom edge. Do NOT leave blank space on any side. Do NOT create a hard diagonal or vertical boundary splitting the image into two halves.',
-    '',
-    'BACKGROUND SCENE:',
-    getBgDesc(selBg),
-    '',
-    '*** WARM ATMOSPHERIC LIGHTING — ON TOP OF THE MAP, NOT REPLACING IT ***',
-    'The entire map is visible across the full frame. A warm orange-to-red atmospheric glow sits ON TOP of the map on the right-center area — like warm late-afternoon sunlight pouring across the scene. The map beneath this glow is STILL VISIBLE (with all its terrain, arrows, and labels) but tinted warm. The glow fades smoothly so there is no hard edge.',
-    '- Left side of the map: normal cooler lighting, full detail, slight dark vignette in corners',
-    '- Right-center of the map: warm orange glow overlay on top of the map details',
-    '- Right edge: slightly darker to frame the glow',
-    'The map is ONE continuous scene across the full frame, with the warm glow acting as colored light across the right half. The map details (arrows, terrain, labels, unit markers) are visible THROUGH the warm glow.',
-    '',
-    'RENDERING: HIGH-CONTRAST, SATURATED colors, bold and graphic like a YouTube thumbnail. Photorealistic but stylized. Deep blacks in corners. The map must extend to all four edges of the frame.',
-    '',
-    'NEGATIVE: NO human figures, NO people, NO faces, NO soldiers, NO silhouettes of people. NO blank empty areas. NO hard vertical or diagonal line splitting the image in half. NO watermarks, NO UI elements, NO borders.'
-  ].join('\n');
-}
-
-// PASS 2: Composite the general onto the Pass 1 output
-function buildPromptPass2Template() {
-  var g = appData.general;
-  var refNote = generalImgs.length > 0
-    ? 'CRITICAL: Match the face in the provided reference photo(s) EXACTLY — same skin tone, face shape, jawline, eyes, hair, uniform details. Do not invent a different face. '
-    : '';
-
-  return [
-    'PASS 2 OF 2 — COMPOSITE the general onto the provided background image, preserving the background\'s warm right-side glow as an AURA behind the figure.',
-    '',
-    'You are given: (1) a background image from Pass 1 (which already has a warm orange glow on its right side), (2) reference photo(s) of the general.',
-    '',
-    'TASK: Add a photorealistic portrait of ' + g.name + ' into the RIGHT HALF of the background image, positioned so that the EXISTING WARM ORANGE GLOW in the background appears as a HALO radiating from behind him. ' + refNote,
-    '',
-    'FIGURE DETAILS: Full ' + g.era + ' military uniform. ' + g.physical + '. Expression: ' + EXPRESSIONS[selectedExprIdx] + '.',
-    '',
-    'PLACEMENT: Right half of the frame, taking up roughly 50-55% of image width. TIGHT CROP — head and upper chest only. Head fills the upper-right area. Figure should feel LARGE, DOMINANT, LOOMING. Position him so the EXISTING WARM GLOW in the background sits directly behind his head and shoulders.',
-    '',
-    '*** AURA SEPARATION — CRITICAL ***',
-    'The general MUST have strong visual separation from the background:',
-    '1. The warm orange/red glow from the background should radiate OUT from behind his head — like a halo',
-    '2. On his LEFT side (the side facing the background), add a warm rim light — a bright warm edge wrapping around his shoulder, neck, and cheek from the glow',
-    '3. On his RIGHT side (outer frame edge), a cooler darker shadow so the figure has depth',
-    '4. The area DIRECTLY behind his body should be slightly darker than the glow — creating the "halo" effect',
-    '5. DO NOT paste him flat onto the background — blend edges with light and shadow so he emerges naturally from the scene',
-    '',
-    'LIGHTING ON THE FIGURE:',
-    '- Hard directional key light from upper-front-left at ~45°',
-    '- Warm orange rim light wrapping around his LEFT side (motivated by the background glow)',
-    '- Face brightly lit and sharp — the BRIGHTEST element in the frame',
-    '- Hard shadows under jaw and helmet brim',
-    '',
-    'INTEGRATION: The figure must look naturally embedded — NOT pasted on. Edge light and color temperature must match the background\'s warm glow. The background\'s left-half detail (map, arrows, etc) must remain visible and undisturbed.',
-    '',
-    'COLOR GRADING: Cinematic teal-and-orange. Deep blacks. Rich saturation. Sharp focus on the face.',
-    '',
-    'NEGATIVE: NO modern banner text, NO title cards, NO watermarks, NO borders, NO UI. Period-appropriate map labels already in the background image must be preserved untouched. Leave the lower portion of the image relatively uncluttered so a banner can be overlaid in post-production.'
-  ].join('\n');
-}
-
-function copyPrompt() {
-  var box = document.getElementById('promptOut');
-  if (!box || box.classList.contains('awaiting')) return showToast('Make your selections first', true);
-  navigator.clipboard.writeText(box.textContent).then(function() { showToast('Prompt copied to clipboard'); });
-}
-
-function copyDescription() {
-  navigator.clipboard.writeText(window._desc || '').then(function() { showToast('Description copied!'); });
-}
-
-function copyTags() {
-  navigator.clipboard.writeText(window._tags || '').then(function() { showToast('Tags copied!'); });
-}
-
-// ============================================================================
-// GENERATE IMAGE — single or two-pass
-// ============================================================================
-function generateImage() {
-  var gKey = document.getElementById('googleKey').value.trim();
-  if (!gKey) return showToast('Enter your Google AI Studio API key', true);
-  if (!selBg) return showToast('Select a background type first (Step 3)', true);
-
-  var btn = document.getElementById('genBtn');
-  btn.disabled = true;
-  btn.textContent = 'GENERATING...';
-
-  if (selectedMode === 'twopass') {
-    runTwoPass(gKey, btn);
+  let scriptContent, scriptType;
+  if (state.scriptSource === 'pdf' && state.scriptPdfBase64) {
+    scriptContent = state.scriptPdfBase64;
+    scriptType = 'pdf';
+  } else if (state.scriptText && state.scriptText.length >= 100) {
+    scriptContent = state.scriptText;
+    scriptType = 'text';
   } else {
-    runSinglePass(gKey, btn);
+    showError('Provide a script (>100 chars or PDF)'); return;
   }
-}
 
-function runSinglePass(gKey, btn) {
-  showOverlay(true, 'GENERATING', 'Sending to ' + GEMINI_MODELS[selectedImgIdx].name + '...');
-  var progress = startProgressTimer();
-  var prompt = buildPromptSingle();
-  var parts = [{ text: prompt }];
-  generalImgs.slice(0, 3).forEach(function(img) {
-    parts.push({ inlineData: { mimeType: img.type, data: img.data } });
-  });
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('workflow').classList.remove('visible');
+  document.getElementById('analyzingState').style.display = 'flex';
+  document.getElementById('mainTitle').textContent = 'Brain Engaged';
+  document.getElementById('mainHint').textContent = 'Analyzing script...';
+  document.querySelectorAll('.stage-item').forEach(el => el.classList.remove('active', 'done'));
 
-  callGemini(gKey, parts).then(function(result) {
-    clearInterval(progress);
-    showOverlay(false);
-    updateCost(getImageCost());
-    if (!result.b64) throw new Error('No image in response. ' + (result.text || ''));
-    loadAndComposite(result.b64, result.mime);
-  }).catch(function(err) {
-    clearInterval(progress);
-    showOverlay(false);
-    handleGenError(err);
-  }).finally(function() {
+  const btn = document.getElementById('analyzeBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+  const stageInterval = advanceStages();
+
+  try {
+    const { result } = await callClaude(scriptContent, scriptType, state.claudeModel, apiKey);
+    clearInterval(stageInterval);
+    document.querySelectorAll('.stage-item').forEach(el => { el.classList.remove('active'); el.classList.add('done'); });
+
+    const cost = parseFloat(document.querySelector(`#claudeModels .option-row[data-model="${state.claudeModel}"]`).dataset.cost);
+    state.sessionSpend += cost;
+    document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
+
+    state.brainResult = result;
+    renderBrainOutput(result);
+
+    setTimeout(() => {
+      document.getElementById('analyzingState').style.display = 'none';
+      document.getElementById('workflow').classList.add('visible');
+      document.getElementById('mainTitle').textContent = 'Pipeline Active';
+      document.getElementById('mainHint').textContent = 'Step 02 / 06 · Select Title';
+    }, 600);
+
+  } catch (err) {
+    clearInterval(stageInterval);
+    document.getElementById('analyzingState').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'flex';
+    document.getElementById('mainTitle').textContent = 'Awaiting Script';
+    document.getElementById('mainHint').textContent = 'Analysis failed';
+    showError(`Analysis failed: ${err.message}`);
+    console.error(err);
+  } finally {
+    btn.classList.remove('loading');
     btn.disabled = false;
-    btn.textContent = 'GENERATE THUMBNAIL';
+  }
+});
+
+function renderBrainOutput(result) {
+  const triggers = result.analysis.emotional_triggers
+    .map(t => `<span class="trigger-chip">${t.replace(/_/g, ' ')}</span>`).join('');
+
+  document.getElementById('analysisSummary').innerHTML = `
+    <div class="analysis-row"><div class="analysis-key">General</div><div class="analysis-value">${escapeHtml(result.general.name)}</div></div>
+    <div class="analysis-row"><div class="analysis-key">Era</div><div class="analysis-value">${escapeHtml(result.general.era)} · ${escapeHtml(result.general.service_branch)}</div></div>
+    <div class="analysis-row"><div class="analysis-key">Contradiction</div><div class="analysis-value">${escapeHtml(result.analysis.central_contradiction)}</div></div>
+    <div class="analysis-row"><div class="analysis-key">Dramatic Moment</div><div class="analysis-value">${escapeHtml(result.analysis.dramatic_moment)}</div></div>
+    <div class="analysis-row"><div class="analysis-key">Key Actors</div><div class="analysis-value">${result.analysis.key_actors.map(escapeHtml).join(', ')}</div></div>
+    <div class="analysis-row"><div class="analysis-key">Triggers</div><div class="analysis-value"><div class="triggers">${triggers}</div></div></div>
+    <div class="analysis-row"><div class="analysis-key">Anchors</div><div class="analysis-value">${result.analysis.specific_anchors.map(escapeHtml).join(' · ')}</div></div>
+    <div class="analysis-row"><div class="analysis-key">Predicted Tier</div><div class="analysis-value"><span class="tier-pill tier-${result.analysis.predicted_tier.toLowerCase()}">${result.analysis.predicted_tier}-Tier</span></div></div>
+  `;
+  document.getElementById('step1').classList.add('completed');
+  document.getElementById('step1').querySelector('.step-status').textContent = 'Complete';
+
+  document.getElementById('titleOptions').innerHTML = result.options.map((opt, idx) => {
+    const charCount = opt.title_chars || opt.title.length;
+    const optimalLength = charCount >= 75 && charCount <= 90;
+    const lengthClass = optimalLength ? 'optimal' : 'suboptimal';
+    return `
+      <div class="option-card" data-idx="${idx}">
+        <span class="tier-badge tier-${opt.tier.toLowerCase()}">${opt.tier}-Tier · Predicted</span>
+        <span class="title-char-count ${lengthClass}">${charCount} chars</span>
+        <div class="option-banner-preview">${escapeHtml(opt.banners[0].word)}</div>
+        <div class="option-banners-list">+ ${escapeHtml(opt.banners.slice(1).map(b => b.word).join(' · '))}</div>
+        <div class="option-title-text" style="margin-top:10px;">${escapeHtml(opt.title)}</div>
+        <div class="option-rationale">${escapeHtml(opt.rationale)}</div>
+      </div>`;
+  }).join('');
+  document.getElementById('step2').classList.add('active');
+
+  document.querySelectorAll('.option-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const idx = parseInt(card.dataset.idx);
+      document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      state.selectedTitleIdx = idx;
+      onTitleSelected(idx);
+    });
   });
+
+  document.getElementById('step4').classList.add('active');
+  document.getElementById('step5').classList.add('active');
+  document.getElementById('step6').classList.add('active');
+  document.getElementById('stepOutput').classList.add('active');
+
+  document.getElementById('seoDescription').textContent = result.seo.description;
+  document.getElementById('seoTags').innerHTML = result.seo.tags.map(tag => `<span class="seo-tag">${escapeHtml(tag)}</span>`).join('');
+  document.getElementById('seoBlock').style.display = 'block';
 }
 
-function runTwoPass(gKey, btn) {
-  // PASS 1 — background only, no reference photos
-  showOverlay(true, 'PASS 1 OF 2', 'Generating background...');
-  var progress = startProgressTimer();
-  var prompt1 = buildPromptPass1();
-  var parts1 = [{ text: prompt1 }];
+function onTitleSelected(idx) {
+  const option = state.brainResult.options[idx];
+  document.getElementById('bannerOptions').innerHTML = option.banners.map((banner, bIdx) => `
+    <div class="banner-card" data-idx="${bIdx}">
+      <div class="banner-card-category">${escapeHtml((banner.category || '').replace(/_/g, ' '))}</div>
+      <div class="banner-card-word">${escapeHtml(banner.word)}</div>
+      <div class="banner-card-angle">${escapeHtml(banner.angle)}</div>
+    </div>
+  `).join('');
+  document.getElementById('bannerEditRow').style.display = 'flex';
+  document.getElementById('bannerEditInput').value = '';
+  state.selectedBannerIdx = 0;
+  state.customBanner = '';
+  document.querySelector('.banner-card[data-idx="0"]')?.classList.add('selected');
 
-  callGemini(gKey, parts1).then(function(result1) {
-    clearInterval(progress);
-    showOverlay(false);
-    if (!result1.b64) throw new Error('Pass 1 failed: ' + (result1.text || 'No image returned'));
-    updateCost(getImageCost());
-    // Store pass 1 result and show approval UI
-    window._pass1Result = result1;
-    window._pass1GKey = gKey;
-    showPass1Approval(result1);
-    btn.disabled = false;
-    btn.textContent = 'GENERATE THUMBNAIL';
-  }).catch(function(err) {
-    clearInterval(progress);
-    showOverlay(false);
-    handleGenError(err);
-    btn.disabled = false;
-    btn.textContent = 'GENERATE THUMBNAIL';
-  });
-}
-
-function showPass1Approval(result1) {
-  var wrap = document.getElementById('resultWrap');
-  wrap.style.display = 'flex';
-  wrap.style.flexDirection = 'column';
-  wrap.innerHTML = '<div class="div-line">Pass 1 — Background Preview · Approve to continue</div>' +
-    '<img id="pass1Preview" style="width:100%;border-radius:4px;border:1px solid var(--border2);display:block" />' +
-    '<div class="act-row">' +
-      '<button class="gen-btn" id="approveP1" style="background:var(--green)">✓ APPROVE &amp; RUN PASS 2</button>' +
-      '<button class="regen-btn" id="regenP1">↻ Regenerate Pass 1</button>' +
-    '</div>' +
-    '<div style="font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.7">Review the background before running Pass 2. Pass 2 will composite the general into the warm glow zone on the right side. Regenerating Pass 1 costs ~$' + getImageCost().toFixed(3) + '.</div>';
-
-  document.getElementById('pass1Preview').src = 'data:' + result1.mime + ';base64,' + result1.b64;
-
-  document.getElementById('approveP1').addEventListener('click', function() {
-    runPass2(window._pass1GKey, window._pass1Result);
-  });
-  document.getElementById('regenP1').addEventListener('click', function() {
-    wrap.innerHTML = '';
-    wrap.style.display = 'none';
-    window._pass1Result = null;
-    var btn = document.getElementById('genBtn');
-    btn.disabled = true;
-    btn.textContent = 'GENERATING...';
-    runTwoPass(window._pass1GKey, btn);
+  document.querySelectorAll('.banner-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const bIdx = parseInt(card.dataset.idx);
+      document.querySelectorAll('.banner-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      state.selectedBannerIdx = bIdx;
+      state.customBanner = '';
+      document.getElementById('bannerEditInput').value = '';
+    });
   });
 
-  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  showToast('Pass 1 ready — approve or regenerate below');
-}
-
-function runPass2(gKey, pass1Result) {
-  var btn = document.getElementById('approveP1');
-  if (btn) { btn.disabled = true; btn.textContent = 'RUNNING PASS 2...'; }
-
-  showOverlay(true, 'PASS 2 OF 2', 'Compositing general onto background...');
-  var progress = startProgressTimer();
-
-  var prompt2 = buildPromptPass2Template();
-  var parts2 = [{ text: prompt2 }];
-  parts2.push({ inlineData: { mimeType: pass1Result.mime, data: pass1Result.b64 } });
-  generalImgs.slice(0, 3).forEach(function(img) {
-    parts2.push({ inlineData: { mimeType: img.type, data: img.data } });
-  });
-
-  callGemini(gKey, parts2).then(function(result2) {
-    clearInterval(progress);
-    showOverlay(false);
-    updateCost(getImageCost());
-    if (!result2.b64) throw new Error('Pass 2 failed: ' + (result2.text || 'No image returned'));
-    // Replace the approval UI with the final result UI
-    rebuildResultUI();
-    loadAndComposite(result2.b64, result2.mime);
-  }).catch(function(err) {
-    clearInterval(progress);
-    showOverlay(false);
-    handleGenError(err);
-    if (btn) { btn.disabled = false; btn.textContent = '✓ APPROVE & RUN PASS 2'; }
-  });
-}
-
-function rebuildResultUI() {
-  var wrap = document.getElementById('resultWrap');
-  wrap.innerHTML = '<div class="div-line">Generated Thumbnail · Banner to add in Canva</div>' +
-    '<img id="resultImg" style="width:100%;border-radius:4px;border:1px solid var(--border2);display:block" />' +
-    '<div class="act-row">' +
-      '<button class="dl-btn" id="dlBtn">Download PNG</button>' +
-      '<button class="regen-btn" id="regenBtn">Regenerate</button>' +
-    '</div>';
-  document.getElementById('dlBtn').addEventListener('click', dlImage);
-  document.getElementById('regenBtn').addEventListener('click', generateImage);
-}
-
-// Single Gemini API call — returns { b64, mime, text }
-function callGemini(gKey, parts) {
-  var controller = new AbortController();
-  var timeout = setTimeout(function() { controller.abort(); }, 180000);
-  var imgModel = GEMINI_MODELS[selectedImgIdx];
-
-  // Nano Banana Pro supports imageConfig for resolution + aspect ratio
-  // Nano Banana (2.5 Flash Image) ignores these params but won't error
-  var generationConfig = {
-    responseModalities: ['IMAGE', 'TEXT'],
-    imageConfig: {
-      aspectRatio: '16:9',
-      imageSize: selectedResolution
+  document.getElementById('bannerEditInput').addEventListener('input', (e) => {
+    const val = e.target.value.trim();
+    if (val) {
+      state.customBanner = val.toUpperCase();
+      document.querySelectorAll('.banner-card').forEach(c => c.classList.remove('selected'));
+      state.selectedBannerIdx = -1;
     }
-  };
+  });
 
-  return fetch('https://generativelanguage.googleapis.com/v1beta/models/' + imgModel.id + ':generateContent?key=' + gKey, {
+  document.getElementById('step2').classList.add('completed');
+  document.getElementById('step2').querySelector('.step-status').textContent = 'Complete';
+  document.getElementById('step3').classList.add('active');
+  document.getElementById('step3').querySelector('.step-status').textContent = 'Choose Banner';
+
+  const recommended = option.background_recommendation;
+  document.querySelectorAll('.style-card').forEach(card => {
+    card.classList.remove('recommended');
+    if (card.dataset.style === recommended) card.classList.add('recommended');
+  });
+  document.getElementById('mainHint').textContent = 'Step 03 / 06 · Select Banner';
+}
+
+function getCurrentBanner() {
+  if (state.customBanner) return state.customBanner;
+  if (state.selectedTitleIdx === null || state.selectedBannerIdx === null) return null;
+  return state.brainResult.options[state.selectedTitleIdx].banners[state.selectedBannerIdx]?.word;
+}
+
+document.querySelectorAll('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const type = btn.dataset.copy;
+    let text = '';
+    if (type === 'description') text = document.getElementById('seoDescription').textContent;
+    else if (type === 'tags') text = state.brainResult?.seo.tags.join(', ') || '';
+    navigator.clipboard.writeText(text).then(() => {
+      btn.classList.add('copied'); btn.textContent = 'Copied';
+      setTimeout(() => { btn.classList.remove('copied'); btn.textContent = 'Copy'; }, 1500);
+    });
+  });
+});
+
+const GEMINI_MODEL_MAP = {
+  'nano-banana': 'gemini-2.5-flash-image-preview',
+  'nano-banana-pro': 'gemini-3-pro-image-preview'
+};
+
+async function urlToInlineData(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Failed to fetch reference: ${url}`);
+  const blob = await response.blob();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result.split(',')[1];
+      resolve({ inline_data: { mime_type: blob.type || 'image/jpeg', data: base64 } });
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+function dataUrlToInlineData(dataUrl) {
+  const [meta, base64] = dataUrl.split(',');
+  const mimeMatch = meta.match(/data:([^;]+);/);
+  const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+  return { inline_data: { mime_type: mimeType, data: base64 } };
+}
+
+const BANNER_INSTRUCTION_TEMPLATE = (bannerWord) => `
+
+============================================
+BANNER OVERLAY (REQUIRED — RENDER INTO IMAGE):
+============================================
+
+Add a bold red banner box at the BOTTOM of the frame, slightly tilted (3-7° rotation) with rough/torn paper edges. Banner sits in the lower 25-30% of the frame, centered or slightly left.
+
+BANNER BOX:
+- Background: Bright pure red (#dc2626 / vibrant red)
+- Shape: Rectangular block with slightly rough/torn edges (NOT clean rounded corners — should look hand-painted or brush-stroke)
+- Width: Sized to fit text snugly (banner takes 35-50% of frame width)
+- Slight 3-7° rotation for visual energy
+
+BANNER TEXT:
+- Word to render: "${bannerWord}"
+- Color: Pure white (#ffffff)
+- Font: Bold sans-serif similar to Anton or Bebas Neue (heavy, condensed, modern, geometric)
+- Case: ALL UPPERCASE
+- Letter spacing: Slightly tight
+- Padding: tight on all sides
+- Text must be CRISP, SHARP, perfectly legible
+
+CRITICAL — SUBTLE BLACK GLOW BEHIND BANNER:
+- Soft black drop shadow extending OUTSIDE the red banner box
+- Glow size: ~15-20 pixels of soft spread
+- Glow opacity: ~50-60% black
+- Glow offset: very slight downward (2-3 pixels)
+- Soft and DIFFUSED, NOT a hard outline
+
+CRITICAL TEXT ACCURACY:
+- Banner text must read EXACTLY: "${bannerWord}"
+- Spell every letter correctly — non-negotiable
+- Do not abbreviate, modify, or stylize the word
+- Clean readable letterforms — no decorative effects, no 3D extrusion
+
+The banner should look like a torn red poster strip with bold white text floating at the bottom of the thumbnail with a subtle dark halo. Reference: think YouTube military history thumbnails like "THE MYTH" / "FRAUD" / "ERASED" with their characteristic brushstroke red banners.`;
+
+async function generateThumbnail(style, weaponRefs, googleKey, model, bannerWord) {
+  const styleRefUrls = STYLE_REFS[style] || [];
+  let stylePrompt = STYLE_PROMPTS[style];
+
+  if (state.overlayEnabled && bannerWord) {
+    stylePrompt = stylePrompt + BANNER_INSTRUCTION_TEMPLATE(bannerWord);
+  }
+
+  const parts = [];
+  for (const url of styleRefUrls) parts.push(await urlToInlineData(url));
+  for (const ref of weaponRefs) if (ref) parts.push(dataUrlToInlineData(ref));
+  parts.push({ text: stylePrompt });
+
+  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL_MAP[model]}:generateContent?key=${googleKey}`;
+  const response = await fetch(apiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      contents: [{ role: 'user', parts: parts }],
-      generationConfig: generationConfig
-    }),
-    signal: controller.signal
-  }).then(function(res) {
-    clearTimeout(timeout);
-    return res.json().then(function(json) {
-      if (!res.ok) throw new Error(json.error && json.error.message ? json.error.message : 'Google API error ' + res.status);
-      return json;
-    });
-  }).then(function(json) {
-    var b64 = null, mime = 'image/png', text = '';
-    var candidates = json.candidates || [];
-    for (var i = 0; i < candidates.length; i++) {
-      var pts = (candidates[i].content && candidates[i].content.parts) || [];
-      for (var j = 0; j < pts.length; j++) {
-        if (pts[j].inlineData && pts[j].inlineData.mimeType && pts[j].inlineData.mimeType.indexOf('image/') === 0) {
-          b64 = pts[j].inlineData.data;
-          mime = pts[j].inlineData.mimeType;
-        } else if (pts[j].text) {
-          text = pts[j].text.slice(0, 200);
-        }
-      }
-      if (b64) break;
-    }
-    return { b64: b64, mime: mime, text: text };
+      contents: [{ parts: parts }],
+      generationConfig: { responseModalities: ['IMAGE'] }
+    })
   });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    let errMsg = `Image API error (${response.status})`;
+    try { const errJson = JSON.parse(errText); errMsg = errJson.error?.message || errMsg; } catch(e) {}
+    throw new Error(errMsg);
+  }
+
+  const data = await response.json();
+  const candidates = data.candidates || [];
+  if (!candidates.length) throw new Error('No image returned');
+  const imagePart = candidates[0].content.parts.find(p => p.inline_data || p.inlineData);
+  if (!imagePart) throw new Error('Response contained no image');
+  const inline = imagePart.inline_data || imagePart.inlineData;
+  return `data:${inline.mime_type || inline.mimeType};base64,${inline.data}`;
 }
 
-function loadAndComposite(b64, mime) {
-  var src = 'data:' + mime + ';base64,' + b64;
-  var img = document.getElementById('resultImg');
-  if (!img) return;
-  img.onload = function() {
-    // Verify returned resolution matches what we asked for
-    var actualW = img.naturalWidth;
-    var expected = selectedResolution === '4K' ? 5376 : (selectedResolution === '2K' ? 2688 : 1344);
-    if (actualW < expected * 0.85) {
-      showToast('Note: Google returned ' + actualW + 'px instead of ' + expected + 'px. Resolution may have been downgraded.', true, 5500);
+document.getElementById('generateBtn').addEventListener('click', async () => {
+  clearError();
+  const googleKey = document.getElementById('googleKey').value.trim();
+  if (!googleKey) { showError('Google AI Studio key required'); return; }
+
+  const banner = getCurrentBanner();
+  if (!banner) { showError('Select or type a banner word first'); return; }
+
+  const generalRefs = state.references.filter(r => r);
+  if (generalRefs.length === 0) { showError('Upload at least one general reference photo'); return; }
+
+  const styles = [...state.selectedStyles];
+  if (styles.length === 0) { showError('Select at least one image style'); return; }
+
+  const outputGrid = document.getElementById('outputGrid');
+  outputGrid.innerHTML = styles.map(style => `
+    <div class="output-tile loading" data-style="${style}">
+      <span>Generating ${STYLE_NAMES[style]}...</span>
+    </div>
+  `).join('');
+
+  document.getElementById('stepOutput').querySelector('.step-status').textContent = `Generating ${styles.length}...`;
+  const btn = document.getElementById('generateBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  const cost = parseFloat(document.querySelector(`#imageModels .option-row[data-model="${state.imageModel}"]`).dataset.cost);
+
+  const promises = styles.map(async (style) => {
+    const tile = outputGrid.querySelector(`[data-style="${style}"]`);
+    try {
+      const imageUrl = await generateThumbnail(style, generalRefs, googleKey, state.imageModel, banner);
+      tile.classList.remove('loading');
+      tile.innerHTML = `
+        <img src="${imageUrl}" alt="${STYLE_NAMES[style]}">
+        <div class="output-tile-label">${STYLE_NAMES[style]}</div>
+        <div class="output-tile-actions">
+          <button class="tile-action" data-action="download">Download</button>
+          <button class="tile-action" data-action="regenerate">Retry</button>
+        </div>
+      `;
+      tile.querySelector('[data-action="download"]').addEventListener('click', () => {
+        const a = document.createElement('a');
+        a.href = imageUrl;
+        a.download = `american-brass-${style}-${banner.toLowerCase().replace(/\s+/g, '-')}.png`;
+        a.click();
+      });
+      tile.querySelector('[data-action="regenerate"]').addEventListener('click', async () => {
+        tile.classList.add('loading');
+        tile.innerHTML = `<span>Regenerating ${STYLE_NAMES[style]}...</span>`;
+        try {
+          const newUrl = await generateThumbnail(style, generalRefs, googleKey, state.imageModel, banner);
+          state.sessionSpend += cost;
+          document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
+          tile.classList.remove('loading');
+          tile.innerHTML = `
+            <img src="${newUrl}" alt="${STYLE_NAMES[style]}">
+            <div class="output-tile-label">${STYLE_NAMES[style]}</div>
+            <div class="output-tile-actions">
+              <button class="tile-action" data-action="download">Download</button>
+              <button class="tile-action" data-action="regenerate">Retry</button>
+            </div>
+          `;
+          tile.querySelector('[data-action="download"]').addEventListener('click', () => {
+            const a = document.createElement('a'); a.href = newUrl;
+            a.download = `american-brass-${style}-${banner.toLowerCase().replace(/\s+/g, '-')}.png`;
+            a.click();
+          });
+        } catch (err) {
+          tile.classList.remove('loading');
+          tile.classList.add('error');
+          tile.innerHTML = `Failed: ${escapeHtml(err.message)}`;
+        }
+      });
+      state.sessionSpend += cost;
+      document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
+    } catch (err) {
+      tile.classList.remove('loading');
+      tile.classList.add('error');
+      tile.innerHTML = `${STYLE_NAMES[style]}<br>Failed: ${escapeHtml(err.message)}`;
+      console.error(`${style} generation failed:`, err);
     }
-    var wrap = document.getElementById('resultWrap');
-    wrap.style.display = 'flex';
-    wrap.style.flexDirection = 'column';
-    setStep(6, 'done');
-    showToast('Thumbnail generated at ' + actualW + '×' + img.naturalHeight);
-    wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  };
-  // Stash for download
-  window._lastImgSrc = src;
-  img.src = src;
+  });
+
+  await Promise.allSettled(promises);
+  btn.classList.remove('loading');
+  btn.disabled = false;
+  document.getElementById('stepOutput').querySelector('.step-status').textContent = 'Complete';
+});
+
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-function startProgressTimer() {
-  var elapsed = 0;
-  return setInterval(function() {
-    elapsed += 5;
-    var subEl = document.getElementById('ovSub');
-    if (subEl) subEl.textContent = 'Processing... ' + elapsed + 's (usually 20-60s per pass)';
-  }, 5000);
-}
-
-function handleGenError(err) {
-  if (err.name === 'AbortError') {
-    showToast('Request timed out after 120s. Try again or switch to single-pass mode.', true, 7000);
-  } else {
-    showToast('Error: ' + err.message, true, 7000);
-  }
-  console.error(err);
-}
-
-// ============================================================================
-// DOWNLOAD
-// ============================================================================
-function dlImage() {
-  var src = window._lastImgSrc;
-  if (!src) return;
-  var a = document.createElement('a');
-  a.href = src;
-  var lastName = 'thumbnail';
-  if (appData && appData.general && appData.general.name) {
-    var parts = appData.general.name.split(' ').filter(function(s) { return s.length > 0; });
-    if (parts.length > 0) lastName = parts[parts.length - 1];
-  }
-  var word = selBanner && selBanner.word ? selBanner.word.replace(/[^a-zA-Z0-9]/g, '') : 'final';
-  a.download = word + '-' + lastName + '-thumb.png';
-  a.click();
-}
+console.log('American Brass v1.0 — WWII American generals thumbnail pipeline');
 </script>
 </body>
 </html>
