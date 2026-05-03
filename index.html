@@ -517,7 +517,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
     <span class="brand-name">American Brass</span>
   </div>
   <nav class="header-nav">
-    <span class="nav-pill">Pipeline v1.1</span>
+    <span class="nav-pill">Pipeline v1.2</span>
     <span class="nav-item active">Pipeline</span>
     <button class="theme-toggle" id="themeToggle">☾ Dark</button>
   </nav>
@@ -592,7 +592,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
         Paste a script and hit ANALYZE SCRIPT. The brain extracts the central irony,
         generates 3 title options each with 3 fresh banner choices, recommends visual
         styles, then builds your Nano Banana prompts for up to 5 thumbnail variants
-        in cinematic amber-gold aesthetic with black banner overlays.
+        in deep cinematic wine-red aesthetic with black banner overlays.
       </p>
     </div>
 
@@ -789,40 +789,44 @@ const STYLE_NAMES = {
 };
 
 const PALETTE_INSTRUCTIONS = `
-COLOR PALETTE — CINEMATIC AMBER / BRASS (CRITICAL):
-This thumbnail uses a deep saturated AMBER-GOLD background with strong dark vignette. Match this palette precisely. Think "premium WWII history documentary" — the color of aged brass, bourbon held to light, museum lighting on a war memorial.
+COLOR PALETTE — DEEP CINEMATIC WINE-RED (CRITICAL):
+This thumbnail uses a deep saturated WINE-RED / BURGUNDY background with strong dark vignette. Match this palette precisely. Think "premium HBO war documentary poster" — deep cinematic blood-red, dark theatrical, with a tight bright crimson hot-spot behind the subject that falls off quickly into near-black corners. Saturated and dramatic, NOT pulpy fire-engine red, NOT muddy brown, NOT pale.
 
 REFERENCE IMAGE COLOR SUBSTITUTION:
-The provided style reference image uses a RED gradient background. You MUST replace this with a saturated AMBER-GOLD gradient. Match the reference's COMPOSITION, LIGHTING DIRECTION, GLOW STRUCTURE, and DRAMATIC INTENSITY exactly — only swap the red color for amber-gold per the rules below. Do NOT make the palette cool, blue, or desaturated.
+The provided style reference image uses a RED gradient background. Match its COMPOSITION, LIGHTING DIRECTION, GLOW STRUCTURE, and DRAMATIC INTENSITY exactly. Use the wine-red palette below — which is darker, deeper, and has a tighter hot-spot than the reference's flat bright red. Do NOT make the palette cool, blue, amber, orange, or desaturated.
 
-Background gradient:
-- Behind the general's head and upper torso: bright saturated AMBER (#d97706 to #f59e0b) forming a wide radial glow — rich orange-gold, NOT yellow, NOT brown
-- Mid-frame: deep burnt umber and dark bronze (#78350f to #92400e) — saturated and warm
-- Outer edges and all four corners: near-black with warm dark-brown shadow (#1c0a02 to #000000)
-- HEAVY dark vignette in all four corners — corners should be almost pure black, fading inward through deep umber to amber
+BACKGROUND GRADIENT (precise specification — follow exactly):
+- HOT-SPOT (small concentrated area directly behind the general's head/shoulders, ~25-30% of frame): bright saturated CRIMSON (#dc2626 at the brightest pixel, #b91c1c surrounding) — this is the small bright core, NOT a wide flat glow
+- GLOW BODY (extending outward from hot-spot, ~30-40% of frame): deep blood red (#991b1b to #7f1d1d) — saturated, dark, cinematic
+- MID-FRAME (further out): wine and burgundy (#5c0f0f to #3a0808) — very dark red, falling toward black
+- OUTER EDGES AND ALL FOUR CORNERS: near-black with red-black tint (#1a0303 to #050000) — corners should be almost PURE BLACK
+- HEAVY hard-falloff dark vignette — the corners must read as black, NOT as dark red
 
-The radial glow behind the general's head is the visual anchor of the entire image:
-- Bright warm amber-gold (#f59e0b to #fbbf24 at the brightest center point)
-- Glow radius is wide and soft, occupying roughly 50-60% of the frame behind the figure
-- Glow color stays warm gold — NEVER pure yellow, NEVER pink, NEVER cool, NEVER brown-muddy
-- Glow fades smoothly outward into the deep umber mid-tones, then into black at the edges
+GLOW FALLOFF CURVE (CRITICAL — this is what makes ours distinct from competitors):
+- The bright crimson hot-spot is SMALL and TIGHT, not a wide wash
+- Falloff from bright center to black corners is FAST — over roughly 35-40% of the radial distance
+- Most of the frame should sit in the deep wine-red to near-black range, with only a small punch of bright crimson behind the head
+- Think "stage spotlight on dark theater backdrop" — concentrated bright core, deep darkness around it
+- NOT a flat red wall, NOT a wide soft glow — TIGHT and DARK
 
 CRITICAL — AVOID THESE FAILURE MODES:
-- DO NOT make the background pale yellow or mustard — it must be saturated rich amber-orange
-- DO NOT make the background flat brown — it must have a clear bright glow center fading to dark
-- DO NOT desaturate — this palette only works at high saturation
-- DO NOT use red as the dominant background — this is amber/gold, distinct from red-channel aesthetics
-- DO NOT use steel blue, cyan, teal, or any cool color in the background
+- DO NOT use bright fire-engine red across the whole background (that's the competitor's look — too pulpy, flat, no depth)
+- DO NOT make the background amber, orange, sepia, brown, or tobacco-colored — this is RED, deep wine-red specifically
+- DO NOT make the glow wide and soft — it must be a tight hot-spot with fast falloff
+- DO NOT desaturate — this palette only works at high saturation in the red channels
+- DO NOT use steel blue, cyan, teal, green, or any cool color in the background
+- DO NOT make the corners dark red — corners must read as near-black
 
-OVERALL MOOD: Dramatic, cinematic, high-stakes investigative documentary poster. Punchy and eye-catching. Saturated, contrasty, magazine-cover quality. Warm prestige feel — old brass, aged film, museum gold. NOT muted, NOT cold, NOT desaturated.
+OVERALL MOOD: Premium, cinematic, theatrical, high-stakes investigative documentary poster. Deep saturated red with strong dark falloff. Punchy and eye-catching but with depth and contrast — magazine-cover quality. Like an HBO miniseries key art, NOT a pulpy paperback cover.
 
 CONTRAST RULES (CRITICAL):
-- The general's face must be WARMLY LIT and noticeably BRIGHTER than the amber background behind him — face stands out clearly
+- The general's face must be WARMLY LIT and noticeably BRIGHTER than the wine-red background — face must clearly stand out
 - Strong dark shadows under the jaw, helmet brim, and on the side opposite the key light
-- The corners of the frame should fall off into near-black so the eye is pulled to center
-- High overall contrast between the bright lit face and the dark vignette edges
+- The corners of the frame fall off into NEAR-BLACK so the eye is pulled hard to center
+- VERY HIGH overall contrast between the bright lit face and the dark vignette edges
+- Skin tones should pick up subtle warm red rim light from the background, but the face itself reads as sharp warm key light, not red
 
-The lower-center area can have a slight darker zone to make banner overlay readable in post.
+The lower-center area can have a slightly darker zone to make banner overlay readable in post.
 `;
 
 const FACE_INSTRUCTIONS = `
@@ -831,7 +835,7 @@ FACE & LIKENESS (CRITICAL):
 - Match skin tone, face shape, jawline, eyes, hair, and uniform details PRECISELY
 - Do NOT invent a different face
 - The general's face is the BRIGHTEST, SHARPEST, most in-focus element in the frame
-- Eyes catch warm amber light, skin texture visible, every wrinkle and detail rendered
+- Eyes catch sharp warm key light with subtle red rim from the background, skin texture visible, every wrinkle and detail rendered
 - Cinematic film-stock quality on the face, lit warmly with hard key light
 `;
 
@@ -840,17 +844,17 @@ NEGATIVE REQUIREMENTS (DO NOT INCLUDE):
 - NO modern banner text overlays unless explicitly instructed
 - NO title cards, NO captions, NO watermarks, NO play buttons, NO YouTube UI elements
 - NO borders or frames around the image
-- NO red gradient backgrounds (we use amber-gold)
+- NO bright fire-engine red flat backgrounds (we use deep wine-red with tight hot-spot and dark falloff)
 - NO steel blue, cyan, teal, or cool desaturated palettes
 - Period-appropriate map labels, newspaper headlines, document text are ALLOWED
 - Leave lower-center area uncluttered for banner overlay in post-production
 `;
 
 const STYLE_PROMPTS = {
-'portrait-hero': `Create a cinematic 16:9 YouTube thumbnail in PORTRAIT HERO style — a single dominant general portrait with a saturated amber-gold cinematic aesthetic.
+'portrait-hero': `Create a cinematic 16:9 YouTube thumbnail in PORTRAIT HERO style — a single dominant general portrait with a deep cinematic wine-red aesthetic.
 
 REFERENCE IMAGE INTERPRETATION:
-The provided reference image (Bradley) shows COMPOSITION, LIGHTING, and DRAMATIC INTENSITY you must match: tight portrait of a general, head and upper chest, helmet visible, dramatic backlight halo, hard cinematic key light, high contrast face. Match all of this. ONLY swap the red background gradient for amber-gold per palette rules below — keep everything else (composition, lighting drama, glow structure, contrast level) identical to the reference.
+The provided reference image (Bradley) shows COMPOSITION, LIGHTING, and DRAMATIC INTENSITY you must match: tight portrait of a general, head and upper chest, helmet visible, dramatic backlight halo, hard cinematic key light, high contrast face. Match all of this. The background should be deep wine-red per palette rules below — darker and with tighter glow falloff than the reference, but in the same red color family. Keep everything else (composition, lighting drama, glow structure, contrast level) identical to the reference.
 
 User-uploaded images = the SUBJECT (the actual general we're rendering).
 
@@ -860,20 +864,20 @@ COMPOSITION:
 - General positioned slightly right of center (~55% from left)
 - Tight crop — top of helmet/hair has 5-10% margin from frame top
 - Full era-appropriate uniform visible: collar, insignia, medals, helmet or cap
-- Negative space on LEFT side filled with the amber glow and dark vignette
+- Negative space on LEFT side filled with deep wine-red and dark vignette falling to near-black
 - Bottom-center area open for banner placement
 
 LIGHTING:
 - Hard directional key light from upper-front-left at ~45°
-- WARM rim light wrapping the LEFT side of face/shoulders, picking up amber tones
+- WARM rim light wrapping the LEFT side of face/shoulders, picking up subtle red tones from the background
 - Face brightly and warmly lit — the BRIGHTEST element in frame
 - Hard shadows under jaw and helmet brim
-- Cinematic warm color grading — amber highlights, deep umber shadows
+- Cinematic warm color grading — warm key on face, deep wine-red shadows, near-black falloff
 
 AURA / GLOW:
-- Behind the general's head and shoulders: bright AMBER-GOLD radial glow
+- Behind the general's head and shoulders: a TIGHT bright crimson hot-spot (#dc2626) — small concentrated bright core, NOT a wide soft glow
 - Glow fades outward smoothly, creates clear halo separation
-- Glow color: warm orange-gold (#f59e0b to #fbbf24 at brightest), NEVER cool, NEVER pink
+- Hot-spot color: bright saturated crimson (#dc2626 brightest), falling fast through deep red to near-black at edges. NEVER pink, NEVER orange, NEVER amber.
 
 UNIFORM:
 - Authentic period US Army or USMC uniform appropriate to era
@@ -887,10 +891,10 @@ ${NEGATIVE_REQUIREMENTS}
 
 OUTPUT: Photorealistic 3D render, 16:9 widescreen, hyper-detailed face, magazine-cover quality, saturated and high-contrast.`,
 
-'battle-map': `Create a cinematic 16:9 YouTube thumbnail in BATTLE MAP COMPOSITE style — a general portrait paired with a tactical battle map, amber-gold palette.
+'battle-map': `Create a cinematic 16:9 YouTube thumbnail in BATTLE MAP COMPOSITE style — a general portrait paired with a tactical battle map, deep wine-red palette.
 
 REFERENCE IMAGE INTERPRETATION:
-The provided reference (Manstein) shows COMPOSITION, LIGHTING, and INTENSITY you must match: tactical map fills LEFT 50%, general portrait fills RIGHT 50%, dramatic glow behind portrait. Match all of this. ONLY swap the red background gradient for amber-gold per palette rules — keep the composition, drama, and contrast level identical.
+The provided reference (Manstein) shows COMPOSITION, LIGHTING, and INTENSITY you must match: tactical map fills LEFT 50%, general portrait fills RIGHT 50%, dramatic glow behind portrait. Match all of this. The background should be deep wine-red per palette rules below — darker and with tighter glow falloff than the reference. Keep composition, drama, and contrast level identical.
 
 User-uploaded images = SUBJECT (actual general to render).
 
@@ -903,21 +907,22 @@ COMPOSITION:
 
 THE BATTLE MAP (LEFT):
 - Style: Period military operations map, slightly stylized
-- Background: Deep warm umber/dark amber (#3a2010 to #1a0e05) — matches the overall palette, NOT blue, NOT cool
-- Land: Slightly darker warm brown; Water: deep navy or near-black for contrast
-- THICK BOLD ARROWS — saturated red for friendly forces, dark navy for enemy. 12-15 pixels wide. Sweeping inward. (Red arrows allowed here for tactical clarity — the BACKGROUND must still be amber.)
+- Background: Very dark navy / near-black (#0a0e1a to #000000) with subtle red tint at edges — NOT brown, NOT amber, NOT bright
+- Land: Slightly lighter dark gray-navy (#1a1e2a); Water: deeper near-black with subtle red glow at distance
+- THICK BOLD ARROWS — saturated bright RED for friendly forces (#dc2626), dark steel for enemy (#475569). 12-15 pixels wide. Sweeping inward. The bright red arrows pop against the dark map.
 - Unit markers: Black tank silhouettes, infantry icons at battle points
-- Place name LABELS: small bold serif type, white/cream ink. Cities uppercase ("STALINGRAD"), rivers italic, regions small caps
+- Place name LABELS: small bold serif type, white/cream ink. Cities uppercase ("STALINGRAD"), rivers italic, regions small caps. Text must be CLEAN and LEGIBLE — proper spelling, not garbled.
 - Date/operation header in upper-left of map: e.g., "AUG 1942 — MAKIN ATOLL"
 - Authentic 1940s military map annotation feel
+- The dark map sits naturally against the wine-red background — they're both dark, with the bright crimson glow from behind the portrait providing the only bright accent on the right side
 
 GENERAL PORTRAIT (RIGHT):
 - Three-quarter view from slightly low angle
 - Head fills upper-right with 5-10% margin from top
 - Body visible from upper chest up
 - Strong directional key light from front-left
-- Warm amber rim light on LEFT side of face from background glow
-- Amber-gold radial glow behind head as halo
+- Warm key light on face with subtle red rim light on LEFT side from the crimson hot-spot behind
+- Tight bright crimson hot-spot directly behind head as concentrated halo (small and bright, fast falloff to dark)
 
 LIGHTING & MOOD:
 - Cinematic warm lighting throughout
@@ -926,16 +931,16 @@ LIGHTING & MOOD:
 - Strong dark vignette in corners
 
 ${PALETTE_INSTRUCTIONS}
-(Exception: red arrows on map stay red for tactical clarity. Background stays amber-gold.)
+(Exception: bright red arrows on map are tactical — they stay vivid red against the dark map. The wine-red main background stays per palette rules.)
 ${FACE_INSTRUCTIONS}
 ${NEGATIVE_REQUIREMENTS}
 
 OUTPUT: Photorealistic 3D render with stylized map, 16:9, sharp face, clear readable map, high contrast and saturation.`,
 
-'period-archive': `Create a cinematic 16:9 YouTube thumbnail in PERIOD ARCHIVE style — general portrait surrounded by overlapping period newspapers, documents, photographs in amber-gold cinematic aesthetic.
+'period-archive': `Create a cinematic 16:9 YouTube thumbnail in PERIOD ARCHIVE style — general portrait surrounded by overlapping period newspapers, documents, photographs in deep cinematic wine-red aesthetic.
 
 REFERENCE IMAGE INTERPRETATION:
-The provided reference (Rommel) shows COMPOSITION, LIGHTING, and DRAMATIC INTENSITY you must match: multiple overlapping period newspapers tiled across LEFT 60%, general portrait on RIGHT 40%, dramatic glow behind portrait. Match all of this. ONLY swap the red background gradient for amber-gold per palette rules — keep composition and contrast intact.
+The provided reference (Rommel) shows COMPOSITION, LIGHTING, and DRAMATIC INTENSITY you must match: multiple overlapping period newspapers tiled across LEFT 60%, general portrait on RIGHT 40%, dramatic glow behind portrait. Match all of this. The background should be deep wine-red per palette rules below — darker and with tighter glow falloff than the reference. Keep composition and contrast intact.
 
 User-uploaded images = SUBJECT.
 
@@ -953,7 +958,7 @@ THE ARCHIVE STACK (LEFT):
   - Smaller subheadline in bold type
   - Column text below as dense gray texture (don't make individual letters readable)
   - Sometimes a small period photograph
-- Pages: Aged warm yellow-cream paper texture (which sits naturally against the amber background)
+- Pages: Aged warm yellow-cream paper texture (which contrasts strongly against the dark wine-red background — the cream papers POP against the deep red, this is part of the visual punch)
 - Authentic fold marks, torn edges, subtle stains
 - One or two sheets are official military documents:
   - Letterhead with insignia
@@ -965,15 +970,15 @@ THE ARCHIVE STACK (LEFT):
 GENERAL PORTRAIT (RIGHT):
 - Three-quarter view from slightly low angle
 - Tight crop — head and upper chest
-- Amber-gold radial glow behind head
-- Warm amber rim light on LEFT side of face
+- Tight bright crimson hot-spot directly behind head (small concentrated bright core)
+- Warm key light with subtle red rim on LEFT side of face from the hot-spot behind
 - Sharp focus on face, eyes catching warm light
 - General appears to "emerge" from behind the document stack
 
 LIGHTING:
 - Documents lit from upper-left, casting subtle warm shadows
 - Portrait lit cinematically with hard key from front-left
-- Warm-on-warm palette: papers cream-yellow, background amber-gold, deep umber shadows
+- Strong color contrast: warm cream-yellow papers POP against deep wine-red background, near-black shadows in corners — the cream-on-red is the visual signature of this style
 - Strong dark vignette in corners
 
 MOOD: "Investigation board" — evidence wall in a documentary about historical injustice. Premium, cinematic, saturated.
@@ -985,10 +990,10 @@ ${NEGATIVE_REQUIREMENTS}
 
 OUTPUT: Photorealistic 3D render with detailed period print materials, 16:9, sharp face, layered documents, high contrast.`,
 
-'battlefield-command': `Create a cinematic 16:9 YouTube thumbnail in BATTLEFIELD COMMAND style — general at the front with combat vehicles in atmospheric haze, amber-gold palette.
+'battlefield-command': `Create a cinematic 16:9 YouTube thumbnail in BATTLEFIELD COMMAND style — general at the front with combat vehicles in atmospheric haze, deep wine-red palette.
 
 REFERENCE IMAGE INTERPRETATION:
-The provided reference (Collins "LIGHTNING JOE") shows COMPOSITION, LIGHTING, and INTENSITY you must match: general's head dead-center, military vehicles flanking on both sides at three-quarter angles in atmospheric mist, period road signs at edges, dramatic backlight. Match all of this. ONLY swap the background palette for amber-gold per rules below.
+The provided reference (Collins "LIGHTNING JOE") shows COMPOSITION, LIGHTING, and INTENSITY you must match: general's head dead-center, military vehicles flanking on both sides at three-quarter angles in atmospheric mist, period road signs at edges, dramatic backlight. Match all of this. The background should be deep wine-red per palette rules below — darker and with tighter glow falloff than the reference. CRITICAL: Generate NEW vehicles appropriate to the script (do NOT just copy the vehicles from the reference image — the reference shows COMPOSITION only, the actual vehicles should be freshly generated to match the script's theater and era).
 
 User-uploaded images = SUBJECT.
 
@@ -1000,35 +1005,35 @@ COMPOSITION:
   - RIGHT: Jeep, halftrack, or similar at three-quarter angle, slightly receding
   - Era-appropriate: Pacific = LVT amphtracs, Marine equipment; European = Sherman tanks, M3 halftracks; Korea = M26 Pershings
 - Atmospheric haze creates depth between subject and vehicles
-- Vehicles fade into amber-tinted haze as they recede
+- Vehicles fade into deep red-tinted atmospheric haze as they recede into the background
 
 ENVIRONMENT (matches script setting):
 - Pacific/Marines: tropical palms, beach sand, surf line, palm silhouettes
 - European: muddy roads, hedgerows, distant ruins, foggy atmosphere
 - Korea: mountainous terrain, frozen ground, sparse trees
 - Period road signs in correct languages
-- Atmospheric haze unifies the scene with warm amber tone
+- Atmospheric haze tinted by the wine-red background unifies the scene
 
 VEHICLES:
 - Photorealistic with weathering: dust, mud splatter, paint wear
 - Soldiers visible inside/on vehicles as background figures
 - Subtle motion: vehicles in formation but not blurred
 - Era-accurate markings: white US Army stars, unit numbers
-- Caught in warm amber light from background glow
+- Vehicles caught in warm key light with subtle red rim from the background hot-spot
 
 GENERAL PORTRAIT:
 - Three-quarter view from slightly low angle
 - Head and upper chest only
 - Sharp focus, brightest element in frame
 - Strong cinematic warm key light from front-left
-- Warm amber rim light on edges
-- Amber-gold radial glow behind head
+- Warm key light on face with subtle red rim light from the crimson hot-spot behind
+- Tight bright crimson hot-spot directly behind head (small concentrated bright core)
 
 LIGHTING & MOOD:
-- Warm cinematic atmospheric daylight (smoky, dusty, golden hour)
+- Cinematic atmospheric daylight tinted by the wine-red environment (dusty, smoky, theatrical)
 - Strong directional key light on general
-- Vehicles lit consistently in same warm tone
-- Atmospheric amber haze adds depth
+- Vehicles lit consistently with subtle red rim from background
+- Atmospheric red-tinted haze adds depth between subject and vehicles
 - Strong dark vignette in corners
 
 ${PALETTE_INSTRUCTIONS}
@@ -1037,10 +1042,10 @@ ${NEGATIVE_REQUIREMENTS}
 
 OUTPUT: Photorealistic cinematic 3D render, 16:9, sharp face, atmospheric battlefield depth, saturated warm palette.`,
 
-'rivalry': `Create a cinematic 16:9 YouTube thumbnail in RIVALRY style — TWO generals facing each other with a tactical context element between them, amber-gold palette.
+'rivalry': `Create a cinematic 16:9 YouTube thumbnail in RIVALRY style — TWO generals facing each other with a tactical context element between them, deep wine-red palette.
 
 REFERENCE IMAGE INTERPRETATION:
-The provided reference (Rommel vs Rundstedt) shows COMPOSITION, LIGHTING, and INTENSITY you must match: TWO generals' portraits, left and right, with tactical map floating in center between them, dramatic glow behind both. Match all of this. ONLY swap the red background gradient for amber-gold per palette rules.
+The provided reference (Rommel vs Rundstedt) shows COMPOSITION, LIGHTING, and INTENSITY you must match: TWO generals' portraits, left and right, with tactical map floating in center between them, dramatic glow behind both. Match all of this. The background should be deep wine-red per palette rules below — darker and with tighter glow falloff than the reference.
 
 User-uploaded images include TWO distinct generals (General A reference photos AND General B reference photos). Render BOTH faces precisely.
 
@@ -1063,21 +1068,21 @@ THE TWO GENERALS:
 - Three-quarter views, slightly angled toward each other
 - Different uniforms if from different services/sides
 - Both lit cinematically from front-left (consistent direction)
-- Both have warm amber rim light on inner shoulder (the side facing the other)
+- Both have warm key light with subtle red rim on inner shoulder (the side facing the other) from the background hot-spots
 - The space between their faces is where the eye lands
 - Facial expressions imply tension: stern looks, hard jaws, narrowed eyes
 - Both faces equally sharp and detailed (neither is "the loser")
 
 LIGHTING:
 - Hard warm key light from upper-front-left for both figures
-- Warm amber rim light on inner sides (creating "collision" feel)
+- Warm key light with red rim on inner sides (creating "collision" feel)
 - Map element backlit slightly so it pops
 - Strong dark vignette in corners
 
 MOOD: "Showdown" or "argument" — two professionals in opposition. Documentary-cinematic tone, NOT cartoon WWE-style face-off. Saturated and dramatic.
 
 ${PALETTE_INSTRUCTIONS}
-(Exception: map arrows can be red/blue for tactical clarity. Background stays amber-gold.)
+(Exception: bright red/steel arrows on map are tactical, they stay vivid. Wine-red background stays per palette rules.)
 ${FACE_INSTRUCTIONS}
 (CRITICAL: Apply the FACE & LIKENESS rules to BOTH generals separately — match BOTH reference photo sets precisely. The first set of reference photos = General A on the LEFT. The second set = General B on the RIGHT.)
 ${NEGATIVE_REQUIREMENTS}
@@ -1793,13 +1798,13 @@ BANNER TEXT:
 - Padding: tight on all sides
 - Text must be CRISP, SHARP, perfectly legible against the black background
 
-CRITICAL — SUBTLE WARM AMBER GLOW BEHIND BANNER:
-- Soft warm amber drop shadow extending OUTSIDE the black banner box
-- Glow color: warm amber (#d97706 to #f59e0b at low opacity, ~30-40%)
+CRITICAL — SUBTLE CREAM-WHITE GLOW BEHIND BANNER:
+- Soft warm cream-white drop shadow extending OUTSIDE the black banner box
+- Glow color: warm cream-white (#fef3c7 to #fde68a at low opacity, ~30-40%) — this provides separation from the dark wine-red background without color clash
 - Glow size: ~15-20 pixels of soft spread
 - Glow offset: very slight downward (2-3 pixels)
 - Soft and DIFFUSED, NOT a hard outline
-- This warm glow ties the banner into the amber palette of the rest of the thumbnail
+- This soft cream-white glow lifts the black banner cleanly off the dark wine-red background
 
 CRITICAL TEXT ACCURACY:
 - Banner text must read EXACTLY: "${bannerWord}"
@@ -1807,7 +1812,7 @@ CRITICAL TEXT ACCURACY:
 - Do not abbreviate, modify, or stylize the word
 - Clean readable letterforms — no decorative effects, no 3D extrusion
 
-The banner should look like a torn black poster strip with bold white text floating at the bottom of the thumbnail with a subtle warm amber halo. Premium documentary aesthetic — distinct from the red-banner military history channels. Black + white + warm amber halo = our signature.`;
+The banner should look like a torn black poster strip with bold white text floating at the bottom of the thumbnail with a subtle cream-white halo for separation. Premium HBO-documentary aesthetic — distinct from competitors' red-banner military history channels. Black box + white text + cream halo on deep wine-red background = our signature look.`;
 
 async function generateThumbnail(style, refsA, refsB, googleKey, model, bannerWord) {
   const styleRefUrls = STYLE_REFS[style] || [];
@@ -1955,7 +1960,7 @@ function escapeHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-console.log('American Brass v1.1 — WWII American generals thumbnail pipeline (amber/black palette, dual-general refs)');
+console.log('American Brass v1.2 — WWII American generals thumbnail pipeline (deep wine-red palette, black banner, dual-general refs)');
 </script>
 </body>
 </html>
