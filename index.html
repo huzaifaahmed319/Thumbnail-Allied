@@ -339,6 +339,24 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 .styles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 @media (max-width: 1280px) { .styles-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 768px) { .styles-grid { grid-template-columns: 1fr; } }
+
+.expression-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+@media (max-width: 1280px) { .expression-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px) { .expression-grid { grid-template-columns: repeat(2, 1fr); } }
+.expression-card {
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  padding: 12px 10px; cursor: pointer; transition: all 0.15s ease;
+  display: flex; flex-direction: column; gap: 4px; text-align: center; position: relative;
+}
+.expression-card:hover { border-color: var(--border-strong); background: var(--bg-hover); }
+.expression-card.selected { border-color: var(--accent); background: var(--accent-soft); }
+.expression-card.selected::before {
+  content: '✓'; position: absolute; top: 4px; right: 4px; width: 16px; height: 16px;
+  background: var(--accent); color: white; display: flex; align-items: center;
+  justify-content: center; font-size: 10px; font-weight: 700;
+}
+.expression-name { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.expression-desc { font-size: 9px; color: var(--text-muted); letter-spacing: 0.03em; line-height: 1.3; }
 .style-card {
   background: var(--bg-elevated); border: 1px solid var(--border);
   cursor: pointer; transition: all 0.15s ease; overflow: hidden; position: relative;
@@ -517,7 +535,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
     <span class="brand-name">American Brass</span>
   </div>
   <nav class="header-nav">
-    <span class="nav-pill">Pipeline v1.2</span>
+    <span class="nav-pill">Pipeline v1.3</span>
     <span class="nav-item active">Pipeline</span>
     <button class="theme-toggle" id="themeToggle">☾ Dark</button>
   </nav>
@@ -560,12 +578,12 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
       <div class="section-label">Image Model (Google)</div>
       <div class="option-stack" id="imageModels">
         <div class="option-row" data-model="nano-banana" data-cost="0.039">
-          <div class="option-meta"><span class="option-name">Nano Banana</span><span class="option-detail">2.5 Flash · Fast</span></div>
-          <span class="option-price">~$0.039</span>
+          <div class="option-meta"><span class="option-name">Nano Banana</span><span class="option-detail">2.5 Flash · 2-pass</span></div>
+          <span class="option-price">~$0.078</span>
         </div>
         <div class="option-row active" data-model="nano-banana-pro" data-cost="0.134">
-          <div class="option-meta"><span class="option-name">Nano Banana Pro</span><span class="option-detail">3 Pro · Best</span></div>
-          <span class="option-price">~$0.134</span>
+          <div class="option-meta"><span class="option-name">Nano Banana Pro</span><span class="option-detail">3 Pro · 2-pass</span></div>
+          <span class="option-price">~$0.27</span>
         </div>
       </div>
     </div>
@@ -590,9 +608,10 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
       <p class="empty-body">
         American Brass — the WWII American generals thumbnail pipeline.
         Paste a script and hit ANALYZE SCRIPT. The brain extracts the central irony,
-        generates 3 title options each with 3 fresh banner choices, recommends visual
-        styles, then builds your Nano Banana prompts for up to 5 thumbnail variants
-        in deep cinematic wine-red aesthetic with black banner overlays.
+        generates 3 title options with fresh banners, real map place names, and
+        period-accurate newspaper headlines from your script's research. Then a
+        two-pass image pipeline builds detailed backgrounds first, composites your
+        general into them, in atmospheric wine-red with black banner overlays.
       </p>
     </div>
 
@@ -643,9 +662,29 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
         </div>
       </div>
 
-      <div class="step" id="step4">
+      <div class="step" id="stepExpression">
         <div class="step-header">
           <span class="step-num">04</span>
+          <span class="step-title">Select Expression</span>
+          <span class="step-status">Pending</span>
+        </div>
+        <div class="expression-grid" id="expressionGrid">
+          <div class="expression-card selected" data-expression="stern"><span class="expression-name">Stern</span><span class="expression-desc">Authoritative, jaw set</span></div>
+          <div class="expression-card" data-expression="determined"><span class="expression-name">Determined</span><span class="expression-desc">Hard resolved focus</span></div>
+          <div class="expression-card" data-expression="grim"><span class="expression-name">Grim</span><span class="expression-desc">Weighted, weary command</span></div>
+          <div class="expression-card" data-expression="tense"><span class="expression-name">Tense</span><span class="expression-desc">Alert, under pressure</span></div>
+          <div class="expression-card" data-expression="skeptical"><span class="expression-name">Skeptical</span><span class="expression-desc">Eyebrow raised, doubting</span></div>
+          <div class="expression-card" data-expression="smirking"><span class="expression-name">Smirking</span><span class="expression-desc">Subtle confident</span></div>
+          <div class="expression-card" data-expression="faint-smile"><span class="expression-name">Faint Smile</span><span class="expression-desc">Slight warm dignity</span></div>
+          <div class="expression-card" data-expression="shocked"><span class="expression-name">Shocked</span><span class="expression-desc">Stunned, brows raised</span></div>
+          <div class="expression-card" data-expression="angry"><span class="expression-name">Angry</span><span class="expression-desc">Controlled fury</span></div>
+          <div class="expression-card" data-expression="weary"><span class="expression-name">Weary</span><span class="expression-desc">Exhausted, war-tired</span></div>
+        </div>
+      </div>
+
+      <div class="step" id="step4">
+        <div class="step-header">
+          <span class="step-num">05</span>
           <span class="step-title">Select Image Styles</span>
           <span class="step-status">Toggle 1-5</span>
         </div>
@@ -690,7 +729,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 
       <div class="step" id="step5">
         <div class="step-header">
-          <span class="step-num">05</span>
+          <span class="step-num">06</span>
           <span class="step-title">Upload Reference Photos</span>
           <span class="step-status">1-3 each</span>
         </div>
@@ -734,7 +773,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 
       <div class="step" id="step6">
         <div class="step-header">
-          <span class="step-num">06</span>
+          <span class="step-num">07</span>
           <span class="step-title">Generate Thumbnails</span>
           <span class="step-status">Ready</span>
         </div>
@@ -743,7 +782,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 
       <div class="step" id="stepOutput">
         <div class="step-header">
-          <span class="step-num">07</span>
+          <span class="step-num">08</span>
           <span class="step-title">Output</span>
           <span class="step-status">Awaiting</span>
         </div>
@@ -789,44 +828,44 @@ const STYLE_NAMES = {
 };
 
 const PALETTE_INSTRUCTIONS = `
-COLOR PALETTE — DEEP CINEMATIC WINE-RED (CRITICAL):
-This thumbnail uses a deep saturated WINE-RED / BURGUNDY background with strong dark vignette. Match this palette precisely. Think "premium HBO war documentary poster" — deep cinematic blood-red, dark theatrical, with a tight bright crimson hot-spot behind the subject that falls off quickly into near-black corners. Saturated and dramatic, NOT pulpy fire-engine red, NOT muddy brown, NOT pale.
+COLOR PALETTE — DEEP ATMOSPHERIC WINE-RED (CRITICAL):
+This thumbnail uses a deep saturated WINE-RED / BURGUNDY background that's atmospheric and cinematic, NOT a stage spotlight, NOT a flat red wall. Match this palette precisely. Think "premium HBO war documentary key art" — deep cinematic wine-red mood, dark theatrical, with a SOFT subtle brightening behind the subject (not a hot spotlight) and dramatic falloff to near-black at the corners.
 
 REFERENCE IMAGE COLOR SUBSTITUTION:
-The provided style reference image uses a RED gradient background. Match its COMPOSITION, LIGHTING DIRECTION, GLOW STRUCTURE, and DRAMATIC INTENSITY exactly. Use the wine-red palette below — which is darker, deeper, and has a tighter hot-spot than the reference's flat bright red. Do NOT make the palette cool, blue, amber, orange, or desaturated.
+The provided style reference image shows COMPOSITION, FRAMING, and DRAMATIC INTENSITY you must match. The background should be deep wine-red per the spec below. Do NOT make the palette cool, blue, amber, orange, sepia, or desaturated.
 
 BACKGROUND GRADIENT (precise specification — follow exactly):
-- HOT-SPOT (small concentrated area directly behind the general's head/shoulders, ~25-30% of frame): bright saturated CRIMSON (#dc2626 at the brightest pixel, #b91c1c surrounding) — this is the small bright core, NOT a wide flat glow
-- GLOW BODY (extending outward from hot-spot, ~30-40% of frame): deep blood red (#991b1b to #7f1d1d) — saturated, dark, cinematic
-- MID-FRAME (further out): wine and burgundy (#5c0f0f to #3a0808) — very dark red, falling toward black
+- BEHIND THE SUBJECT (the area the head/shoulders sit against): a SOFT slightly brighter zone of deep red (#7f1d1d to #991b1b range) — this is a SUBTLE atmospheric brightening, NOT a bright glow, NOT a halo, NOT a spotlight. The brightening is gentle — perhaps 15-20% brighter than the surrounding mid-frame. It feels like the subject is sitting in a slightly lit zone of an otherwise dark red space.
+- MID-FRAME (around the subject zone): deep wine-red (#5c0f0f to #3a0808) — the dominant background color, dark and saturated
 - OUTER EDGES AND ALL FOUR CORNERS: near-black with red-black tint (#1a0303 to #050000) — corners should be almost PURE BLACK
 - HEAVY hard-falloff dark vignette — the corners must read as black, NOT as dark red
 
-GLOW FALLOFF CURVE (CRITICAL — this is what makes ours distinct from competitors):
-- The bright crimson hot-spot is SMALL and TIGHT, not a wide wash
-- Falloff from bright center to black corners is FAST — over roughly 35-40% of the radial distance
-- Most of the frame should sit in the deep wine-red to near-black range, with only a small punch of bright crimson behind the head
-- Think "stage spotlight on dark theater backdrop" — concentrated bright core, deep darkness around it
-- NOT a flat red wall, NOT a wide soft glow — TIGHT and DARK
+CRITICAL — NO STAGE SPOTLIGHT EFFECT:
+Do NOT render the area behind the subject as a bright glowing halo, sunburst, or spotlight. The background is an ATMOSPHERIC deep red FIELD with a gentle brightening behind the subject. The drama comes from the dark vignette at the edges pulling the eye in, NOT from a bright glow pushing the subject forward.
+- Do NOT use bright saturated crimson (#dc2626) as a wide visible glow — that's too aggressive
+- Do NOT make the area behind the head obviously brighter — it should be subtly brighter, atmospheric
+- Do NOT render rays, light beams, or radial gradient lines emanating from behind the subject
+- The background should look like a deep red moody photograph, not a poster with a backlight
 
 CRITICAL — AVOID THESE FAILURE MODES:
-- DO NOT use bright fire-engine red across the whole background (that's the competitor's look — too pulpy, flat, no depth)
+- DO NOT use bright fire-engine red across the whole background — too pulpy, flat, no depth
 - DO NOT make the background amber, orange, sepia, brown, or tobacco-colored — this is RED, deep wine-red specifically
-- DO NOT make the glow wide and soft — it must be a tight hot-spot with fast falloff
+- DO NOT make a dramatic spotlight or sunburst behind the subject — it should be atmospheric, not theatrical
 - DO NOT desaturate — this palette only works at high saturation in the red channels
 - DO NOT use steel blue, cyan, teal, green, or any cool color in the background
 - DO NOT make the corners dark red — corners must read as near-black
 
-OVERALL MOOD: Premium, cinematic, theatrical, high-stakes investigative documentary poster. Deep saturated red with strong dark falloff. Punchy and eye-catching but with depth and contrast — magazine-cover quality. Like an HBO miniseries key art, NOT a pulpy paperback cover.
+OVERALL MOOD: Premium, cinematic, theatrical, high-stakes investigative documentary key art. Deep saturated atmospheric wine-red with strong dark falloff at the edges. Punchy and eye-catching but with depth and contrast — magazine-cover quality. Like an HBO miniseries poster — moody, deep, controlled. NOT a pulpy paperback cover, NOT a stage with a spotlight.
 
-CONTRAST RULES (CRITICAL):
-- The general's face must be WARMLY LIT and noticeably BRIGHTER than the wine-red background — face must clearly stand out
+CONTRAST RULES (CRITICAL — this is what makes the subject pop):
+- The subject's face is WARMLY LIT from a hard key light source (front-left at 45°) — this front lighting is what makes the face stand out, NOT a backlight halo
 - Strong dark shadows under the jaw, helmet brim, and on the side opposite the key light
 - The corners of the frame fall off into NEAR-BLACK so the eye is pulled hard to center
 - VERY HIGH overall contrast between the bright lit face and the dark vignette edges
-- Skin tones should pick up subtle warm red rim light from the background, but the face itself reads as sharp warm key light, not red
+- The subject reads as 3D-rounded with proper light/shadow on the face — NOT flat
+- A thin warm rim light along the edges of the face/shoulders (from a KEY light, not from background) gives subtle separation from the red field
 
-The lower-center area can have a slightly darker zone to make banner overlay readable in post.
+The lower-center area can be slightly darker to make banner overlay readable in post.
 `;
 
 const FACE_INSTRUCTIONS = `
@@ -844,251 +883,376 @@ NEGATIVE REQUIREMENTS (DO NOT INCLUDE):
 - NO modern banner text overlays unless explicitly instructed
 - NO title cards, NO captions, NO watermarks, NO play buttons, NO YouTube UI elements
 - NO borders or frames around the image
-- NO bright fire-engine red flat backgrounds (we use deep wine-red with tight hot-spot and dark falloff)
+- NO bright fire-engine red flat backgrounds (we use deep atmospheric wine-red with dark falloff)
+- NO bright stage spotlight or sunburst effect behind the subject (atmospheric brightening only)
 - NO steel blue, cyan, teal, or cool desaturated palettes
-- Period-appropriate map labels, newspaper headlines, document text are ALLOWED
+- Period-appropriate map labels, newspaper headlines, document text are ALLOWED and required
 - Leave lower-center area uncluttered for banner overlay in post-production
 `;
 
-const STYLE_PROMPTS = {
-'portrait-hero': `Create a cinematic 16:9 YouTube thumbnail in PORTRAIT HERO style — a single dominant general portrait with a deep cinematic wine-red aesthetic.
+// =====================================================================
+// PASS 1: BACKGROUND PROMPTS — generate the scene WITHOUT the general
+// =====================================================================
+// These build the background image that Pass 2 will composite the
+// general into. visual_assets from the brain are injected at runtime.
 
-REFERENCE IMAGE INTERPRETATION:
-The provided reference image (Bradley) shows COMPOSITION, LIGHTING, and DRAMATIC INTENSITY you must match: tight portrait of a general, head and upper chest, helmet visible, dramatic backlight halo, hard cinematic key light, high contrast face. Match all of this. The background should be deep wine-red per palette rules below — darker and with tighter glow falloff than the reference, but in the same red color family. Keep everything else (composition, lighting drama, glow structure, contrast level) identical to the reference.
+const BACKGROUND_PROMPTS = {
+'portrait-hero': (va) => `Create a cinematic 16:9 background image in deep atmospheric wine-red palette — for a YouTube thumbnail in PORTRAIT HERO style. THIS IS A BACKGROUND ONLY — DO NOT INCLUDE ANY PEOPLE OR FACES IN THIS IMAGE.
 
-User-uploaded images = the SUBJECT (the actual general we're rendering).
+The background should be a moody atmospheric wine-red field with strong dark vignette. The right-center area (where a person's head and shoulders would later be placed in a portrait composition) should be a slightly brighter zone of deep red — NOT a glow, NOT a halo, just a subtle atmospheric brightening. The corners must fall off into near-black.
 
-COMPOSITION:
-- Three-quarter view from slightly low angle for authority
-- General's head and upper chest fills the frame (head occupies upper-third)
-- General positioned slightly right of center (~55% from left)
-- Tight crop — top of helmet/hair has 5-10% margin from frame top
-- Full era-appropriate uniform visible: collar, insignia, medals, helmet or cap
-- Negative space on LEFT side filled with deep wine-red and dark vignette falling to near-black
-- Bottom-center area open for banner placement
+The image should look like a backdrop or studio backdrop — entirely empty space, ready for a portrait subject to be added later. NO furniture, NO objects, NO text, NO people. Just the deep red atmospheric field with vignette.
+
+CRITICAL: Leave a clear "subject zone" centered slightly right (around 55-60% from left, vertically centered) where the general will be added in Pass 2. This zone should be the slightly brighter atmospheric red area.
+
+${PALETTE_INSTRUCTIONS}
+${NEGATIVE_REQUIREMENTS}
+
+OUTPUT: 16:9 widescreen background image, deep atmospheric wine-red, NO PEOPLE, NO TEXT, ready for subject compositing in Pass 2.`,
+
+'battle-map': (va) => {
+  const locations = (va.map_locations || []).join(', ');
+  const opLabel = va.map_operation_label || '';
+  const arrows = (va.map_arrow_directions || []).join('; ');
+  return `Create a cinematic 16:9 background image — a tactical battle map composition in deep atmospheric wine-red palette — for a YouTube thumbnail in BATTLE MAP COMPOSITE style. THIS IS A BACKGROUND ONLY — DO NOT INCLUDE ANY PEOPLE OR FACES.
+
+LAYOUT (CRITICAL):
+- LEFT 50% of frame: detailed tactical battle map with proper geography, place name labels, and bold tactical arrows
+- RIGHT 50% of frame: deep atmospheric wine-red field with dark vignette in corners — this is the "subject zone" where the general will be added in Pass 2 (leave it empty of any subject, just atmospheric red)
+- Soft gradient between map (left) and red field (right) — no hard edge
+
+THE BATTLE MAP (LEFT 50%):
+- Period military operations map style, slightly stylized like a 1940s tactical document
+- Map background: very dark navy / near-black (#0a0e1a to #000000) with subtle wine-red tint at edges
+- Land masses: muted dark gray-navy (#1a1e2a)
+- Water: deeper near-black with subtle red glow at distance
+
+REAL PLACE NAMES (from script research — render these EXACTLY as labels on the map):
+${locations}
+- Cities/atolls/landmarks in ALL CAPS, small bold serif type, white/cream ink
+- Render every label CLEAN and LEGIBLE — no garbled text, no fake-looking words. Spelling MUST be exact.
+- Position labels at appropriate geographic positions on the map
+
+TACTICAL ARROWS (render these as the visual story):
+${arrows}
+- Friendly forces: bright saturated red arrows (#dc2626), 12-15 pixels wide, sweeping inward toward objectives
+- Enemy forces: dark steel-gray arrows (#475569), thinner
+- Arrows have proper tapered arrowheads, slight curve for movement
+- Unit markers: black tank/infantry silhouettes at battle points
+
+OPERATION HEADER (upper-left of map, render exactly):
+"${opLabel}"
+- Bold serif type, white/cream ink, on a slightly darker background plate
+- Spelling MUST be perfect
+
+RIGHT 50% (subject zone — leave empty):
+- Deep atmospheric wine-red field per palette rules
+- Subtle brightening in the right-center area where the general will be added in Pass 2
+- Strong dark vignette in upper-right and lower-right corners
+- NO people, NO objects, NO text in this zone — pure atmospheric red, ready for compositing
+
+${PALETTE_INSTRUCTIONS}
+(Exception: bright red/steel arrows on map are tactical, they stay vivid. The map's dark navy/near-black background sits naturally next to the wine-red field on the right.)
+${NEGATIVE_REQUIREMENTS}
+
+OUTPUT: 16:9 widescreen, detailed tactical map on left with PROPERLY SPELLED real place names, atmospheric wine-red empty zone on right, ready for general compositing in Pass 2. NO PEOPLE.`;
+},
+
+'period-archive': (va) => {
+  const headlines = (va.newspaper_headlines || []).map(h => `"${h}"`).join(', ');
+  const mastheads = (va.newspaper_mastheads || []).map(m => `"${m}"`).join(', ');
+  const docCls = va.document_classification || {};
+  return `Create a cinematic 16:9 background image — overlapping period newspapers, magazines, and documents in deep atmospheric wine-red palette — for a YouTube thumbnail in PERIOD ARCHIVE style. THIS IS A BACKGROUND ONLY — DO NOT INCLUDE ANY PEOPLE OR FACES.
+
+LAYOUT (CRITICAL):
+- LEFT 60% of frame: overlapping period print materials (newspapers, magazines, official documents) tiled at slight angles
+- RIGHT 40% of frame: deep atmospheric wine-red field with dark vignette — the "subject zone" where the general will be added in Pass 2 (leave it EMPTY)
+- Documents overlap into the lower portion of the right side at the bottom edge (no hard edge between zones)
+
+THE ARCHIVE STACK (LEFT 60%):
+- 4-6 overlapping period newspapers, magazines, and documents at slight angles (5-15° rotation)
+- Pages: aged warm yellow-cream paper texture with realistic fold marks, torn edges, subtle stains and aging
+- Cream papers POP against the deep wine-red background — the warm-cream-on-deep-red contrast is the visual signature
+
+NEWSPAPER MASTHEADS (render these EXACTLY at top of newspapers — proper period typography):
+${mastheads}
+- Heavy serif typefaces, bold, period-accurate
+- Spelling MUST be perfect — these are the most-read elements
+
+HEADLINES (render these EXACTLY as huge bold uppercase serif headlines on the newspapers):
+${headlines}
+- Each headline takes up most of one newspaper's front page
+- Bold uppercase serif type, dramatic size, period-accurate
+- Spelling MUST be perfect — no garbled text, no fake words
+- Smaller subheadlines and dense gray column-text texture below each headline (column text doesn't need to be readable, just visual texture)
+- Some newspapers have small period photographs embedded
+
+OFFICIAL DOCUMENTS (1-2 sheets in the stack):
+- Letterhead reading: "${docCls.letterhead || 'WAR DEPARTMENT'}"
+- Typewritten body text texture (gray, illegible at this scale, just texture)
+- Classification stamp: "${docCls.stamp || 'CLASSIFIED'}" in red ink, slightly tilted, looks rubber-stamped
+- Date stamp: "${docCls.date || ''}"
+- Bold ink signature at bottom
+
+RIGHT 40% (subject zone — leave empty):
+- Deep atmospheric wine-red field per palette rules
+- Subtle brightening in the upper-right where the general's head will be added in Pass 2
+- Strong dark vignette in upper-right and lower-right corners
+- NO people, NO objects, NO additional text — pure atmospheric red, ready for compositing
 
 LIGHTING:
-- Hard directional key light from upper-front-left at ~45°
-- WARM rim light wrapping the LEFT side of face/shoulders, picking up subtle red tones from the background
-- Face brightly and warmly lit — the BRIGHTEST element in frame
-- Hard shadows under jaw and helmet brim
-- Cinematic warm color grading — warm key on face, deep wine-red shadows, near-black falloff
-
-AURA / GLOW:
-- Behind the general's head and shoulders: a TIGHT bright crimson hot-spot (#dc2626) — small concentrated bright core, NOT a wide soft glow
-- Glow fades outward smoothly, creates clear halo separation
-- Hot-spot color: bright saturated crimson (#dc2626 brightest), falling fast through deep red to near-black at edges. NEVER pink, NEVER orange, NEVER amber.
-
-UNIFORM:
-- Authentic period US Army or USMC uniform appropriate to era
-- Olive drab green for US Army, faded sage for USMC
-- All insignia, rank stars, medals rendered with sharp detail, catching warm light
-- Slight weathering — combat-worn but readable
+- Documents lit from upper-left at 45°, casting subtle warm shadows
+- Cream papers and aged textures pick up subtle warm light
+- Strong dark vignette around the entire image
 
 ${PALETTE_INSTRUCTIONS}
-${FACE_INSTRUCTIONS}
+(Exception: aged paper retains warm cream-yellow tone for period authenticity. Red ink CLASSIFIED stamps allowed.)
 ${NEGATIVE_REQUIREMENTS}
 
-OUTPUT: Photorealistic 3D render, 16:9 widescreen, hyper-detailed face, magazine-cover quality, saturated and high-contrast.`,
+OUTPUT: 16:9 widescreen, detailed period archive stack on left with PROPERLY SPELLED real headlines and mastheads, atmospheric wine-red empty zone on right, ready for general compositing in Pass 2. NO PEOPLE.`;
+},
 
-'battle-map': `Create a cinematic 16:9 YouTube thumbnail in BATTLE MAP COMPOSITE style — a general portrait paired with a tactical battle map, deep wine-red palette.
+'battlefield-command': (va) => {
+  const setting = va.battlefield_setting || {};
+  const vehicles = (setting.vehicles || []).join(', ');
+  const signs = (setting.road_signs || []).map(s => `"${s}"`).join(', ');
+  return `Create a cinematic 16:9 background image — a battlefield scene with combat vehicles and atmospheric haze in deep wine-red palette — for a YouTube thumbnail in BATTLEFIELD COMMAND style. THIS IS A BACKGROUND ONLY — DO NOT INCLUDE THE MAIN GENERAL/COMMANDING OFFICER. (Soldiers visible inside or operating vehicles in the distance are OK as background figures.)
 
-REFERENCE IMAGE INTERPRETATION:
-The provided reference (Manstein) shows COMPOSITION, LIGHTING, and INTENSITY you must match: tactical map fills LEFT 50%, general portrait fills RIGHT 50%, dramatic glow behind portrait. Match all of this. The background should be deep wine-red per palette rules below — darker and with tighter glow falloff than the reference. Keep composition, drama, and contrast level identical.
-
-User-uploaded images = SUBJECT (actual general to render).
-
-COMPOSITION:
-- LEFT HALF (50%): Tactical battle map for the script's campaign
-- RIGHT HALF (50%): General's portrait, three-quarter view, head fills upper half
-- Tight crop on general — head and upper chest only
-- General positioned right of center (~75% from left)
-- Map and portrait separated by soft gradient, not hard edge
-
-THE BATTLE MAP (LEFT):
-- Style: Period military operations map, slightly stylized
-- Background: Very dark navy / near-black (#0a0e1a to #000000) with subtle red tint at edges — NOT brown, NOT amber, NOT bright
-- Land: Slightly lighter dark gray-navy (#1a1e2a); Water: deeper near-black with subtle red glow at distance
-- THICK BOLD ARROWS — saturated bright RED for friendly forces (#dc2626), dark steel for enemy (#475569). 12-15 pixels wide. Sweeping inward. The bright red arrows pop against the dark map.
-- Unit markers: Black tank silhouettes, infantry icons at battle points
-- Place name LABELS: small bold serif type, white/cream ink. Cities uppercase ("STALINGRAD"), rivers italic, regions small caps. Text must be CLEAN and LEGIBLE — proper spelling, not garbled.
-- Date/operation header in upper-left of map: e.g., "AUG 1942 — MAKIN ATOLL"
-- Authentic 1940s military map annotation feel
-- The dark map sits naturally against the wine-red background — they're both dark, with the bright crimson glow from behind the portrait providing the only bright accent on the right side
-
-GENERAL PORTRAIT (RIGHT):
-- Three-quarter view from slightly low angle
-- Head fills upper-right with 5-10% margin from top
-- Body visible from upper chest up
-- Strong directional key light from front-left
-- Warm key light on face with subtle red rim light on LEFT side from the crimson hot-spot behind
-- Tight bright crimson hot-spot directly behind head as concentrated halo (small and bright, fast falloff to dark)
-
-LIGHTING & MOOD:
-- Cinematic warm lighting throughout
-- Map slightly desaturated relative to portrait (faded military document feel) but still warm-toned
-- Portrait noticeably brighter and sharper to draw the eye
+LAYOUT (CRITICAL):
+- CENTER of frame: deep atmospheric wine-red field with subtle brightening — this is the "subject zone" where the general will be added in Pass 2 (leave EMPTY of any person)
+- LEFT THIRD: 1-2 combat vehicles at three-quarter angle, slightly receding into atmospheric haze
+- RIGHT THIRD: 1-2 different combat vehicles at three-quarter angle, slightly receding into atmospheric haze
+- Vehicles fade into red-tinted haze as they recede
 - Strong dark vignette in corners
 
-${PALETTE_INSTRUCTIONS}
-(Exception: bright red arrows on map are tactical — they stay vivid red against the dark map. The wine-red main background stays per palette rules.)
-${FACE_INSTRUCTIONS}
-${NEGATIVE_REQUIREMENTS}
+THEATER & SETTING (specific to this script):
+- Theater: ${setting.theater || 'WWII battlefield'}
+- Terrain: ${setting.terrain || ''}
+- Atmosphere: ${setting.atmosphere || 'smoky atmospheric haze'}
 
-OUTPUT: Photorealistic 3D render with stylized map, 16:9, sharp face, clear readable map, high contrast and saturation.`,
-
-'period-archive': `Create a cinematic 16:9 YouTube thumbnail in PERIOD ARCHIVE style — general portrait surrounded by overlapping period newspapers, documents, photographs in deep cinematic wine-red aesthetic.
-
-REFERENCE IMAGE INTERPRETATION:
-The provided reference (Rommel) shows COMPOSITION, LIGHTING, and DRAMATIC INTENSITY you must match: multiple overlapping period newspapers tiled across LEFT 60%, general portrait on RIGHT 40%, dramatic glow behind portrait. Match all of this. The background should be deep wine-red per palette rules below — darker and with tighter glow falloff than the reference. Keep composition and contrast intact.
-
-User-uploaded images = SUBJECT.
-
-COMPOSITION:
-- LEFT 55-60%: Overlapping period newspapers, magazine covers, documents, small vintage photo
-- RIGHT 40-45%: General's portrait, three-quarter view
-- Documents overlap into portrait area at bottom (no hard edge)
-- General's head and upper chest fills upper-right
-
-THE ARCHIVE STACK (LEFT):
-- 3-5 overlapping period newspapers/magazines at slight angles (5-15°)
-- Each newspaper has:
-  - Bold period MASTHEAD in heavy serif type — e.g., "THE NEW YORK TIMES", "STARS AND STRIPES", "LIFE", "TIME"
-  - HUGE dramatic HEADLINE in bold uppercase serif — relevant to story
-  - Smaller subheadline in bold type
-  - Column text below as dense gray texture (don't make individual letters readable)
-  - Sometimes a small period photograph
-- Pages: Aged warm yellow-cream paper texture (which contrasts strongly against the dark wine-red background — the cream papers POP against the deep red, this is part of the visual punch)
-- Authentic fold marks, torn edges, subtle stains
-- One or two sheets are official military documents:
-  - Letterhead with insignia
-  - Typewritten text texture
-  - "CONFIDENTIAL" or "CLASSIFIED" stamp in red ink
-  - Bold signature at bottom
-- One small period photograph embedded in stack
-
-GENERAL PORTRAIT (RIGHT):
-- Three-quarter view from slightly low angle
-- Tight crop — head and upper chest
-- Tight bright crimson hot-spot directly behind head (small concentrated bright core)
-- Warm key light with subtle red rim on LEFT side of face from the hot-spot behind
-- Sharp focus on face, eyes catching warm light
-- General appears to "emerge" from behind the document stack
-
-LIGHTING:
-- Documents lit from upper-left, casting subtle warm shadows
-- Portrait lit cinematically with hard key from front-left
-- Strong color contrast: warm cream-yellow papers POP against deep wine-red background, near-black shadows in corners — the cream-on-red is the visual signature of this style
-- Strong dark vignette in corners
-
-MOOD: "Investigation board" — evidence wall in a documentary about historical injustice. Premium, cinematic, saturated.
-
-${PALETTE_INSTRUCTIONS}
-(Exception: aged paper retains warm yellow-cream tone for period authenticity. Red ink stamps allowed.)
-${FACE_INSTRUCTIONS}
-${NEGATIVE_REQUIREMENTS}
-
-OUTPUT: Photorealistic 3D render with detailed period print materials, 16:9, sharp face, layered documents, high contrast.`,
-
-'battlefield-command': `Create a cinematic 16:9 YouTube thumbnail in BATTLEFIELD COMMAND style — general at the front with combat vehicles in atmospheric haze, deep wine-red palette.
-
-REFERENCE IMAGE INTERPRETATION:
-The provided reference (Collins "LIGHTNING JOE") shows COMPOSITION, LIGHTING, and INTENSITY you must match: general's head dead-center, military vehicles flanking on both sides at three-quarter angles in atmospheric mist, period road signs at edges, dramatic backlight. Match all of this. The background should be deep wine-red per palette rules below — darker and with tighter glow falloff than the reference. CRITICAL: Generate NEW vehicles appropriate to the script (do NOT just copy the vehicles from the reference image — the reference shows COMPOSITION only, the actual vehicles should be freshly generated to match the script's theater and era).
-
-User-uploaded images = SUBJECT.
-
-COMPOSITION:
-- General's head dead-center, upper-half of frame
-- Tight crop showing head and upper chest with full uniform
-- Military vehicles flanking the general:
-  - LEFT: 1-2 tanks/armored vehicles at three-quarter angle, slightly receding
-  - RIGHT: Jeep, halftrack, or similar at three-quarter angle, slightly receding
-  - Era-appropriate: Pacific = LVT amphtracs, Marine equipment; European = Sherman tanks, M3 halftracks; Korea = M26 Pershings
-- Atmospheric haze creates depth between subject and vehicles
-- Vehicles fade into deep red-tinted atmospheric haze as they recede into the background
-
-ENVIRONMENT (matches script setting):
-- Pacific/Marines: tropical palms, beach sand, surf line, palm silhouettes
-- European: muddy roads, hedgerows, distant ruins, foggy atmosphere
-- Korea: mountainous terrain, frozen ground, sparse trees
-- Period road signs in correct languages
-- Atmospheric haze tinted by the wine-red background unifies the scene
-
-VEHICLES:
+VEHICLES (render these specific era-accurate vehicles — not generic):
+${vehicles || 'period-appropriate WWII combat vehicles'}
 - Photorealistic with weathering: dust, mud splatter, paint wear
-- Soldiers visible inside/on vehicles as background figures
-- Subtle motion: vehicles in formation but not blurred
-- Era-accurate markings: white US Army stars, unit numbers
-- Vehicles caught in warm key light with subtle red rim from the background hot-spot
+- Soldiers visible inside/on vehicles as small distant background figures (NOT the main subject)
+- Era-accurate markings: white US Army stars, unit numbers, division insignia
+- Vehicles caught in warm key light from upper-left, with subtle red rim from the wine-red environment
 
-GENERAL PORTRAIT:
-- Three-quarter view from slightly low angle
-- Head and upper chest only
-- Sharp focus, brightest element in frame
-- Strong cinematic warm key light from front-left
-- Warm key light on face with subtle red rim light from the crimson hot-spot behind
-- Tight bright crimson hot-spot directly behind head (small concentrated bright core)
+ROAD SIGNS (render these EXACT texts if any are listed):
+${signs || '(none for this theater)'}
+- Period road signs in correct era/region typography
+- Positioned at frame edges, partially visible
+
+CENTER (subject zone — LEAVE EMPTY):
+- Deep atmospheric wine-red field per palette rules
+- Subtle brightening in the center where the general's head and shoulders will be added in Pass 2
+- NO main figure / commanding officer — leave this zone clear
+- NO bright glow or spotlight — atmospheric only
 
 LIGHTING & MOOD:
 - Cinematic atmospheric daylight tinted by the wine-red environment (dusty, smoky, theatrical)
-- Strong directional key light on general
-- Vehicles lit consistently with subtle red rim from background
-- Atmospheric red-tinted haze adds depth between subject and vehicles
+- Strong directional key light from upper-front-left
+- Atmospheric red-tinted haze unifies the scene
 - Strong dark vignette in corners
 
 ${PALETTE_INSTRUCTIONS}
-${FACE_INSTRUCTIONS}
 ${NEGATIVE_REQUIREMENTS}
 
-OUTPUT: Photorealistic cinematic 3D render, 16:9, sharp face, atmospheric battlefield depth, saturated warm palette.`,
+OUTPUT: 16:9 widescreen, theater-specific battlefield scene with vehicles flanking an empty center zone, atmospheric wine-red palette, ready for general compositing in Pass 2. CENTER MUST BE EMPTY — no main subject, no commanding officer, no general.`;
+},
 
-'rivalry': `Create a cinematic 16:9 YouTube thumbnail in RIVALRY style — TWO generals facing each other with a tactical context element between them, deep wine-red palette.
+'rivalry': (va) => {
+  const locations = (va.map_locations || []).slice(0, 6).join(', ');
+  const opLabel = va.map_operation_label || '';
+  return `Create a cinematic 16:9 background image — a center tactical map element flanked by empty subject zones — for a YouTube thumbnail in RIVALRY style. THIS IS A BACKGROUND ONLY — DO NOT INCLUDE ANY PEOPLE OR FACES.
 
-REFERENCE IMAGE INTERPRETATION:
-The provided reference (Rommel vs Rundstedt) shows COMPOSITION, LIGHTING, and INTENSITY you must match: TWO generals' portraits, left and right, with tactical map floating in center between them, dramatic glow behind both. Match all of this. The background should be deep wine-red per palette rules below — darker and with tighter glow falloff than the reference.
+LAYOUT (CRITICAL):
+- LEFT THIRD: deep atmospheric wine-red field with subtle brightening — "subject zone A" for the first general (leave EMPTY)
+- CENTER (25-30% width, 50% height): a stylized tactical battle map, floating with slight 3D tilt
+- RIGHT THIRD: deep atmospheric wine-red field with subtle brightening — "subject zone B" for the second general (leave EMPTY)
+- Strong dark vignette around the entire image
 
-User-uploaded images include TWO distinct generals (General A reference photos AND General B reference photos). Render BOTH faces precisely.
+THE CENTER MAP:
+- Period military operations map showing the campaign of conflict
+- Bold tactical arrows: red for one side, dark steel for the other
+- Place names rendered EXACTLY (no garbled text, perfect spelling): ${locations}
+- Date/operation header: "${opLabel}"
+- Map sits floating with slight 3D tilt, slight glow behind it
+- Map background: dark navy/near-black with subtle red tint
 
-COMPOSITION (only use this style if script has TWO opposing/contrasting commanders):
-- LEFT GENERAL: occupies left third, head and upper chest, three-quarter view facing slightly inward — use General A reference photos
-- RIGHT GENERAL: occupies right third, head and upper chest, three-quarter view facing slightly inward — use General B reference photos
-- CENTER: Tactical map/document/symbolic element floats between them at chest height, slightly tilted
-- Both generals' heads at roughly same height for balance
-- Strong dark vignette around outer edges
-
-CENTER ELEMENT:
-- Tactical battle map showing the campaign of their conflict
-- Stylized period military map with arrows, unit markers, place names
-- Sized ~25-30% of frame width, ~50% of frame height
-- Floats with slight 3D tilt
-- Date label in corner: e.g., "6 JUIN 1944"
-
-THE TWO GENERALS:
-- Each is tight portrait, head and upper chest only
-- Three-quarter views, slightly angled toward each other
-- Different uniforms if from different services/sides
-- Both lit cinematically from front-left (consistent direction)
-- Both have warm key light with subtle red rim on inner shoulder (the side facing the other) from the background hot-spots
-- The space between their faces is where the eye lands
-- Facial expressions imply tension: stern looks, hard jaws, narrowed eyes
-- Both faces equally sharp and detailed (neither is "the loser")
-
-LIGHTING:
-- Hard warm key light from upper-front-left for both figures
-- Warm key light with red rim on inner sides (creating "collision" feel)
-- Map element backlit slightly so it pops
-- Strong dark vignette in corners
-
-MOOD: "Showdown" or "argument" — two professionals in opposition. Documentary-cinematic tone, NOT cartoon WWE-style face-off. Saturated and dramatic.
+LEFT AND RIGHT SUBJECT ZONES (LEAVE EMPTY):
+- Deep atmospheric wine-red field per palette rules
+- Subtle brightening in each zone where a general's head will be added in Pass 2
+- Both zones at the same approximate vertical height for compositional balance
+- Strong dark vignette in outer corners
+- NO people, NO objects, NO text in either subject zone
 
 ${PALETTE_INSTRUCTIONS}
-(Exception: bright red/steel arrows on map are tactical, they stay vivid. Wine-red background stays per palette rules.)
-${FACE_INSTRUCTIONS}
-(CRITICAL: Apply the FACE & LIKENESS rules to BOTH generals separately — match BOTH reference photo sets precisely. The first set of reference photos = General A on the LEFT. The second set = General B on the RIGHT.)
+(Exception: red/steel arrows on the center map are tactical, they stay vivid. Wine-red flanking zones stay per palette rules.)
 ${NEGATIVE_REQUIREMENTS}
 
-OUTPUT: Photorealistic cinematic 3D render, 16:9, sharp faces on both generals, clear tactical center element, saturated and high-contrast.`
+OUTPUT: 16:9 widescreen, center tactical map with PROPERLY SPELLED real place names, atmospheric wine-red empty zones on left and right, ready for two-general compositing in Pass 2. NO PEOPLE.`;
+}
 };
+
+// =====================================================================
+// PASS 2: COMPOSITE PROMPTS — place the general(s) into the background
+// =====================================================================
+
+const EXPRESSION_DESCRIPTIONS = {
+  'stern':       'Stern serious expression — jaw set, mouth firm and closed, eyes focused and direct at camera, gravitas. Default authoritative military bearing.',
+  'determined':  'Determined resolute expression — slight forward lean of focus, tight jaw, eyes hard and fixed, mouth firm. The look of a man about to make a hard decision.',
+  'grim':        'Grim weighted expression — heavy brows, downturned mouth corners, tired eyes that have seen combat, weight of command on his face.',
+  'tense':       'Tense alert expression — slight tightness around the eyes and mouth, alertness in the posture, the look of a man under pressure.',
+  'skeptical':   'Skeptical sidelong expression — one eyebrow slightly raised, head tilted slightly, mouth in a tight line, the look of a man who isn\'t buying it.',
+  'smirking':    'Subtle confident smirk — one corner of mouth slightly raised, knowing look in the eyes, slight head tilt. Quiet confidence, not arrogant.',
+  'faint-smile': 'Faint warm smile — slight upturn of mouth corners, eyes warmed slightly, dignified and genuine. NOT a grin or laugh.',
+  'shocked':     'Shocked or stunned expression — eyebrows raised, eyes slightly wider than normal, mouth slightly open or jaw slack, the look of receiving bad news.',
+  'angry':       'Controlled anger — jaw clenched, brow furrowed, eyes hard and direct, mouth tight. Suppressed fury, not yelling.',
+  'weary':       'Weary exhausted expression — heavy under-eye shadows, tired eyes, slight slump, the look of a man who has been at war too long.'
+};
+
+function buildCompositePrompt(style, expression, isRivalry, va) {
+  const expressionText = EXPRESSION_DESCRIPTIONS[expression] || EXPRESSION_DESCRIPTIONS['stern'];
+
+  const baseFaceBlock = `
+THE GENERAL — FACE & POSE (CRITICAL):
+- Use the user-uploaded reference photos as the EXACT facial likeness — same face, same identity. Match skin tone, face shape, jawline, eyes, hair, ears, every feature precisely.
+- Do NOT invent a different face. Do NOT generalize. Match the reference EXACTLY.
+- Three-quarter view from slightly low angle (camera at chest level looking up slightly for authority)
+- Head and upper chest visible — tight portrait crop
+- Period-accurate uniform: ${va.general_branch || 'US Army or USMC'} uniform appropriate to ${va.general_era || 'WWII'}, with insignia, rank, medals, helmet or service cap rendered with sharp detail
+- Skin texture visible — every wrinkle, pore, stubble, hair detail rendered cinematically
+
+EXPRESSION:
+${expressionText}
+
+LIGHTING ON THE GENERAL (CRITICAL — this is what makes him pop from the background):
+- Hard directional KEY LIGHT from upper-front-left at ~45° — this front lighting illuminates the face brightly and warmly
+- The face is the BRIGHTEST element in the frame — clearly brighter than the wine-red background
+- Subtle warm RIM LIGHT along the right side of the face/shoulders/helmet from a hidden warm source — gives 3D separation from the dark red background
+- A very subtle cool red rim from the background environment on the LEFT edge of the silhouette — atmospheric, not bright
+- Strong shadows under the jaw, helmet brim, and on the side opposite the key light
+- The face reads as 3D-rounded and dimensional, NOT flat
+
+INTEGRATION INTO BACKGROUND:
+- The general should appear to be STANDING IN the background scene, not pasted on top
+- Color grading on the general matches the wine-red environment — subtle red ambient bounce on the shadow side of the face
+- The general's silhouette has clean separation from the background — strong contrast between the lit face and dark environment
+- The general should NOT be larger than the subject zone in the background — fit naturally within it
+- The general should NOT cover key elements of the background (map labels, headlines should remain partially visible)
+`;
+
+  if (style === 'portrait-hero') {
+    return `Take the provided wine-red atmospheric background image and add a ${va.general_name || 'WWII American general'} as the dominant portrait subject. Keep the background EXACTLY as provided — only add the general into the subject zone (centered slightly right, vertically centered).
+
+The general's head should occupy the upper-third of the frame, with the helmet/cap top having 5-10% margin from the frame top. Body visible from upper chest up. Head positioned at approximately 55-60% from left edge.
+
+${baseFaceBlock}
+
+PRESERVE THE BACKGROUND:
+- Keep the wine-red atmospheric field exactly as in the input image
+- Keep the dark vignette and corner falloff exactly
+- Only ADD the general — do not regenerate or alter the background
+
+${FACE_INSTRUCTIONS}
+${NEGATIVE_REQUIREMENTS}
+
+OUTPUT: 16:9 widescreen, the provided background with a single dominant general portrait composited in, sharp face, atmospheric wine-red mood preserved, magazine-cover quality.`;
+  }
+
+  if (style === 'battle-map') {
+    return `Take the provided battle map background image and add a ${va.general_name || 'WWII American general'} as the portrait subject in the right half of the frame. Keep the LEFT 50% (the tactical battle map with all its place name labels and arrows) EXACTLY as provided. Only add the general into the right-side subject zone.
+
+The general's head should fill the upper-right area with 5-10% margin from frame top. Head positioned at approximately 75% from left edge. Body visible from upper chest up.
+
+${baseFaceBlock}
+
+PRESERVE THE BACKGROUND:
+- Keep the LEFT 50% battle map EXACTLY — every place name, arrow, unit marker, operation label must remain identical to the input image
+- Keep the wine-red atmospheric field on the right exactly
+- Keep the dark vignette and corner falloff exactly
+- Only ADD the general into the right-side subject zone — do not alter or regenerate any other part of the image
+
+${FACE_INSTRUCTIONS}
+${NEGATIVE_REQUIREMENTS}
+
+OUTPUT: 16:9 widescreen, the provided battle map background with a general portrait composited into the right side, sharp face, all map labels preserved, atmospheric wine-red mood preserved.`;
+  }
+
+  if (style === 'period-archive') {
+    return `Take the provided period archive background image (overlapping newspapers, magazines, documents on the left) and add a ${va.general_name || 'WWII American general'} as the portrait subject in the right side of the frame. Keep the LEFT 60% (newspapers, headlines, mastheads, documents) EXACTLY as provided. Only add the general into the right-side subject zone.
+
+The general's head should fill the upper-right area with 5-10% margin from frame top. Body visible from upper chest up. The general appears to "emerge" from behind the lower edge of the document stack — bottom of his shoulders may be partially overlapped by documents at the lower-right boundary.
+
+${baseFaceBlock}
+
+PRESERVE THE BACKGROUND:
+- Keep the LEFT 60% archive stack EXACTLY — every headline, masthead, document text, classification stamp must remain identical to the input image
+- Keep the wine-red atmospheric field on the right exactly
+- Keep the dark vignette and corner falloff exactly
+- Only ADD the general into the right-side subject zone — do not alter or regenerate any other part of the image
+
+${FACE_INSTRUCTIONS}
+${NEGATIVE_REQUIREMENTS}
+
+OUTPUT: 16:9 widescreen, the provided archive background with a general portrait composited into the right side emerging from the document stack, sharp face, all newspaper/document text preserved, atmospheric wine-red mood preserved.`;
+  }
+
+  if (style === 'battlefield-command') {
+    return `Take the provided battlefield background image (vehicles flanking an empty center zone) and add a ${va.general_name || 'WWII American general'} as the dominant portrait subject in the center of the frame. Keep the flanking vehicles, terrain, road signs, and atmospheric haze EXACTLY as provided. Only add the general into the center subject zone.
+
+The general's head should be dead-center horizontally, in the upper half of the frame, with 5-10% margin from frame top. Body visible from upper chest up. The general stands in front of the vehicles, with the flanking equipment visible to the left and right behind him.
+
+${baseFaceBlock}
+
+PRESERVE THE BACKGROUND:
+- Keep the LEFT and RIGHT vehicles, terrain, atmospheric haze, road signs EXACTLY as in the input image
+- Keep the wine-red atmospheric field exactly
+- Keep the dark vignette and corner falloff exactly
+- Only ADD the general into the center subject zone — do not alter or regenerate any other part of the image
+
+${FACE_INSTRUCTIONS}
+${NEGATIVE_REQUIREMENTS}
+
+OUTPUT: 16:9 widescreen, the provided battlefield background with a general portrait composited into the center, sharp face, all vehicles and environmental detail preserved, atmospheric wine-red mood preserved.`;
+  }
+
+  if (style === 'rivalry') {
+    return `Take the provided rivalry background image (center tactical map flanked by two empty subject zones) and add TWO different generals — one on the left, one on the right. Keep the CENTER tactical map EXACTLY as provided. Only add the two generals into the left and right subject zones.
+
+GENERAL A (LEFT) — use the FIRST set of reference photos provided:
+- Position: head fills upper-left third, three-quarter view facing slightly inward (toward center map)
+- Head at approximately 18-22% from left edge
+- Body visible from upper chest up
+
+GENERAL B (RIGHT) — use the SECOND set of reference photos provided:
+- Position: head fills upper-right third, three-quarter view facing slightly inward (toward center map)
+- Head at approximately 78-82% from left edge
+- Body visible from upper chest up
+
+Both generals' heads at roughly the same vertical height for compositional balance. Both lit cinematically with hard key light from upper-front-left. Both have warm rim light on inner shoulders (the side facing the center).
+
+${baseFaceBlock}
+(CRITICAL: Apply the FACE & LIKENESS rules to BOTH generals — match BOTH reference photo sets precisely. The first set = General A on the LEFT. The second set = General B on the RIGHT. Both faces equally sharp and detailed.)
+
+EXPRESSIONS (both generals):
+${expressionText}
+
+PRESERVE THE BACKGROUND:
+- Keep the CENTER tactical map EXACTLY — every place name, arrow, operation label must remain identical
+- Keep the wine-red atmospheric flanking zones exactly
+- Keep the dark vignette and corner falloff exactly
+- Only ADD the two generals into the left and right subject zones
+
+${FACE_INSTRUCTIONS}
+${NEGATIVE_REQUIREMENTS}
+
+OUTPUT: 16:9 widescreen, the provided rivalry background with two generals composited into the flanking zones, both faces sharp and matching their references, center tactical map preserved, atmospheric wine-red mood preserved.`;
+  }
+
+  return '';
+}
+
 
 const state = {
   claudeModel: 'opus',
@@ -1098,6 +1262,7 @@ const state = {
   selectedTitleIdx: null,
   selectedBannerIdx: null,
   customBanner: '',
+  selectedExpression: 'stern',
   scriptText: '',
   scriptPdfBase64: null,
   scriptSource: 'text',
@@ -1173,6 +1338,15 @@ document.querySelectorAll('.style-card').forEach(card => {
     if (state.selectedStyles.has(style)) {
       if (state.selectedStyles.size > 1) { state.selectedStyles.delete(style); card.classList.remove('selected'); }
     } else { state.selectedStyles.add(style); card.classList.add('selected'); }
+  });
+});
+
+// Expression handling — single-select
+document.querySelectorAll('.expression-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.expression-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    state.selectedExpression = card.dataset.expression;
   });
 });
 
@@ -1422,6 +1596,52 @@ Required SEO keywords:
 - Faction keywords: US Marines, US Army, American, Allied
 - Niche keywords: military history, generals, command, commanders, American Brass
 
+## VISUAL ASSETS — BACKGROUND CONTENT GENERATION (CRITICAL — NEW)
+
+You also generate concrete visual content that will be RENDERED INTO THE THUMBNAIL BACKGROUND. The thumbnail uses a two-pass image pipeline: Pass 1 builds the background scene with this content baked in (real maps, real headlines, real documents), Pass 2 composites the general into it. Therefore your visual_assets must be SPECIFIC, ACCURATE, and STORY-RELEVANT.
+
+These assets are SHARED across all 3 title options (the underlying facts don't change). Use the script's actual research — real place names from the script's campaigns, real publications from the era, dates and details mentioned in the script.
+
+### map_locations (4-8 entries)
+Real geographic locations from the script's campaigns, in proper format for a tactical map.
+- Use ALL CAPS for cities/atolls/landmarks
+- Use Initial Caps for countries/regions/seas
+- Spelling MUST be exact and historically accurate (e.g., "MAKIN ATOLL", "BUTARITARI", "TARAWA", "GUADALCANAL", "BATAAN", "GIVRY", "ST-LÔ", "BASTOGNE", "SCHMIDT")
+- These will be rendered as labels on the actual battle map
+
+### map_operation_label
+Single-line header for the map's upper-left corner. Format: "[DATE] — [OPERATION NAME]"
+Examples: "AUG 17, 1942 — MAKIN RAID", "JUL 25, 1944 — OPERATION COBRA", "DEC 1944 — BATTLE OF THE BULGE"
+
+### map_arrow_directions (2-4 entries)
+Brief descriptions of where bold tactical arrows should point on the map. These are the visual story of the operation.
+Examples: "from south to Makin atoll", "from beachhead inland to St-Lô", "encircling Bastogne from north and south"
+
+### newspaper_headlines (4-6 entries)
+Real-feeling period newspaper/magazine headlines about the general. THESE ARE THE VISUAL STORY of the Period Archive style.
+Mix tones to create the "investigation board" feel:
+- 50% myth-supporting / heroic ("BRADLEY'S TRIUMPH", "GI'S GENERAL", "HERO OF NORMANDY")
+- 50% skeptical / critical ("WAR HERO QUESTIONED", "SECRET FILES REVEAL TRUTH", "GENERAL'S CONTROVERSIAL TACTICS", "MARSHALL'S DECISION DEBATED")
+- ALL CAPS, 2-5 words each, period-appropriate phrasing
+- Spelling MUST be perfect — these are rendered as readable headlines
+
+### newspaper_mastheads (3-5 entries)
+Real period publications appropriate to the era. Pick 3-5 that fit the general's theater and era:
+US options: "STARS AND STRIPES", "THE NEW YORK TIMES", "LIFE", "TIME", "THE WASHINGTON POST", "YANK", "COLLIER'S", "SATURDAY EVENING POST", "LOOK", "NEWSWEEK"
+Use exact period publication names with correct typography style.
+
+### document_classification
+For Period Archive style, the official documents shown. What classification stamp appears? What date?
+Format: { "stamp": "CLASSIFIED" | "CONFIDENTIAL" | "SECRET" | "TOP SECRET" | "EYES ONLY", "letterhead": "WAR DEPARTMENT" | "OFFICE OF STRATEGIC SERVICES" | etc, "date": "specific date from script" }
+
+### battlefield_setting
+Theater-specific environmental details for Battlefield Command style.
+- theater: "Pacific tropical" | "European hedgerows" | "European urban ruins" | "North African desert" | "Korean mountains" | etc
+- vehicles: List 2-4 era-accurate vehicles for this theater (e.g., "Sherman M4A3 tank, M3 halftrack, Willys MB jeep" for Europe ~1944; "LVT-2 amphtrac, M4A2 Sherman, Marine LVT" for Pacific Marine ops)
+- terrain: 1-2 sentences describing the ground/environment
+- atmosphere: e.g., "smoke and dust haze, golden afternoon light", "muddy hedgerow morning fog", "tropical haze, palm silhouettes"
+- road_signs: List 2-3 era/region appropriate sign texts. For European: French/German town names. For Pacific: leave empty array.
+
 ## OUTPUT FORMAT — STRICT JSON
 
 Return STRICTLY VALID JSON. NO markdown fences, NO preamble.
@@ -1440,6 +1660,25 @@ Return STRICTLY VALID JSON. NO markdown fences, NO preamble.
     "emotional_triggers": ["2-3 from: institutional_erasure, stolen_credit, personal_failure, rivalry, vindication, cover_up, betrayal, contrarian_truth"],
     "specific_anchors": ["array of 4-6 concrete numbers/dates/places"],
     "predicted_tier": "S | A | B"
+  },
+  "visual_assets": {
+    "map_locations": ["MAKIN ATOLL", "BUTARITARI", "TARAWA", "Pacific Ocean"],
+    "map_operation_label": "AUG 17, 1942 — MAKIN RAID",
+    "map_arrow_directions": ["from south to Makin atoll", "from submarine drop point to beach"],
+    "newspaper_headlines": ["RAIDERS STRIKE MAKIN", "MARINES HIT JAPANESE", "CARLSON UNDER FIRE", "RAID QUESTIONED IN PRESS", "RED OFFICER CHARGES"],
+    "newspaper_mastheads": ["STARS AND STRIPES", "THE NEW YORK TIMES", "LIFE", "TIME"],
+    "document_classification": {
+      "stamp": "CLASSIFIED",
+      "letterhead": "WAR DEPARTMENT",
+      "date": "AUGUST 1942"
+    },
+    "battlefield_setting": {
+      "theater": "Pacific tropical atoll",
+      "vehicles": ["LVT-2 amphtrac", "Marine rubber boats", "M3 halftrack"],
+      "terrain": "Coral atoll beach with palm trees, lagoon, distant surf",
+      "atmosphere": "tropical haze, golden afternoon light, smoke from beach battle",
+      "road_signs": []
+    }
   },
   "options": [
     {
@@ -1471,11 +1710,14 @@ Return STRICTLY VALID JSON. NO markdown fences, NO preamble.
 5. ✓ Used proper quoted-adjective format where applicable
 6. ✓ NO question marks at end (except Structure C)
 7. ✓ SEO description is 300-400 words with general's name x3-5
-8. ✓ JSON is valid (no trailing commas, no markdown fences)
+8. ✓ visual_assets fully populated with REAL place names, REAL headlines, REAL publications from the script's era and theater
+9. ✓ All map_locations and newspaper_headlines spelled correctly (no garbled text)
+10. ✓ JSON is valid (no trailing commas, no markdown fences)
 
 If any title is outside 75-90 char range, REWRITE before outputting.
 If any banner is on forbidden list, INVENT new one before outputting.
 If any title has filler words, REWRITE without them.
+If visual_assets are generic/placeholder, REWRITE with real script-specific content.
 
 Return ONLY the JSON object — no preamble, no commentary.`;
 
@@ -1512,7 +1754,7 @@ async function callClaude(scriptContent, scriptType, model, apiKey) {
     },
     body: JSON.stringify({
       model: MODEL_MAP[model],
-      max_tokens: 6000,
+      max_tokens: 8000,
       system: PATTERN_LIBRARY,
       messages: messages
     })
@@ -1611,7 +1853,7 @@ document.getElementById('analyzeBtn').addEventListener('click', async () => {
       document.getElementById('analyzingState').style.display = 'none';
       document.getElementById('workflow').classList.add('visible');
       document.getElementById('mainTitle').textContent = 'Pipeline Active';
-      document.getElementById('mainHint').textContent = 'Step 02 / 06 · Select Title';
+      document.getElementById('mainHint').textContent = 'Step 02 / 07 · Select Title';
     }, 600);
 
   } catch (err) {
@@ -1632,6 +1874,33 @@ function renderBrainOutput(result) {
   const triggers = result.analysis.emotional_triggers
     .map(t => `<span class="trigger-chip">${t.replace(/_/g, ' ')}</span>`).join('');
 
+  // Build visual_assets display row(s) if present
+  let visualAssetsHtml = '';
+  if (result.visual_assets) {
+    const va = result.visual_assets;
+    const assetParts = [];
+    if (va.map_locations?.length) {
+      assetParts.push(`<div><strong>Map labels:</strong> ${va.map_locations.map(escapeHtml).join(' · ')}</div>`);
+    }
+    if (va.map_operation_label) {
+      assetParts.push(`<div><strong>Operation:</strong> ${escapeHtml(va.map_operation_label)}</div>`);
+    }
+    if (va.newspaper_headlines?.length) {
+      assetParts.push(`<div><strong>Headlines:</strong> ${va.newspaper_headlines.map(h => `"${escapeHtml(h)}"`).join(' · ')}</div>`);
+    }
+    if (va.newspaper_mastheads?.length) {
+      assetParts.push(`<div><strong>Mastheads:</strong> ${va.newspaper_mastheads.map(escapeHtml).join(' · ')}</div>`);
+    }
+    if (va.battlefield_setting?.theater) {
+      const bs = va.battlefield_setting;
+      const vehicles = (bs.vehicles || []).map(escapeHtml).join(', ');
+      assetParts.push(`<div><strong>Theater:</strong> ${escapeHtml(bs.theater)}${vehicles ? ` · ${vehicles}` : ''}</div>`);
+    }
+    if (assetParts.length) {
+      visualAssetsHtml = `<div class="analysis-row"><div class="analysis-key">Visual Assets</div><div class="analysis-value" style="font-size: 11px; line-height: 1.5;">${assetParts.join('')}</div></div>`;
+    }
+  }
+
   document.getElementById('analysisSummary').innerHTML = `
     <div class="analysis-row"><div class="analysis-key">General</div><div class="analysis-value">${escapeHtml(result.general.name)}</div></div>
     <div class="analysis-row"><div class="analysis-key">Era</div><div class="analysis-value">${escapeHtml(result.general.era)} · ${escapeHtml(result.general.service_branch)}</div></div>
@@ -1641,6 +1910,7 @@ function renderBrainOutput(result) {
     <div class="analysis-row"><div class="analysis-key">Triggers</div><div class="analysis-value"><div class="triggers">${triggers}</div></div></div>
     <div class="analysis-row"><div class="analysis-key">Anchors</div><div class="analysis-value">${result.analysis.specific_anchors.map(escapeHtml).join(' · ')}</div></div>
     <div class="analysis-row"><div class="analysis-key">Predicted Tier</div><div class="analysis-value"><span class="tier-pill tier-${result.analysis.predicted_tier.toLowerCase()}">${result.analysis.predicted_tier}-Tier</span></div></div>
+    ${visualAssetsHtml}
   `;
   document.getElementById('step1').classList.add('completed');
   document.getElementById('step1').querySelector('.step-status').textContent = 'Complete';
@@ -1671,6 +1941,7 @@ function renderBrainOutput(result) {
     });
   });
 
+  document.getElementById('stepExpression').classList.add('active');
   document.getElementById('step4').classList.add('active');
   document.getElementById('step5').classList.add('active');
   document.getElementById('step6').classList.add('active');
@@ -1726,7 +1997,7 @@ function onTitleSelected(idx) {
     card.classList.remove('recommended');
     if (card.dataset.style === recommended) card.classList.add('recommended');
   });
-  document.getElementById('mainHint').textContent = 'Step 03 / 06 · Select Banner';
+  document.getElementById('mainHint').textContent = 'Step 03 / 07 · Select Banner';
 }
 
 function getCurrentBanner() {
@@ -1814,24 +2085,13 @@ CRITICAL TEXT ACCURACY:
 
 The banner should look like a torn black poster strip with bold white text floating at the bottom of the thumbnail with a subtle cream-white halo for separation. Premium HBO-documentary aesthetic — distinct from competitors' red-banner military history channels. Black box + white text + cream halo on deep wine-red background = our signature look.`;
 
-async function generateThumbnail(style, refsA, refsB, googleKey, model, bannerWord) {
-  const styleRefUrls = STYLE_REFS[style] || [];
-  let stylePrompt = STYLE_PROMPTS[style];
+// =====================================================================
+// TWO-PASS IMAGE GENERATION
+// Pass 1: Build background-only image with brain's visual_assets injected
+// Pass 2: Composite the general(s) into the background using image-to-image
+// =====================================================================
 
-  if (state.overlayEnabled && bannerWord) {
-    stylePrompt = stylePrompt + BANNER_INSTRUCTION_TEMPLATE(bannerWord);
-  }
-
-  const parts = [];
-  for (const url of styleRefUrls) parts.push(await urlToInlineData(url));
-  // General A reference photos
-  for (const ref of refsA) if (ref) parts.push(dataUrlToInlineData(ref));
-  // General B reference photos (only for rivalry style)
-  if (style === 'rivalry') {
-    for (const ref of refsB) if (ref) parts.push(dataUrlToInlineData(ref));
-  }
-  parts.push({ text: stylePrompt });
-
+async function callGeminiImage(parts, googleKey, model) {
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL_MAP[model]}:generateContent?key=${googleKey}`;
   const response = await fetch(apiUrl, {
     method: 'POST',
@@ -1841,14 +2101,12 @@ async function generateThumbnail(style, refsA, refsB, googleKey, model, bannerWo
       generationConfig: { responseModalities: ['IMAGE'] }
     })
   });
-
   if (!response.ok) {
     const errText = await response.text();
     let errMsg = `Image API error (${response.status})`;
     try { const errJson = JSON.parse(errText); errMsg = errJson.error?.message || errMsg; } catch(e) {}
     throw new Error(errMsg);
   }
-
   const data = await response.json();
   const candidates = data.candidates || [];
   if (!candidates.length) throw new Error('No image returned');
@@ -1856,6 +2114,54 @@ async function generateThumbnail(style, refsA, refsB, googleKey, model, bannerWo
   if (!imagePart) throw new Error('Response contained no image');
   const inline = imagePart.inline_data || imagePart.inlineData;
   return `data:${inline.mime_type || inline.mimeType};base64,${inline.data}`;
+}
+
+async function generateBackgroundPass(style, va, googleKey, model) {
+  const styleRefUrls = STYLE_REFS[style] || [];
+  const promptFn = BACKGROUND_PROMPTS[style];
+  if (!promptFn) throw new Error(`No background prompt for style: ${style}`);
+  const prompt = promptFn(va);
+
+  const parts = [];
+  // Style reference image as a composition guide for Pass 1 (low priority — we use text mainly)
+  for (const url of styleRefUrls) parts.push(await urlToInlineData(url));
+  parts.push({ text: prompt });
+
+  return await callGeminiImage(parts, googleKey, model);
+}
+
+async function generateCompositePass(style, backgroundDataUrl, refsA, refsB, expression, va, googleKey, model, bannerWord) {
+  const isRivalry = style === 'rivalry';
+  let prompt = buildCompositePrompt(style, expression, isRivalry, va);
+
+  if (state.overlayEnabled && bannerWord) {
+    prompt = prompt + BANNER_INSTRUCTION_TEMPLATE(bannerWord);
+  }
+
+  const parts = [];
+  // The background image goes first — this is what we're editing
+  parts.push(dataUrlToInlineData(backgroundDataUrl));
+  // General A reference photos
+  for (const ref of refsA) if (ref) parts.push(dataUrlToInlineData(ref));
+  // General B reference photos (only for rivalry)
+  if (isRivalry) {
+    for (const ref of refsB) if (ref) parts.push(dataUrlToInlineData(ref));
+  }
+  parts.push({ text: prompt });
+
+  return await callGeminiImage(parts, googleKey, model);
+}
+
+async function generateThumbnail(style, refsA, refsB, googleKey, model, bannerWord, expression, va, onProgress) {
+  // Pass 1
+  if (onProgress) onProgress('background');
+  const backgroundUrl = await generateBackgroundPass(style, va, googleKey, model);
+
+  // Pass 2
+  if (onProgress) onProgress('composite');
+  const finalUrl = await generateCompositePass(style, backgroundUrl, refsA, refsB, expression, va, googleKey, model, bannerWord);
+
+  return { backgroundUrl, finalUrl };
 }
 
 document.getElementById('generateBtn').addEventListener('click', async () => {
@@ -1873,16 +2179,29 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
   const styles = [...state.selectedStyles];
   if (styles.length === 0) { showError('Select at least one image style'); return; }
 
-  // Validate Rivalry has General B refs
   if (styles.includes('rivalry') && refsB.length === 0) {
     showError('Rivalry style requires at least one General B reference photo');
     return;
   }
 
+  if (!state.brainResult) {
+    showError('Run script analysis first');
+    return;
+  }
+
+  // Build the visual_assets payload + a few helper fields the prompt builder needs
+  const va = Object.assign({}, state.brainResult.visual_assets || {}, {
+    general_name: state.brainResult.general?.name || '',
+    general_branch: state.brainResult.general?.service_branch || '',
+    general_era: state.brainResult.general?.era || ''
+  });
+
+  const expression = state.selectedExpression || 'stern';
+
   const outputGrid = document.getElementById('outputGrid');
   outputGrid.innerHTML = styles.map(style => `
     <div class="output-tile loading" data-style="${style}">
-      <span>Generating ${STYLE_NAMES[style]}...</span>
+      <span>Pass 1 · Building ${STYLE_NAMES[style]} background...</span>
     </div>
   `).join('');
 
@@ -1891,62 +2210,82 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
   btn.classList.add('loading');
   btn.disabled = true;
 
-  const cost = parseFloat(document.querySelector(`#imageModels .option-row[data-model="${state.imageModel}"]`).dataset.cost);
+  // Two-pass = 2x cost per thumbnail
+  const baseCost = parseFloat(document.querySelector(`#imageModels .option-row[data-model="${state.imageModel}"]`).dataset.cost);
+  const passCost = baseCost; // each pass costs baseCost
+  const totalPerThumbnail = baseCost * 2;
 
-  const promises = styles.map(async (style) => {
-    const tile = outputGrid.querySelector(`[data-style="${style}"]`);
-    try {
-      const imageUrl = await generateThumbnail(style, refsA, refsB, googleKey, state.imageModel, banner);
+  function setTileState(tile, style, mode, msgOrUrl, bgUrl) {
+    if (mode === 'pass1') {
+      tile.classList.add('loading');
+      tile.classList.remove('error');
+      tile.innerHTML = `<span>Pass 1 · Building ${STYLE_NAMES[style]} background...</span>`;
+    } else if (mode === 'pass2') {
+      tile.classList.add('loading');
+      tile.classList.remove('error');
+      tile.innerHTML = `<span>Pass 2 · Compositing general into ${STYLE_NAMES[style]}...</span>`;
+    } else if (mode === 'done') {
       tile.classList.remove('loading');
+      tile.classList.remove('error');
       tile.innerHTML = `
-        <img src="${imageUrl}" alt="${STYLE_NAMES[style]}">
+        <img src="${msgOrUrl}" alt="${STYLE_NAMES[style]}">
         <div class="output-tile-label">${STYLE_NAMES[style]}</div>
         <div class="output-tile-actions">
+          ${bgUrl ? '<button class="tile-action" data-action="view-bg">View BG</button>' : ''}
           <button class="tile-action" data-action="download">Download</button>
           <button class="tile-action" data-action="regenerate">Retry</button>
         </div>
       `;
       tile.querySelector('[data-action="download"]').addEventListener('click', () => {
         const a = document.createElement('a');
-        a.href = imageUrl;
+        a.href = msgOrUrl;
         a.download = `american-brass-${style}-${banner.toLowerCase().replace(/\s+/g, '-')}.png`;
         a.click();
       });
+      const viewBgBtn = tile.querySelector('[data-action="view-bg"]');
+      if (viewBgBtn && bgUrl) {
+        viewBgBtn.addEventListener('click', () => {
+          window.open(bgUrl, '_blank');
+        });
+      }
       tile.querySelector('[data-action="regenerate"]').addEventListener('click', async () => {
-        tile.classList.add('loading');
-        tile.innerHTML = `<span>Regenerating ${STYLE_NAMES[style]}...</span>`;
-        try {
-          const newUrl = await generateThumbnail(style, refsA, refsB, googleKey, state.imageModel, banner);
-          state.sessionSpend += cost;
-          document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
-          tile.classList.remove('loading');
-          tile.innerHTML = `
-            <img src="${newUrl}" alt="${STYLE_NAMES[style]}">
-            <div class="output-tile-label">${STYLE_NAMES[style]}</div>
-            <div class="output-tile-actions">
-              <button class="tile-action" data-action="download">Download</button>
-              <button class="tile-action" data-action="regenerate">Retry</button>
-            </div>
-          `;
-          tile.querySelector('[data-action="download"]').addEventListener('click', () => {
-            const a = document.createElement('a'); a.href = newUrl;
-            a.download = `american-brass-${style}-${banner.toLowerCase().replace(/\s+/g, '-')}.png`;
-            a.click();
-          });
-        } catch (err) {
-          tile.classList.remove('loading');
-          tile.classList.add('error');
-          tile.innerHTML = `Failed: ${escapeHtml(err.message)}`;
-        }
+        await runOne(style, tile, true);
       });
-      state.sessionSpend += cost;
-      document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
-    } catch (err) {
+    } else if (mode === 'error') {
       tile.classList.remove('loading');
       tile.classList.add('error');
-      tile.innerHTML = `${STYLE_NAMES[style]}<br>Failed: ${escapeHtml(err.message)}`;
+      tile.innerHTML = `${STYLE_NAMES[style]}<br>Failed: ${escapeHtml(msgOrUrl)}`;
+    }
+  }
+
+  async function runOne(style, tile, isRetry) {
+    try {
+      const result = await generateThumbnail(
+        style, refsA, refsB, googleKey, state.imageModel,
+        banner, expression, va,
+        (stage) => {
+          if (stage === 'background') setTileState(tile, style, 'pass1');
+          else if (stage === 'composite') {
+            // Pass 1 done — bill it
+            state.sessionSpend += passCost;
+            document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
+            setTileState(tile, style, 'pass2');
+          }
+        }
+      );
+      // Pass 2 done — bill it
+      state.sessionSpend += passCost;
+      document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
+      setTileState(tile, style, 'done', result.finalUrl, result.backgroundUrl);
+    } catch (err) {
+      setTileState(tile, style, 'error', err.message);
       console.error(`${style} generation failed:`, err);
     }
+  }
+
+  const promises = styles.map(async (style) => {
+    const tile = outputGrid.querySelector(`[data-style="${style}"]`);
+    await runOne(style, tile, false);
   });
 
   await Promise.allSettled(promises);
@@ -1960,7 +2299,7 @@ function escapeHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-console.log('American Brass v1.2 — WWII American generals thumbnail pipeline (deep wine-red palette, black banner, dual-general refs)');
+console.log('American Brass v1.3 — Two-pass pipeline, brain-generated visual assets, expression selector, atmospheric wine-red palette');
 </script>
 </body>
 </html>
