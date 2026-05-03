@@ -15,33 +15,35 @@
   --text: #e0e6ee;
   --text-muted: #6c7888;
   --text-faint: #3a4554;
-  --accent: #4a6e88;
-  --accent-hover: #5a8aa8;
-  --accent-soft: rgba(74, 110, 136, 0.15);
-  --steel: #3a5870;
+  --accent: #b8821a;
+  --accent-hover: #d4961f;
+  --accent-soft: rgba(184, 130, 26, 0.15);
+  --brass: #b8821a;
   --danger: #dc2626;
   --danger-soft: rgba(220, 38, 38, 0.12);
   --success: #4caf50;
   --warning: #ff9800;
+  --banner-display: #0a0a0a;
 }
 :root[data-theme="light"] {
-  --bg: #f4f6fa;
+  --bg: #f4f1ea;
   --bg-elevated: #ffffff;
-  --bg-input: #f0f3f7;
-  --bg-hover: #e6ebf1;
-  --border: #d8dde5;
-  --border-strong: #b8c0cc;
-  --text: #1a2838;
-  --text-muted: #5a6878;
-  --text-faint: #a0a8b4;
-  --accent: #3a5870;
-  --accent-hover: #2a4258;
-  --accent-soft: rgba(58, 88, 112, 0.08);
-  --steel: #3a5870;
-  --danger: #dc2626;
-  --danger-soft: rgba(220, 38, 38, 0.08);
+  --bg-input: #ede8de;
+  --bg-hover: #e2dccf;
+  --border: #d4cdb8;
+  --border-strong: #b8af97;
+  --text: #2a1f0f;
+  --text-muted: #6b5d40;
+  --text-faint: #a89c80;
+  --accent: #92651a;
+  --accent-hover: #6b4a13;
+  --accent-soft: rgba(146, 101, 26, 0.10);
+  --brass: #92651a;
+  --danger: #b91c1c;
+  --danger-soft: rgba(185, 28, 28, 0.08);
   --success: #2e7d32;
   --warning: #ed6c02;
+  --banner-display: #0a0a0a;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { font-size: 14px; }
@@ -60,7 +62,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 .brand { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; }
 .brand-bar {
   width: 3px; height: 16px;
-  background: linear-gradient(180deg, var(--steel) 0%, var(--steel) 50%, var(--danger) 50%, var(--danger) 100%);
+  background: linear-gradient(180deg, var(--brass) 0%, var(--brass) 50%, #0a0a0a 50%, #0a0a0a 100%);
 }
 .brand-name { text-transform: uppercase; }
 .header-nav {
@@ -273,8 +275,10 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 .title-char-count.suboptimal { color: var(--warning); border-color: var(--warning); }
 
 .option-banner-preview {
-  font-size: 12px; font-weight: 800; color: var(--danger);
+  font-size: 12px; font-weight: 800; color: var(--text);
+  background: var(--banner-display); padding: 4px 10px;
   letter-spacing: 0.06em; margin-bottom: 8px; text-transform: uppercase;
+  display: inline-block;
 }
 .option-banners-list {
   font-size: 9px; color: var(--text-muted); margin-top: 4px;
@@ -301,7 +305,11 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
   justify-content: center; font-size: 10px; font-weight: 700;
 }
 .banner-card-word {
-  font-size: 16px; font-weight: 800; color: var(--danger);
+  display: inline-block;
+  background: var(--banner-display);
+  color: #ffffff;
+  font-size: 16px; font-weight: 800;
+  padding: 6px 14px;
   letter-spacing: 0.08em; margin-bottom: 6px; text-transform: uppercase;
 }
 .banner-card-category {
@@ -322,8 +330,8 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
   color: var(--text-muted); flex-shrink: 0;
 }
 .banner-edit-input {
-  flex: 1; background: var(--bg-input); border: 1px solid var(--border);
-  color: var(--danger); padding: 8px 10px; font-size: 13px; font-weight: 800;
+  flex: 1; background: var(--banner-display); border: 1px solid var(--border);
+  color: #ffffff; padding: 8px 10px; font-size: 13px; font-weight: 800;
   letter-spacing: 0.08em; text-transform: uppercase; outline: none;
 }
 .banner-edit-input:focus { border-color: var(--accent); }
@@ -358,6 +366,27 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 .style-name { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
 .style-desc { font-size: 10px; color: var(--text-muted); line-height: 1.5; }
 
+.refs-block { margin-bottom: 18px; }
+.refs-block:last-of-type { margin-bottom: 0; }
+.refs-subhead {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px;
+}
+.refs-subhead-label {
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--text-muted); font-weight: 600;
+}
+.refs-subhead-tag {
+  font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-faint);
+}
+.refs-bulk-btn {
+  background: transparent; border: 1px solid var(--accent); color: var(--accent);
+  padding: 5px 10px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.15s ease; font-weight: 600;
+}
+.refs-bulk-btn:hover { background: var(--accent-soft); }
+
 .refs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .ref-slot {
   aspect-ratio: 1; background: var(--bg-input); border: 1px dashed var(--border-strong);
@@ -369,10 +398,23 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 .ref-slot:hover { border-color: var(--accent); color: var(--accent); }
 .ref-slot.has-image { border-style: solid; border-color: var(--success); padding: 0; }
 .ref-slot.has-image img { width: 100%; height: 100%; object-fit: cover; }
+.ref-slot-clear {
+  position: absolute; top: 4px; right: 4px;
+  background: rgba(0,0,0,0.7); color: white;
+  border: none; width: 20px; height: 20px;
+  font-size: 12px; cursor: pointer; opacity: 0;
+  transition: opacity 0.15s ease; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.ref-slot.has-image:hover .ref-slot-clear { opacity: 1; }
 .ref-icon { font-size: 18px; font-weight: 300; }
 .ref-note {
   margin-top: 12px; padding: 10px 12px; background: var(--accent-soft);
   border: 1px solid var(--accent); font-size: 10px; line-height: 1.6; color: var(--text);
+}
+.refs-rivalry-hint {
+  font-size: 10px; color: var(--text-muted); padding: 8px 0;
+  letter-spacing: 0.05em; line-height: 1.5;
 }
 
 .toggle-row {
@@ -475,7 +517,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
     <span class="brand-name">American Brass</span>
   </div>
   <nav class="header-nav">
-    <span class="nav-pill">Pipeline v1.0</span>
+    <span class="nav-pill">Pipeline v1.1</span>
     <span class="nav-item active">Pipeline</span>
     <button class="theme-toggle" id="themeToggle">☾ Dark</button>
   </nav>
@@ -550,7 +592,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
         Paste a script and hit ANALYZE SCRIPT. The brain extracts the central irony,
         generates 3 title options each with 3 fresh banner choices, recommends visual
         styles, then builds your Nano Banana prompts for up to 5 thumbnail variants
-        in steel blue documentary aesthetic.
+        in cinematic amber-gold aesthetic with black banner overlays.
       </p>
     </div>
 
@@ -640,7 +682,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
             <div class="style-preview"><img src="https://raw.githubusercontent.com/huzaifaahmed319/Thumbnail-Allied/main/style-rivalry.jpg" alt="Rivalry" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=style-preview-text>Rivalry<br>Reference</span>';"></div>
             <div class="style-info">
               <div class="style-name">Rivalry / Multi-Subject</div>
-              <div class="style-desc">Two opposing commanders with tactical element between them.</div>
+              <div class="style-desc">Two opposing commanders with tactical element between them. Requires General B.</div>
             </div>
           </div>
         </div>
@@ -649,21 +691,42 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
       <div class="step" id="step5">
         <div class="step-header">
           <span class="step-num">05</span>
-          <span class="step-title">Upload General Reference Photos</span>
-          <span class="step-status">1-3 photos</span>
+          <span class="step-title">Upload Reference Photos</span>
+          <span class="step-status">1-3 each</span>
         </div>
-        <div class="refs-grid">
-          <div class="ref-slot" data-slot="0"><span class="ref-icon">+</span><span>Reference 1</span></div>
-          <div class="ref-slot" data-slot="1"><span class="ref-icon">+</span><span>Reference 2</span></div>
-          <div class="ref-slot" data-slot="2"><span class="ref-icon">+</span><span>Reference 3</span></div>
+
+        <div class="refs-block">
+          <div class="refs-subhead">
+            <span class="refs-subhead-label">General A (Primary)</span>
+            <button class="refs-bulk-btn" id="bulkUploadA">+ Pick Multiple</button>
+          </div>
+          <div class="refs-grid" id="refsGridA">
+            <div class="ref-slot" data-slot="0" data-set="A"><span class="ref-icon">+</span><span>Reference 1</span></div>
+            <div class="ref-slot" data-slot="1" data-set="A"><span class="ref-icon">+</span><span>Reference 2</span></div>
+            <div class="ref-slot" data-slot="2" data-set="A"><span class="ref-icon">+</span><span>Reference 3</span></div>
+          </div>
         </div>
-        <div class="ref-note" id="refNote">
-          Upload portrait photos of the general for face/uniform likeness. Best sources: Wikipedia Commons, archives.gov, Library of Congress.
+
+        <div class="refs-block">
+          <div class="refs-subhead">
+            <span class="refs-subhead-label">General B (Rivalry only)</span>
+            <button class="refs-bulk-btn" id="bulkUploadB">+ Pick Multiple</button>
+          </div>
+          <div class="refs-rivalry-hint">Only used when Rivalry style is selected. Upload the second commander's reference photos.</div>
+          <div class="refs-grid" id="refsGridB">
+            <div class="ref-slot" data-slot="0" data-set="B"><span class="ref-icon">+</span><span>Reference 1</span></div>
+            <div class="ref-slot" data-slot="1" data-set="B"><span class="ref-icon">+</span><span>Reference 2</span></div>
+            <div class="ref-slot" data-slot="2" data-set="B"><span class="ref-icon">+</span><span>Reference 3</span></div>
+          </div>
+        </div>
+
+        <div class="ref-note">
+          Upload portrait photos for face/uniform likeness. Best sources: Wikipedia Commons, archives.gov, Library of Congress. Tip: click "Pick Multiple" to select up to 3 photos at once.
         </div>
         <div class="toggle-row">
           <div>
             <div class="toggle-info-name">Auto-Generate Banner</div>
-            <div class="toggle-info-desc">AI bakes red banner with selected word into thumbnail (~50-70% success rate)</div>
+            <div class="toggle-info-desc">AI bakes black banner with selected word into thumbnail (~50-70% success rate)</div>
           </div>
           <div class="switch" id="overlayToggle"></div>
         </div>
@@ -726,20 +789,40 @@ const STYLE_NAMES = {
 };
 
 const PALETTE_INSTRUCTIONS = `
-COLOR PALETTE — STEEL BLUE (CRITICAL — DO NOT USE RED BACKGROUND):
-The reference image uses a RED gradient background. You MUST replace this with a STEEL BLUE gradient.
+COLOR PALETTE — CINEMATIC AMBER / BRASS (CRITICAL):
+This thumbnail uses a deep saturated AMBER-GOLD background with strong dark vignette. Match this palette precisely. Think "premium WWII history documentary" — the color of aged brass, bourbon held to light, museum lighting on a war memorial.
 
-Background colors:
-- Top of frame: Steel blue (#3a5870) — cool desaturated blue-gray
-- Center of frame: Slightly darker steel blue (#2a4258)
-- Bottom of frame and edges: Near-black navy (#1a2838 to #0a0e15)
-- Strong dark vignette in all four corners fading to almost black
+REFERENCE IMAGE COLOR SUBSTITUTION:
+The provided style reference image uses a RED gradient background. You MUST replace this with a saturated AMBER-GOLD gradient. Match the reference's COMPOSITION, LIGHTING DIRECTION, GLOW STRUCTURE, and DRAMATIC INTENSITY exactly — only swap the red color for amber-gold per the rules below. Do NOT make the palette cool, blue, or desaturated.
 
-The radial glow behind the general's head (which is RED in the reference) must instead be a brighter STEEL BLUE (#4a6e88) — cool light, NOT warm.
+Background gradient:
+- Behind the general's head and upper torso: bright saturated AMBER (#d97706 to #f59e0b) forming a wide radial glow — rich orange-gold, NOT yellow, NOT brown
+- Mid-frame: deep burnt umber and dark bronze (#78350f to #92400e) — saturated and warm
+- Outer edges and all four corners: near-black with warm dark-brown shadow (#1c0a02 to #000000)
+- HEAVY dark vignette in all four corners — corners should be almost pure black, fading inward through deep umber to amber
 
-OVERALL MOOD: Documentary investigation, somber serious, cold institutional. NOT pulpy action poster. Think "60 Minutes investigation piece" not "war movie poster."
+The radial glow behind the general's head is the visual anchor of the entire image:
+- Bright warm amber-gold (#f59e0b to #fbbf24 at the brightest center point)
+- Glow radius is wide and soft, occupying roughly 50-60% of the frame behind the figure
+- Glow color stays warm gold — NEVER pure yellow, NEVER pink, NEVER cool, NEVER brown-muddy
+- Glow fades smoothly outward into the deep umber mid-tones, then into black at the edges
 
-NO RED ANYWHERE in the background or aura. The only red allowed in the final image is on the banner text overlay (if user enables it).
+CRITICAL — AVOID THESE FAILURE MODES:
+- DO NOT make the background pale yellow or mustard — it must be saturated rich amber-orange
+- DO NOT make the background flat brown — it must have a clear bright glow center fading to dark
+- DO NOT desaturate — this palette only works at high saturation
+- DO NOT use red as the dominant background — this is amber/gold, distinct from red-channel aesthetics
+- DO NOT use steel blue, cyan, teal, or any cool color in the background
+
+OVERALL MOOD: Dramatic, cinematic, high-stakes investigative documentary poster. Punchy and eye-catching. Saturated, contrasty, magazine-cover quality. Warm prestige feel — old brass, aged film, museum gold. NOT muted, NOT cold, NOT desaturated.
+
+CONTRAST RULES (CRITICAL):
+- The general's face must be WARMLY LIT and noticeably BRIGHTER than the amber background behind him — face stands out clearly
+- Strong dark shadows under the jaw, helmet brim, and on the side opposite the key light
+- The corners of the frame should fall off into near-black so the eye is pulled to center
+- High overall contrast between the bright lit face and the dark vignette edges
+
+The lower-center area can have a slight darker zone to make banner overlay readable in post.
 `;
 
 const FACE_INSTRUCTIONS = `
@@ -748,8 +831,8 @@ FACE & LIKENESS (CRITICAL):
 - Match skin tone, face shape, jawline, eyes, hair, and uniform details PRECISELY
 - Do NOT invent a different face
 - The general's face is the BRIGHTEST, SHARPEST, most in-focus element in the frame
-- Eyes catch light, skin texture visible, every wrinkle and detail rendered
-- Cinematic film-stock quality on the face
+- Eyes catch warm amber light, skin texture visible, every wrinkle and detail rendered
+- Cinematic film-stock quality on the face, lit warmly with hard key light
 `;
 
 const NEGATIVE_REQUIREMENTS = `
@@ -757,16 +840,17 @@ NEGATIVE REQUIREMENTS (DO NOT INCLUDE):
 - NO modern banner text overlays unless explicitly instructed
 - NO title cards, NO captions, NO watermarks, NO play buttons, NO YouTube UI elements
 - NO borders or frames around the image
-- NO red gradient backgrounds (this is critical — we use steel blue)
+- NO red gradient backgrounds (we use amber-gold)
+- NO steel blue, cyan, teal, or cool desaturated palettes
 - Period-appropriate map labels, newspaper headlines, document text are ALLOWED
 - Leave lower-center area uncluttered for banner overlay in post-production
 `;
 
 const STYLE_PROMPTS = {
-'portrait-hero': `Create a cinematic 16:9 YouTube thumbnail in PORTRAIT HERO style — a single dominant general portrait with a steel blue documentary aesthetic.
+'portrait-hero': `Create a cinematic 16:9 YouTube thumbnail in PORTRAIT HERO style — a single dominant general portrait with a saturated amber-gold cinematic aesthetic.
 
 REFERENCE IMAGE INTERPRETATION:
-The provided reference image (Bradley) shows COMPOSITION you must match: tight portrait of a general, head and upper chest, helmet visible, dramatic backlight halo. BUT swap the RED background for STEEL BLUE per palette rules below.
+The provided reference image (Bradley) shows COMPOSITION, LIGHTING, and DRAMATIC INTENSITY you must match: tight portrait of a general, head and upper chest, helmet visible, dramatic backlight halo, hard cinematic key light, high contrast face. Match all of this. ONLY swap the red background gradient for amber-gold per palette rules below — keep everything else (composition, lighting drama, glow structure, contrast level) identical to the reference.
 
 User-uploaded images = the SUBJECT (the actual general we're rendering).
 
@@ -776,37 +860,37 @@ COMPOSITION:
 - General positioned slightly right of center (~55% from left)
 - Tight crop — top of helmet/hair has 5-10% margin from frame top
 - Full era-appropriate uniform visible: collar, insignia, medals, helmet or cap
-- Negative space on LEFT side (atmospheric, blue-tinted)
+- Negative space on LEFT side filled with the amber glow and dark vignette
 - Bottom-center area open for banner placement
 
 LIGHTING:
 - Hard directional key light from upper-front-left at ~45°
-- Strong cool rim light wrapping the LEFT side of face/shoulders
-- Face brightly lit and sharp — the BRIGHTEST element in frame
+- WARM rim light wrapping the LEFT side of face/shoulders, picking up amber tones
+- Face brightly and warmly lit — the BRIGHTEST element in frame
 - Hard shadows under jaw and helmet brim
-- Cinematic teal-and-cool color grading
+- Cinematic warm color grading — amber highlights, deep umber shadows
 
 AURA / GLOW:
-- Behind the general's head and shoulders: bright STEEL BLUE radial glow (NOT red)
+- Behind the general's head and shoulders: bright AMBER-GOLD radial glow
 - Glow fades outward smoothly, creates clear halo separation
-- Glow color: cool blue-white (#4a6e88 to #6a8aa8), NOT warm
+- Glow color: warm orange-gold (#f59e0b to #fbbf24 at brightest), NEVER cool, NEVER pink
 
 UNIFORM:
 - Authentic period US Army or USMC uniform appropriate to era
 - Olive drab green for US Army, faded sage for USMC
-- All insignia, rank stars, medals rendered with sharp detail
+- All insignia, rank stars, medals rendered with sharp detail, catching warm light
 - Slight weathering — combat-worn but readable
 
 ${PALETTE_INSTRUCTIONS}
 ${FACE_INSTRUCTIONS}
 ${NEGATIVE_REQUIREMENTS}
 
-OUTPUT: Photorealistic 3D render, 16:9 widescreen, hyper-detailed face, magazine-cover quality.`,
+OUTPUT: Photorealistic 3D render, 16:9 widescreen, hyper-detailed face, magazine-cover quality, saturated and high-contrast.`,
 
-'battle-map': `Create a cinematic 16:9 YouTube thumbnail in BATTLE MAP COMPOSITE style — a general portrait paired with a tactical battle map, steel blue palette.
+'battle-map': `Create a cinematic 16:9 YouTube thumbnail in BATTLE MAP COMPOSITE style — a general portrait paired with a tactical battle map, amber-gold palette.
 
 REFERENCE IMAGE INTERPRETATION:
-The provided reference (Manstein) shows COMPOSITION: tactical map fills LEFT 50%, general portrait fills RIGHT 50%. BUT swap RED background for STEEL BLUE per palette rules.
+The provided reference (Manstein) shows COMPOSITION, LIGHTING, and INTENSITY you must match: tactical map fills LEFT 50%, general portrait fills RIGHT 50%, dramatic glow behind portrait. Match all of this. ONLY swap the red background gradient for amber-gold per palette rules — keep the composition, drama, and contrast level identical.
 
 User-uploaded images = SUBJECT (actual general to render).
 
@@ -819,11 +903,11 @@ COMPOSITION:
 
 THE BATTLE MAP (LEFT):
 - Style: Period military operations map, slightly stylized
-- Background: Steel blue tones (#3a5870 to #1a2838)
-- Land: Slightly darker blue-gray; Water: slightly lighter blue
-- THICK BOLD ARROWS — saturated red for friendly forces, dark blue for enemy. 12-15 pixels wide. Sweeping inward.
+- Background: Deep warm umber/dark amber (#3a2010 to #1a0e05) — matches the overall palette, NOT blue, NOT cool
+- Land: Slightly darker warm brown; Water: deep navy or near-black for contrast
+- THICK BOLD ARROWS — saturated red for friendly forces, dark navy for enemy. 12-15 pixels wide. Sweeping inward. (Red arrows allowed here for tactical clarity — the BACKGROUND must still be amber.)
 - Unit markers: Black tank silhouettes, infantry icons at battle points
-- Place name LABELS: small bold serif type, white/pale yellow ink. Cities uppercase ("STALINGRAD"), rivers italic, regions small caps
+- Place name LABELS: small bold serif type, white/cream ink. Cities uppercase ("STALINGRAD"), rivers italic, regions small caps
 - Date/operation header in upper-left of map: e.g., "AUG 1942 — MAKIN ATOLL"
 - Authentic 1940s military map annotation feel
 
@@ -832,26 +916,26 @@ GENERAL PORTRAIT (RIGHT):
 - Head fills upper-right with 5-10% margin from top
 - Body visible from upper chest up
 - Strong directional key light from front-left
-- Cool rim light on LEFT side of face from map glow
-- Steel blue radial glow behind head as halo
+- Warm amber rim light on LEFT side of face from background glow
+- Amber-gold radial glow behind head as halo
 
 LIGHTING & MOOD:
-- Cool documentary lighting
-- Map slightly desaturated (faded military document feel)
-- Portrait slightly brighter and sharper to draw the eye
-- Subtle dark vignette in corners
+- Cinematic warm lighting throughout
+- Map slightly desaturated relative to portrait (faded military document feel) but still warm-toned
+- Portrait noticeably brighter and sharper to draw the eye
+- Strong dark vignette in corners
 
 ${PALETTE_INSTRUCTIONS}
-(Exception: red arrows on map stay red for tactical clarity. Background stays steel blue.)
+(Exception: red arrows on map stay red for tactical clarity. Background stays amber-gold.)
 ${FACE_INSTRUCTIONS}
 ${NEGATIVE_REQUIREMENTS}
 
-OUTPUT: Photorealistic 3D render with stylized map, 16:9, sharp face, clear readable map.`,
+OUTPUT: Photorealistic 3D render with stylized map, 16:9, sharp face, clear readable map, high contrast and saturation.`,
 
-'period-archive': `Create a cinematic 16:9 YouTube thumbnail in PERIOD ARCHIVE style — general portrait surrounded by overlapping period newspapers, documents, photographs in steel blue documentary aesthetic.
+'period-archive': `Create a cinematic 16:9 YouTube thumbnail in PERIOD ARCHIVE style — general portrait surrounded by overlapping period newspapers, documents, photographs in amber-gold cinematic aesthetic.
 
 REFERENCE IMAGE INTERPRETATION:
-The provided reference (Rommel) shows COMPOSITION: multiple overlapping period newspapers tiled across LEFT 60%, general portrait on RIGHT 40%. BUT swap RED background for STEEL BLUE per palette rules.
+The provided reference (Rommel) shows COMPOSITION, LIGHTING, and DRAMATIC INTENSITY you must match: multiple overlapping period newspapers tiled across LEFT 60%, general portrait on RIGHT 40%, dramatic glow behind portrait. Match all of this. ONLY swap the red background gradient for amber-gold per palette rules — keep composition and contrast intact.
 
 User-uploaded images = SUBJECT.
 
@@ -869,7 +953,7 @@ THE ARCHIVE STACK (LEFT):
   - Smaller subheadline in bold type
   - Column text below as dense gray texture (don't make individual letters readable)
   - Sometimes a small period photograph
-- Pages: Aged warm yellow-cream paper texture (against cool background)
+- Pages: Aged warm yellow-cream paper texture (which sits naturally against the amber background)
 - Authentic fold marks, torn edges, subtle stains
 - One or two sheets are official military documents:
   - Letterhead with insignia
@@ -881,30 +965,30 @@ THE ARCHIVE STACK (LEFT):
 GENERAL PORTRAIT (RIGHT):
 - Three-quarter view from slightly low angle
 - Tight crop — head and upper chest
-- Steel blue radial glow behind head
-- Cool rim light on LEFT side of face
-- Sharp focus on face, eyes catching light
+- Amber-gold radial glow behind head
+- Warm amber rim light on LEFT side of face
+- Sharp focus on face, eyes catching warm light
 - General appears to "emerge" from behind the document stack
 
 LIGHTING:
-- Documents lit from upper-left, casting subtle shadows
+- Documents lit from upper-left, casting subtle warm shadows
 - Portrait lit cinematically with hard key from front-left
-- Warm-cool contrast: papers warm yellow-cream, background/figure cool steel blue
+- Warm-on-warm palette: papers cream-yellow, background amber-gold, deep umber shadows
 - Strong dark vignette in corners
 
-MOOD: "Investigation board" — evidence wall in a documentary about historical injustice.
+MOOD: "Investigation board" — evidence wall in a documentary about historical injustice. Premium, cinematic, saturated.
 
 ${PALETTE_INSTRUCTIONS}
 (Exception: aged paper retains warm yellow-cream tone for period authenticity. Red ink stamps allowed.)
 ${FACE_INSTRUCTIONS}
 ${NEGATIVE_REQUIREMENTS}
 
-OUTPUT: Photorealistic 3D render with detailed period print materials, 16:9, sharp face, layered documents.`,
+OUTPUT: Photorealistic 3D render with detailed period print materials, 16:9, sharp face, layered documents, high contrast.`,
 
-'battlefield-command': `Create a cinematic 16:9 YouTube thumbnail in BATTLEFIELD COMMAND style — general at the front with combat vehicles in atmospheric haze, steel blue palette.
+'battlefield-command': `Create a cinematic 16:9 YouTube thumbnail in BATTLEFIELD COMMAND style — general at the front with combat vehicles in atmospheric haze, amber-gold palette.
 
 REFERENCE IMAGE INTERPRETATION:
-The provided reference (Collins "LIGHTNING JOE") shows COMPOSITION: general's head dead-center, military vehicles flanking on both sides at three-quarter angles in atmospheric mist, period road signs at edges. BUT swap warm desaturated background for STEEL BLUE per palette rules.
+The provided reference (Collins "LIGHTNING JOE") shows COMPOSITION, LIGHTING, and INTENSITY you must match: general's head dead-center, military vehicles flanking on both sides at three-quarter angles in atmospheric mist, period road signs at edges, dramatic backlight. Match all of this. ONLY swap the background palette for amber-gold per rules below.
 
 User-uploaded images = SUBJECT.
 
@@ -916,52 +1000,53 @@ COMPOSITION:
   - RIGHT: Jeep, halftrack, or similar at three-quarter angle, slightly receding
   - Era-appropriate: Pacific = LVT amphtracs, Marine equipment; European = Sherman tanks, M3 halftracks; Korea = M26 Pershings
 - Atmospheric haze creates depth between subject and vehicles
-- Vehicles fade into haze as they recede
+- Vehicles fade into amber-tinted haze as they recede
 
 ENVIRONMENT (matches script setting):
 - Pacific/Marines: tropical palms, beach sand, surf line, palm silhouettes
 - European: muddy roads, hedgerows, distant ruins, foggy atmosphere
 - Korea: mountainous terrain, frozen ground, sparse trees
 - Period road signs in correct languages
-- Atmospheric haze unifies the scene
+- Atmospheric haze unifies the scene with warm amber tone
 
 VEHICLES:
 - Photorealistic with weathering: dust, mud splatter, paint wear
 - Soldiers visible inside/on vehicles as background figures
 - Subtle motion: vehicles in formation but not blurred
 - Era-accurate markings: white US Army stars, unit numbers
+- Caught in warm amber light from background glow
 
 GENERAL PORTRAIT:
 - Three-quarter view from slightly low angle
 - Head and upper chest only
 - Sharp focus, brightest element in frame
-- Strong cinematic lighting from front-left
-- Cool rim light on LEFT from steel blue background
-- Steel blue radial glow behind head
+- Strong cinematic warm key light from front-left
+- Warm amber rim light on edges
+- Amber-gold radial glow behind head
 
 LIGHTING & MOOD:
-- Cool documentary daylight (overcast/atmospheric)
+- Warm cinematic atmospheric daylight (smoky, dusty, golden hour)
 - Strong directional key light on general
-- Vehicles lit consistently
-- Atmospheric haze adds depth
-- Dark vignette in corners
+- Vehicles lit consistently in same warm tone
+- Atmospheric amber haze adds depth
+- Strong dark vignette in corners
 
 ${PALETTE_INSTRUCTIONS}
 ${FACE_INSTRUCTIONS}
 ${NEGATIVE_REQUIREMENTS}
 
-OUTPUT: Photorealistic cinematic 3D render, 16:9, sharp face, atmospheric battlefield depth.`,
+OUTPUT: Photorealistic cinematic 3D render, 16:9, sharp face, atmospheric battlefield depth, saturated warm palette.`,
 
-'rivalry': `Create a cinematic 16:9 YouTube thumbnail in RIVALRY style — TWO generals facing each other with a tactical context element between them, steel blue palette.
+'rivalry': `Create a cinematic 16:9 YouTube thumbnail in RIVALRY style — TWO generals facing each other with a tactical context element between them, amber-gold palette.
 
 REFERENCE IMAGE INTERPRETATION:
-The provided reference (Rommel vs Rundstedt) shows COMPOSITION: TWO generals' portraits, left and right, with tactical map floating in center between them. BUT swap RED background for STEEL BLUE per palette rules.
+The provided reference (Rommel vs Rundstedt) shows COMPOSITION, LIGHTING, and INTENSITY you must match: TWO generals' portraits, left and right, with tactical map floating in center between them, dramatic glow behind both. Match all of this. ONLY swap the red background gradient for amber-gold per palette rules.
 
-User-uploaded images = SUBJECTS (should be 2 distinct generals).
+User-uploaded images include TWO distinct generals (General A reference photos AND General B reference photos). Render BOTH faces precisely.
 
 COMPOSITION (only use this style if script has TWO opposing/contrasting commanders):
-- LEFT GENERAL: occupies left third, head and upper chest, three-quarter view facing slightly inward
-- RIGHT GENERAL: occupies right third, head and upper chest, three-quarter view facing slightly inward
+- LEFT GENERAL: occupies left third, head and upper chest, three-quarter view facing slightly inward — use General A reference photos
+- RIGHT GENERAL: occupies right third, head and upper chest, three-quarter view facing slightly inward — use General B reference photos
 - CENTER: Tactical map/document/symbolic element floats between them at chest height, slightly tilted
 - Both generals' heads at roughly same height for balance
 - Strong dark vignette around outer edges
@@ -978,26 +1063,26 @@ THE TWO GENERALS:
 - Three-quarter views, slightly angled toward each other
 - Different uniforms if from different services/sides
 - Both lit cinematically from front-left (consistent direction)
-- Both have steel blue rim light on inner shoulder (the side facing the other)
+- Both have warm amber rim light on inner shoulder (the side facing the other)
 - The space between their faces is where the eye lands
 - Facial expressions imply tension: stern looks, hard jaws, narrowed eyes
 - Both faces equally sharp and detailed (neither is "the loser")
 
 LIGHTING:
-- Hard key light from upper-front-left for both figures
-- Cool steel blue rim light on inner sides (creating "collision" feel)
+- Hard warm key light from upper-front-left for both figures
+- Warm amber rim light on inner sides (creating "collision" feel)
 - Map element backlit slightly so it pops
 - Strong dark vignette in corners
 
-MOOD: "Showdown" or "argument" — two professionals in opposition. Documentary tone, NOT cartoon WWE-style face-off.
+MOOD: "Showdown" or "argument" — two professionals in opposition. Documentary-cinematic tone, NOT cartoon WWE-style face-off. Saturated and dramatic.
 
 ${PALETTE_INSTRUCTIONS}
-(Exception: map arrows can be red/blue for tactical clarity. Background stays steel blue.)
+(Exception: map arrows can be red/blue for tactical clarity. Background stays amber-gold.)
 ${FACE_INSTRUCTIONS}
-(Apply to BOTH generals — match BOTH reference photos precisely.)
+(CRITICAL: Apply the FACE & LIKENESS rules to BOTH generals separately — match BOTH reference photo sets precisely. The first set of reference photos = General A on the LEFT. The second set = General B on the RIGHT.)
 ${NEGATIVE_REQUIREMENTS}
 
-OUTPUT: Photorealistic cinematic 3D render, 16:9, sharp faces on both generals, clear tactical center element.`
+OUTPUT: Photorealistic cinematic 3D render, 16:9, sharp faces on both generals, clear tactical center element, saturated and high-contrast.`
 };
 
 const state = {
@@ -1011,7 +1096,8 @@ const state = {
   scriptText: '',
   scriptPdfBase64: null,
   scriptSource: 'text',
-  references: [null, null, null],
+  referencesA: [null, null, null],
+  referencesB: [null, null, null],
   sessionSpend: 0,
   brainResult: null
 };
@@ -1085,26 +1171,109 @@ document.querySelectorAll('.style-card').forEach(card => {
   });
 });
 
-document.querySelectorAll('.ref-slot').forEach(slot => {
-  slot.addEventListener('click', () => {
+// Reference photo handling — supports both per-slot click AND multi-select bulk upload
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => resolve(ev.target.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function refreshRefSlot(slot, dataUrl) {
+  if (dataUrl) {
+    slot.classList.add('has-image');
+    slot.innerHTML = `<img src="${dataUrl}" alt="Reference"><button class="ref-slot-clear" title="Remove">×</button>`;
+    slot.querySelector('.ref-slot-clear').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const setKey = slot.dataset.set === 'A' ? 'referencesA' : 'referencesB';
+      const idx = parseInt(slot.dataset.slot);
+      state[setKey][idx] = null;
+      slot.classList.remove('has-image');
+      slot.innerHTML = `<span class="ref-icon">+</span><span>Reference ${idx + 1}</span>`;
+      attachSlotListener(slot);
+    });
+  } else {
+    const idx = parseInt(slot.dataset.slot);
+    slot.classList.remove('has-image');
+    slot.innerHTML = `<span class="ref-icon">+</span><span>Reference ${idx + 1}</span>`;
+  }
+}
+
+async function handleFilesForSet(setKey, startSlotIdx, files) {
+  const stateArr = state[setKey];
+  const setLetter = setKey === 'referencesA' ? 'A' : 'B';
+  const grid = document.getElementById(setKey === 'referencesA' ? 'refsGridA' : 'refsGridB');
+
+  // Determine target slots: start at startSlotIdx, fill up to 3 total slots
+  const slotsToFill = [];
+  let cursor = startSlotIdx;
+  for (let i = 0; i < files.length && slotsToFill.length < 3; i++) {
+    if (cursor >= 3) break;
+    slotsToFill.push(cursor);
+    cursor++;
+  }
+
+  // If user picked more than fits from start, just truncate (don't wrap)
+  for (let i = 0; i < slotsToFill.length; i++) {
+    const file = files[i];
+    if (!file || !file.type.startsWith('image/')) continue;
+    try {
+      const dataUrl = await readFileAsDataURL(file);
+      const slotIdx = slotsToFill[i];
+      stateArr[slotIdx] = dataUrl;
+      const slotEl = grid.querySelector(`.ref-slot[data-slot="${slotIdx}"]`);
+      refreshRefSlot(slotEl, dataUrl);
+    } catch (err) {
+      showError(`Failed to read image: ${file.name}`);
+    }
+  }
+}
+
+function attachSlotListener(slot) {
+  // Remove old listeners by cloning
+  const newSlot = slot.cloneNode(true);
+  slot.parentNode.replaceChild(newSlot, slot);
+  newSlot.addEventListener('click', () => {
+    if (newSlot.classList.contains('has-image')) return; // clear button handles this
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
-    input.onchange = (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const idx = parseInt(slot.dataset.slot);
-        state.references[idx] = ev.target.result;
-        slot.classList.add('has-image');
-        slot.innerHTML = `<img src="${ev.target.result}" alt="Reference">`;
-      };
-      reader.readAsDataURL(file);
+    input.multiple = true; // allow multi-select even when starting from a single slot
+    input.onchange = async (e) => {
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
+      const setKey = newSlot.dataset.set === 'A' ? 'referencesA' : 'referencesB';
+      const startSlotIdx = parseInt(newSlot.dataset.slot);
+      await handleFilesForSet(setKey, startSlotIdx, files);
     };
     input.click();
   });
-});
+}
+
+document.querySelectorAll('.ref-slot').forEach(attachSlotListener);
+
+function setupBulkUpload(buttonId, setKey) {
+  document.getElementById(buttonId).addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.multiple = true;
+    input.onchange = async (e) => {
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
+      // Find first empty slot, or start at 0 if all full (overwrite from start)
+      const stateArr = state[setKey];
+      let startIdx = stateArr.findIndex(v => v === null);
+      if (startIdx === -1) startIdx = 0;
+      await handleFilesForSet(setKey, startIdx, files);
+    };
+    input.click();
+  });
+}
+setupBulkUpload('bulkUploadA', 'referencesA');
+setupBulkUpload('bulkUploadB', 'referencesB');
 
 document.getElementById('overlayToggle').addEventListener('click', (e) => {
   e.currentTarget.classList.toggle('on');
@@ -1607,11 +1776,11 @@ const BANNER_INSTRUCTION_TEMPLATE = (bannerWord) => `
 BANNER OVERLAY (REQUIRED — RENDER INTO IMAGE):
 ============================================
 
-Add a bold red banner box at the BOTTOM of the frame, slightly tilted (3-7° rotation) with rough/torn paper edges. Banner sits in the lower 25-30% of the frame, centered or slightly left.
+Add a bold BLACK banner box at the BOTTOM of the frame, slightly tilted (3-7° rotation) with rough/torn paper edges. Banner sits in the lower 25-30% of the frame, centered or slightly left.
 
 BANNER BOX:
-- Background: Bright pure red (#dc2626 / vibrant red)
-- Shape: Rectangular block with slightly rough/torn edges (NOT clean rounded corners — should look hand-painted or brush-stroke)
+- Background: Pure deep BLACK (#0a0a0a / near-pure black) — solid, opaque
+- Shape: Rectangular block with slightly rough/torn edges (NOT clean rounded corners — should look hand-painted or brush-stroke, like a torn paper strip)
 - Width: Sized to fit text snugly (banner takes 35-50% of frame width)
 - Slight 3-7° rotation for visual energy
 
@@ -1622,14 +1791,15 @@ BANNER TEXT:
 - Case: ALL UPPERCASE
 - Letter spacing: Slightly tight
 - Padding: tight on all sides
-- Text must be CRISP, SHARP, perfectly legible
+- Text must be CRISP, SHARP, perfectly legible against the black background
 
-CRITICAL — SUBTLE BLACK GLOW BEHIND BANNER:
-- Soft black drop shadow extending OUTSIDE the red banner box
+CRITICAL — SUBTLE WARM AMBER GLOW BEHIND BANNER:
+- Soft warm amber drop shadow extending OUTSIDE the black banner box
+- Glow color: warm amber (#d97706 to #f59e0b at low opacity, ~30-40%)
 - Glow size: ~15-20 pixels of soft spread
-- Glow opacity: ~50-60% black
 - Glow offset: very slight downward (2-3 pixels)
 - Soft and DIFFUSED, NOT a hard outline
+- This warm glow ties the banner into the amber palette of the rest of the thumbnail
 
 CRITICAL TEXT ACCURACY:
 - Banner text must read EXACTLY: "${bannerWord}"
@@ -1637,9 +1807,9 @@ CRITICAL TEXT ACCURACY:
 - Do not abbreviate, modify, or stylize the word
 - Clean readable letterforms — no decorative effects, no 3D extrusion
 
-The banner should look like a torn red poster strip with bold white text floating at the bottom of the thumbnail with a subtle dark halo. Reference: think YouTube military history thumbnails like "THE MYTH" / "FRAUD" / "ERASED" with their characteristic brushstroke red banners.`;
+The banner should look like a torn black poster strip with bold white text floating at the bottom of the thumbnail with a subtle warm amber halo. Premium documentary aesthetic — distinct from the red-banner military history channels. Black + white + warm amber halo = our signature.`;
 
-async function generateThumbnail(style, weaponRefs, googleKey, model, bannerWord) {
+async function generateThumbnail(style, refsA, refsB, googleKey, model, bannerWord) {
   const styleRefUrls = STYLE_REFS[style] || [];
   let stylePrompt = STYLE_PROMPTS[style];
 
@@ -1649,7 +1819,12 @@ async function generateThumbnail(style, weaponRefs, googleKey, model, bannerWord
 
   const parts = [];
   for (const url of styleRefUrls) parts.push(await urlToInlineData(url));
-  for (const ref of weaponRefs) if (ref) parts.push(dataUrlToInlineData(ref));
+  // General A reference photos
+  for (const ref of refsA) if (ref) parts.push(dataUrlToInlineData(ref));
+  // General B reference photos (only for rivalry style)
+  if (style === 'rivalry') {
+    for (const ref of refsB) if (ref) parts.push(dataUrlToInlineData(ref));
+  }
   parts.push({ text: stylePrompt });
 
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL_MAP[model]}:generateContent?key=${googleKey}`;
@@ -1686,11 +1861,18 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
   const banner = getCurrentBanner();
   if (!banner) { showError('Select or type a banner word first'); return; }
 
-  const generalRefs = state.references.filter(r => r);
-  if (generalRefs.length === 0) { showError('Upload at least one general reference photo'); return; }
+  const refsA = state.referencesA.filter(r => r);
+  const refsB = state.referencesB.filter(r => r);
+  if (refsA.length === 0) { showError('Upload at least one General A reference photo'); return; }
 
   const styles = [...state.selectedStyles];
   if (styles.length === 0) { showError('Select at least one image style'); return; }
+
+  // Validate Rivalry has General B refs
+  if (styles.includes('rivalry') && refsB.length === 0) {
+    showError('Rivalry style requires at least one General B reference photo');
+    return;
+  }
 
   const outputGrid = document.getElementById('outputGrid');
   outputGrid.innerHTML = styles.map(style => `
@@ -1709,7 +1891,7 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
   const promises = styles.map(async (style) => {
     const tile = outputGrid.querySelector(`[data-style="${style}"]`);
     try {
-      const imageUrl = await generateThumbnail(style, generalRefs, googleKey, state.imageModel, banner);
+      const imageUrl = await generateThumbnail(style, refsA, refsB, googleKey, state.imageModel, banner);
       tile.classList.remove('loading');
       tile.innerHTML = `
         <img src="${imageUrl}" alt="${STYLE_NAMES[style]}">
@@ -1729,7 +1911,7 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
         tile.classList.add('loading');
         tile.innerHTML = `<span>Regenerating ${STYLE_NAMES[style]}...</span>`;
         try {
-          const newUrl = await generateThumbnail(style, generalRefs, googleKey, state.imageModel, banner);
+          const newUrl = await generateThumbnail(style, refsA, refsB, googleKey, state.imageModel, banner);
           state.sessionSpend += cost;
           document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
           tile.classList.remove('loading');
@@ -1773,7 +1955,7 @@ function escapeHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-console.log('American Brass v1.0 — WWII American generals thumbnail pipeline');
+console.log('American Brass v1.1 — WWII American generals thumbnail pipeline (amber/black palette, dual-general refs)');
 </script>
 </body>
 </html>
