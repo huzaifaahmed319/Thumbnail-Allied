@@ -15,32 +15,32 @@
   --text: #e0e6ee;
   --text-muted: #6c7888;
   --text-faint: #3a4554;
-  --accent: #b8821a;
-  --accent-hover: #d4961f;
-  --accent-soft: rgba(184, 130, 26, 0.15);
-  --brass: #b8821a;
-  --danger: #dc2626;
-  --danger-soft: rgba(220, 38, 38, 0.12);
+  --accent: #dc2626;
+  --accent-hover: #ef4444;
+  --accent-soft: rgba(220, 38, 38, 0.15);
+  --brass: #dc2626;
+  --danger: #f97316;
+  --danger-soft: rgba(249, 115, 22, 0.12);
   --success: #4caf50;
   --warning: #ff9800;
   --banner-display: #0a0a0a;
 }
 :root[data-theme="light"] {
-  --bg: #f4f1ea;
+  --bg: #f5f5f6;
   --bg-elevated: #ffffff;
-  --bg-input: #ede8de;
-  --bg-hover: #e2dccf;
-  --border: #d4cdb8;
-  --border-strong: #b8af97;
-  --text: #2a1f0f;
-  --text-muted: #6b5d40;
-  --text-faint: #a89c80;
-  --accent: #92651a;
-  --accent-hover: #6b4a13;
-  --accent-soft: rgba(146, 101, 26, 0.10);
-  --brass: #92651a;
-  --danger: #b91c1c;
-  --danger-soft: rgba(185, 28, 28, 0.08);
+  --bg-input: #ededee;
+  --bg-hover: #e0e0e2;
+  --border: #d4d4d6;
+  --border-strong: #b0b0b4;
+  --text: #18181b;
+  --text-muted: #5a5a60;
+  --text-faint: #a8a8ac;
+  --accent: #b91c1c;
+  --accent-hover: #991b1b;
+  --accent-soft: rgba(185, 28, 28, 0.10);
+  --brass: #b91c1c;
+  --danger: #c2410c;
+  --danger-soft: rgba(194, 65, 12, 0.08);
   --success: #2e7d32;
   --warning: #ed6c02;
   --banner-display: #0a0a0a;
@@ -590,7 +590,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
     <span class="brand-name">American Brass</span>
   </div>
   <nav class="header-nav">
-    <span class="nav-pill">Pipeline v1.4</span>
+    <span class="nav-pill">Pipeline v1.5</span>
     <span class="nav-item active">Pipeline</span>
     <button class="theme-toggle" id="themeToggle">☾ Dark</button>
   </nav>
@@ -897,47 +897,49 @@ const STYLE_NAMES = {
 };
 
 const PALETTE_INSTRUCTIONS = `
-COLOR PALETTE — DEEP CINEMATIC WINE-RED WITH SOFT HALO (CRITICAL):
-This thumbnail uses a deep saturated WINE-RED / BURGUNDY background with a SOFT defined halo behind the subject and dramatic dark vignette at the corners. Match this palette precisely. Think "premium HBO war documentary key art" — deep cinematic wine-red mood with a real but controlled glow behind the subject (not a hot stage spotlight, not a flat field).
+COLOR PALETTE — DEEP CINEMATIC WINE-RED WITH ATMOSPHERIC GLOW (CRITICAL):
+This thumbnail uses a deep saturated WINE-RED / BURGUNDY background with a SOFT ATMOSPHERIC RED GLOW behind the subject — like warm light dispersing through smoky haze, NOT a defined geometric shape, NOT a stage spotlight, NOT a flat field. Match this palette precisely. Think "premium HBO war documentary key art" — cinematic wine-red mood with light radiating outward irregularly through atmospheric haze behind the subject, fading smoothly to dark vignette corners.
 
 REFERENCE IMAGE COLOR SUBSTITUTION:
-The provided style reference image shows COMPOSITION, FRAMING, HALO STRUCTURE, and DRAMATIC INTENSITY you must match. The background should be deep wine-red per the spec below. Do NOT make the palette cool, blue, amber, orange, sepia, or desaturated.
+The provided style reference image shows COMPOSITION, FRAMING, GLOW STRUCTURE, and DRAMATIC INTENSITY you must match. The background should be deep wine-red per the spec below. Do NOT make the palette cool, blue, amber, orange, sepia, or desaturated.
+
+THE GLOW (CRITICAL — atmospheric, NOT a shape):
+Picture a warm crimson light source positioned behind the subject's head, shining outward through smoky atmospheric haze. The light DISPERSES through the haze — it doesn't form a clean oval or circle. The brightness radiates outward irregularly, with smoky soft tendrils, fading smoothly through deep red mid-tones into near-black corners. NO HARD EDGES. NO VISIBLE OVAL OR DISC SHAPE. NO RAYS OR SUNBURST.
+
+How to render the glow correctly:
+- Imagine a smoky theater backdrop with a hidden warm red light behind it — the light bleeds through the smoke unevenly, creating a soft warm zone of brightness with no defined boundary
+- The brightness fades GRADUALLY through the wine-red mid-frame, losing intensity smoothly without a visible edge
+- Subtle smoky/hazy texture variations break up any potential ring or disc artifact
+- Color at brightest point: warm crimson (#c8202b to #d92d3a)
+- The glow zone is roughly behind where the subject sits, but its boundaries are SOFT and IRREGULAR — like fog lit from within, not a painted circle
 
 BACKGROUND GRADIENT (precise specification — follow exactly):
-- HALO ZONE (directly behind the subject's head and shoulders, occupying ~30-35% of the frame's central area): a SOFT BRIGHT GLOW of saturated red — this halo is roughly 35-50% BRIGHTER than the surrounding mid-frame. Color at brightest: vibrant warm crimson (#c8202b to #d92d3a). The halo has a smooth gradient falloff over ~25% of the radial distance to the edges. The halo MUST be clearly visible — the subject sits inside a real lit zone, NOT against a flat field.
-- MID-FRAME (around the halo, extending outward): deep wine-red (#7a1820 to #5a1015) — saturated dark red, the dominant background color
+- BRIGHTEST GLOW REGION (directly behind the subject): warm crimson (#c8202b to #d92d3a), soft and irregular boundaries, atmospheric haze texture
+- MID-FRAME (extending outward from glow): deep wine-red (#7a1820 to #5a1015) — saturated dark red with subtle haze texture
 - OUTER EDGES AND ALL FOUR CORNERS: near-black with red-black tint (#1a0303 to #050000) — corners must be almost PURE BLACK
 - HEAVY hard-falloff dark vignette in all four corners
-
-THE HALO IS REAL AND VISIBLE (CRITICAL — this is what makes the subject pop):
-- The halo behind the head is NOT a subtle atmospheric brightening — it is a DEFINED visible glow zone, roughly elliptical/oval, soft-edged, clearly brighter than the mid-frame
-- Think of it as a backlight from behind the subject lighting up the wall — soft warm red glow, defined shape, soft edges
-- HOWEVER it is NOT a hot stage spotlight: no rays, no sunburst, no dramatic light beams, no harsh edges. Soft, atmospheric, but DEFINED.
-- The halo color stays warm red — never pink, never orange, never amber
-
-GLOW FALLOFF (the curve from halo to corners):
-- From the bright halo center → mid-frame deep wine-red: smooth ~25% radial gradient
-- From mid-frame → corner near-black: sharper ~20% radial falloff (dramatic vignette)
-- The eye should be naturally pulled to the halo zone where the subject sits
+- Subtle film grain and atmospheric texture throughout (no flat color zones)
 
 CRITICAL — AVOID THESE FAILURE MODES:
-- DO NOT make the background flat with no halo — the halo must be visibly brighter (~35-50% brighter than mid-frame). A flat dark red wall is WRONG.
-- DO NOT make the halo a hot bright stage spotlight or sunburst — soft and defined, not theatrical
-- DO NOT use bright fire-engine red (#dc2626 across whole frame) — too pulpy, no depth
+- DO NOT render the glow as a defined oval, circle, disc, or any geometric shape — it must be atmospheric and irregular
+- DO NOT make the glow's edges sharp or visible — soft gradient dispersion only
+- DO NOT add rays, light beams, sunburst patterns, or radiating lines from the subject
+- DO NOT make the background flat with no glow at all — the warm glow must be visibly present, just rendered atmospherically
+- DO NOT use bright fire-engine red across the whole background — too pulpy, no depth
 - DO NOT make the background amber, orange, sepia, brown, or any non-red warm color
 - DO NOT desaturate — high saturation throughout
 - DO NOT use steel blue, cyan, teal, green, or any cool color in the background
 - DO NOT make the corners dark red — corners must read as near-black
 
-OVERALL MOOD: Premium, cinematic, theatrical, high-stakes investigative documentary key art. Deep saturated wine-red with a defined backlight halo behind the subject and dramatic dark falloff at the edges. Punchy, eye-catching, depth — magazine-cover quality. Like an HBO miniseries poster — moody, deep, controlled.
+OVERALL MOOD: Premium, cinematic, theatrical, high-stakes investigative documentary key art. Deep saturated wine-red with atmospheric warm glow behind the subject and dramatic dark falloff at the edges. Punchy, eye-catching, depth — magazine-cover quality. Like an HBO miniseries poster — moody, deep, controlled.
 
 CONTRAST RULES (CRITICAL — this is what makes the subject pop):
-- Subject is illuminated by a HARD KEY LIGHT from upper-front-left at ~45° — bright warm front lighting on the face
-- Subject also receives a thin WARM RIM LIGHT along the right edge of face/shoulders/helmet from the halo behind — gives 3D edge separation from the background
+- Subject is illuminated by a HARD KEY LIGHT from upper-front-left at ~45° — bright warm front lighting on the face AND uniform
+- Subject also receives a thin WARM RIM LIGHT along the right edge of face/shoulders/helmet from the atmospheric glow behind — gives 3D edge separation from the background
 - Strong dark shadows under the jaw, helmet brim, and on the side opposite the key light
-- The face is the BRIGHTEST element in the frame — clearly brighter than the halo behind
+- The face is the BRIGHTEST element in the frame
+- Uniform colors and metallic insignia are also clearly lit — full saturation, sharp detail, NOT washed out or muddy
 - The face reads as 3D-rounded and dimensional, NOT flat — proper light/shadow modeling on the features
-- The halo behind provides background-to-subject contrast and color separation; the rim light provides edge separation; the key light makes the face pop
 
 The lower-center area can be slightly darker to make banner overlay readable in post.
 `;
@@ -948,8 +950,42 @@ FACE & LIKENESS (CRITICAL):
 - Match skin tone, face shape, jawline, eyes, hair, and uniform details PRECISELY
 - Do NOT invent a different face
 - The general's face is the BRIGHTEST, SHARPEST, most in-focus element in the frame
-- Eyes catch sharp warm key light with subtle red rim from the background, skin texture visible, every wrinkle and detail rendered
-- Cinematic film-stock quality on the face, lit warmly with hard key light
+- Eyes catch sharp warm key light, skin texture visible, every wrinkle and pore rendered with cinematic film-stock quality
+- Cinematic film-stock quality on the face, lit warmly with hard key light from upper-front-left
+
+UNIFORM (CRITICAL — must be vibrant and saturated, NOT muddy or dull):
+The uniform must be rendered with full color saturation, sharp metallic detail, and clear material rendering. Reference: a crisp documentary photograph or magazine cover, where every uniform element reads clearly.
+
+US ARMY OFFICER UNIFORMS (most common):
+- Wool service tunic in OLIVE DRAB — true warm olive green-brown (#5d6643 to #6e7549 range), NOT muddy brown, NOT khaki, NOT sage. Visible wool weave texture.
+- Necktie: medium khaki tan (#a08c64), darker than the shirt
+- Shirt collar: lighter tan (#b09870)
+- Brass buttons: bright warm gold (#c9a55a to #e8c879), distinctly metallic with visible specular highlights catching the key light
+- Shoulder boards / sleeve insignia: rank pins/stars in bright polished silver (#d4d4d8) with sharp delineation, OR gold leaves for officers
+- "U.S." brass collar pins: bright polished gold/brass, sharp readable letterforms, catching highlight on the lit side
+- Branch insignia (crossed rifles, etc.): bright brass/silver with detail
+- Medal ribbons (rectangular bars on left chest): rendered as DISTINCT READABLE COLORED STRIPES — each ribbon a recognizable colored bar (red, blue, gold, etc., specific to actual decorations). NOT smudgy, NOT blurred. Each ribbon clearly delineated from neighbors.
+- Combat infantry badge or unit patch: visible if appropriate, rendered with detail
+
+USMC OFFICER UNIFORMS:
+- Service "A" uniform: forest green wool tunic (#3a4a2e) with khaki shirt and tie
+- Field uniform: faded sage / olive utility (#7a7a5d) with weathering
+- Brass eagle/globe/anchor on collar — bright polished brass
+- All metallic insignia bright with specular highlights
+
+USAAF UNIFORMS (when appropriate):
+- Olive drab "Ike" jacket or service tunic
+- Officer's pink-and-greens for some periods
+- Wings insignia in bright silver, prominently displayed
+
+GENERAL UNIFORM RENDERING RULES:
+- Every metallic element (buttons, pins, stars, insignia, eagle, oak leaves, brass buckles) reads as METAL — bright, polished, with clear specular highlights catching the key light
+- Wool fabric has visible weave texture, NOT smooth plastic
+- Color saturation is HIGH — no muddy, washed-out, or desaturated tones
+- Slight combat weathering acceptable (light dust, slight wear) but uniform is intact and dignified
+- The lit side of the uniform (front-left, facing key light) is bright and clear — every detail readable
+- The shadow side falls into deep shadow but the silhouette stays defined
+- Cinematic warm key light reveals all uniform colors and metallic details — the uniform should look as cinematic as the face
 `;
 
 const NEGATIVE_REQUIREMENTS = `
@@ -984,20 +1020,18 @@ ATMOSPHERIC TEXTURE (add all of these subtly):
 - Very slight gradient streaks suggesting atmospheric depth
 - Faint texture variations giving the wall/environment subtle imperfection
 
-THE HALO (CRITICAL — must be defined and visible):
-- A DEFINED SOFT BRIGHT HALO in the right-center area where the general will be added in Pass 2
-- Halo position: roughly centered on the area where a person's head and upper shoulders would sit (around 55-60% from left, vertically positioned in the upper-mid third)
-- Halo shape: soft elliptical/oval, smooth-edged, occupying ~30-35% of the frame's central-right area
-- Halo brightness: ~35-50% brighter than the surrounding mid-frame
-- Halo color: vibrant warm crimson (#c8202b to #d92d3a at the brightest center)
-- This halo MUST be clearly visible — it's what will give the general atmospheric pop in Pass 2
-- Soft gradient falloff from halo to surrounding deep wine-red (~25% radial distance)
+THE ATMOSPHERIC GLOW (CRITICAL — must be visibly present but NEVER a geometric shape):
+- ATMOSPHERIC WARM GLOW in the right-center area where the general will be added in Pass 2 — render as warm crimson light dispersing through smoky haze, irregular and soft, NEVER as a defined oval/circle/disc
+- Position: roughly centered behind where a person's head and upper shoulders would sit (around 55-60% from left, vertically in the upper-mid third)
+- Render as: warm crimson light (#c8202b to #d92d3a at brightest) DISPERSING through smoky atmospheric haze with irregular soft tendrils bleeding outward, fading smoothly through the dark wine-red field
+- The glow MUST be visibly brighter than the surrounding mid-frame (not a flat dark field), but it MUST NOT have any defined oval/circle/disc shape, sharp edges, or geometric boundary
+- Imagine a hidden warm light source behind a smoky scrim — the brightness bleeds through unevenly, creating a soft warm zone with naturally irregular boundaries
 
 LAYOUT:
-- The halo zone occupies center-right (~55-60% from left)
-- The mid-frame deep wine-red surrounds the halo
+- The atmospheric glow zone is positioned center-right (~55-60% from left)
+- Deep wine-red mid-frame surrounds the glow with no visible boundary between them
 - Strong dark vignette pulls all four corners into near-black
-- Atmospheric texture and smoke throughout
+- Atmospheric texture, haze, and smoke throughout (no flat color zones)
 
 CRITICAL — leave the subject zone empty:
 - Where a portrait subject would later be placed (centered slightly right, head occupying upper-third of the right-center area), leave NO person, NO face, NO defined figure
@@ -1006,7 +1040,7 @@ CRITICAL — leave the subject zone empty:
 ${PALETTE_INSTRUCTIONS}
 ${NEGATIVE_REQUIREMENTS}
 
-OUTPUT: 16:9 widescreen, atmospheric wine-red environment with subtle smoke/haze/grain texture and a defined visible halo in the right-center subject zone. NO PEOPLE, NO TEXT, ready for subject compositing in Pass 2.`,
+OUTPUT: 16:9 widescreen, atmospheric wine-red environment with subtle smoke/haze/grain texture and a soft atmospheric warm glow (irregular, dispersing through haze, NOT a disc/oval) in the right-center subject zone. NO PEOPLE, NO TEXT, ready for subject compositing in Pass 2.`,
 
 'battle-map': (va) => {
   const locations = (va.map_locations || []).join(', ');
@@ -1016,7 +1050,7 @@ OUTPUT: 16:9 widescreen, atmospheric wine-red environment with subtle smoke/haze
 
 LAYOUT (CRITICAL):
 - LEFT 50% of frame: a DENSE detailed tactical battle map filling the entire left half — substantial geographic landmasses, multiple bold sweeping arrows, scattered unit markers, large readable place name labels. The map should look like a real wall-mounted military operations map, NOT a sparse infographic.
-- RIGHT 50% of frame: deep wine-red field with a defined SOFT BRIGHT HALO in the right-center area where the general will be added in Pass 2. The halo behind the future subject is roughly 35-50% brighter than the surrounding mid-frame — clearly visible, soft-edged, oval/elliptical shape.
+- RIGHT 50% of frame: deep wine-red field with an ATMOSPHERIC WARM GLOW radiating outward from the right-center area where the general will be added in Pass 2. The glow looks like warm red light dispersing through smoky haze — irregular, soft, bleeding outward through the dark wine-red field. NO defined oval shape, NO disc, NO sharp edges. Color brightens through the glow zone (#c8202b to #d92d3a at brightest), fading smoothly and irregularly outward.
 - Soft gradient transition between map (left) and red field (right) — no hard edge
 
 MAP DENSITY (CRITICAL — DO NOT make a sparse map):
@@ -1064,7 +1098,7 @@ OPERATION HEADER (upper-left of map, render exactly):
 
 RIGHT 50% (subject zone — empty but with HALO):
 - Deep wine-red field per palette rules
-- DEFINED SOFT HALO in the right-center area (where the general will be added in Pass 2) — roughly elliptical, soft-edged, clearly brighter than the surrounding mid-frame, color in the warm crimson range (#c8202b to #d92d3a at the brightest center). The halo MUST be visibly brighter than the rest of the right side — this is what will give the general atmospheric pop in Pass 2.
+- ATMOSPHERIC WARM GLOW in the right-center area where the general will be added in Pass 2 — render as warm crimson light (#c8202b to #d92d3a at brightest) dispersing through smoky atmospheric haze, irregular soft boundaries, NEVER a defined oval/circle/disc shape. The glow is visibly brighter than the surrounding wine-red but rendered atmospherically, not geometrically.
 - Strong dark vignette in upper-right and lower-right corners falling to near-black
 - NO people, NO objects, NO text in this zone — pure atmospheric red with halo, ready for compositing
 
@@ -1072,7 +1106,7 @@ ${PALETTE_INSTRUCTIONS}
 (Exception: bright red/steel arrows on map are tactical, they stay vivid. The map's dark navy/near-black background sits naturally next to the wine-red field on the right.)
 ${NEGATIVE_REQUIREMENTS}
 
-OUTPUT: 16:9 widescreen, DENSE detailed tactical map on left with substantial geographic shapes and PROPERLY SPELLED real place names, wine-red field on right with a defined visible halo where the general will go in Pass 2. NO PEOPLE.`;
+OUTPUT: 16:9 widescreen, DENSE detailed tactical map on left with substantial geographic shapes and PROPERLY SPELLED real place names, wine-red field on right with an atmospheric warm glow (irregular, soft, NOT a disc/oval shape) where the general will go in Pass 2. NO PEOPLE.`;
 },
 
 'period-archive': (va) => {
@@ -1113,7 +1147,7 @@ OFFICIAL DOCUMENTS (1-2 sheets in the stack):
 
 RIGHT 40% (subject zone — empty but with HALO):
 - Deep wine-red field per palette rules
-- DEFINED SOFT BRIGHT HALO in the upper-right area (where the general's head will be added in Pass 2) — roughly oval/elliptical, soft-edged, ~35-50% brighter than the surrounding mid-frame, color in the warm crimson range (#c8202b to #d92d3a at the brightest center). The halo MUST be clearly visible — this is what will give the general atmospheric pop in Pass 2.
+- ATMOSPHERIC WARM GLOW in the upper-right area where the general's head will be added in Pass 2. Render as warm crimson light (#c8202b to #d92d3a at brightest) DISPERSING through smoky atmospheric haze with irregular boundaries — soft tendrils of brightness bleeding outward, fading smoothly through the dark wine-red field, NEVER as a defined oval/circle/disc shape. The glow MUST be clearly visible (visibly brighter than the surrounding mid-frame) but rendered atmospherically, not geometrically. Think: hidden warm light behind smoky scrim, light bleeding through unevenly.
 - Strong dark vignette in upper-right and lower-right corners
 - Optional: very subtle distant smoke/haze texture in the deep red areas
 - NO people, NO objects, NO additional text — pure atmospheric red with halo, ready for compositing
@@ -1162,7 +1196,7 @@ ${signs || '(none for this theater)'}
 
 CENTER (subject zone — empty but with HALO):
 - Deep wine-red field per palette rules behind a clear central area
-- DEFINED SOFT BRIGHT HALO in the center (where the general's head and shoulders will be added in Pass 2) — roughly oval/elliptical, soft-edged, ~35-50% brighter than the surrounding mid-frame, color in the warm crimson range (#c8202b to #d92d3a at the brightest center). The halo sits behind where the general will be, peeking through and around the haze and smoke. The halo MUST be clearly visible — this is what will give the general atmospheric pop in Pass 2.
+- ATMOSPHERIC WARM GLOW in the center where the general's head and shoulders will be added in Pass 2. Render as warm crimson light (#c8202b to #d92d3a at brightest) DISPERSING through the smoky atmospheric haze of the battlefield — the glow blends naturally with the existing battlefield smoke, creating a warm zone of brightness behind where the general will stand. Irregular soft boundaries, NEVER an oval/circle/disc. The glow integrates with the smoke and dust already in the scene — it looks like the light is filtering through the same haze.
 - NO main figure / commanding officer in this center zone — leave it clear of any subject
 - The smoke and haze can drift through the halo zone, but the halo brightening is still visible behind/through them
 
@@ -1199,7 +1233,7 @@ THE CENTER MAP:
 
 LEFT AND RIGHT SUBJECT ZONES (empty but with HALOS):
 - Deep wine-red field per palette rules in each flanking zone
-- DEFINED SOFT BRIGHT HALO in EACH zone (left and right) where each general will be added in Pass 2 — roughly oval/elliptical, soft-edged, ~35-50% brighter than surrounding mid-frame, color in the warm crimson range (#c8202b to #d92d3a at the brightest center). Both halos at the same approximate vertical height and same intensity for compositional balance.
+- ATMOSPHERIC WARM GLOW in EACH flanking zone (left and right) where each general will be added in Pass 2. Render each as warm crimson light (#c8202b to #d92d3a at brightest) DISPERSING through smoky atmospheric haze with irregular boundaries — soft, bleeding outward through the dark wine-red field, NEVER as defined ovals/circles/discs. Both glows at the same approximate vertical height and same intensity for compositional balance, but rendered atmospherically (irregular soft glows, not symmetric shapes).
 - The halos MUST be clearly visible — this is what will give both generals atmospheric pop in Pass 2.
 - Strong dark vignette in outer corners (upper-left, lower-left, upper-right, lower-right) falling to near-black
 - NO people, NO objects, NO text in either subject zone
@@ -1252,12 +1286,12 @@ LIGHTING ON THE GENERAL (CRITICAL — this is what makes him pop from the backgr
 - Strong dark shadows under the jaw, helmet brim, and on the side opposite the key light
 - The face reads as 3D-rounded and dimensional, NOT flat — proper light/shadow modeling on every facial feature
 
-INTEGRATION INTO BACKGROUND (CRITICAL — preserve the existing halo):
-- The provided background ALREADY has a soft halo glow behind the subject zone — DO NOT remove it, DO NOT paint over it, DO NOT make it duller. The halo should remain visible AROUND the general's silhouette, glowing through behind his head and shoulders.
-- The general should appear to be STANDING IN the lit halo zone of the background, with the warm halo light visibly emanating from behind him and creating the rim light on his edges
+INTEGRATION INTO BACKGROUND (CRITICAL — preserve the existing atmospheric glow):
+- The provided background ALREADY has a soft atmospheric warm glow behind the subject zone — DO NOT remove it, DO NOT paint over it, DO NOT make it duller, DO NOT replace it with a flat field. The glow must remain visible AROUND and BEHIND the general's silhouette, with warm crimson light bleeding through the haze around his head and shoulders.
+- The general should appear to be STANDING IN the lit glow zone of the background, with the warm light visibly emanating from behind him and creating the rim light on his edges. The glow itself is atmospheric (irregular, dispersing through haze) — NEVER a defined oval or disc.
 - Color grading on the general matches the wine-red environment — subtle red ambient bounce on the shadow side of the face
-- The general's silhouette has clean SHARP separation from the background — strong contrast between the lit face and dark environment, with the warm rim light creating a glowing edge
-- The general should NOT be larger than the subject zone — fit naturally within the halo area
+- The general's silhouette has clean SHARP separation from the background — strong contrast between the lit face/uniform and the dark environment, with the warm rim light creating a glowing edge
+- The general should NOT be larger than the subject zone — fit naturally within the glow area
 - The general should NOT cover key elements of the background (map labels, headlines, document text must remain visible and readable)
 - The dark vignette in the corners must remain dark — do not brighten the corners
 `;
@@ -2543,7 +2577,7 @@ function escapeHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-console.log('American Brass v1.4 — Two-pass with approval gate, halo-aware palette, denser maps, atmospheric portrait backgrounds');
+console.log('American Brass v1.5 — Atmospheric glow (not disc), saturated uniforms, red theme');
 </script>
 </body>
 </html>
