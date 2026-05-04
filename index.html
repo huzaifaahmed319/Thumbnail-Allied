@@ -590,7 +590,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
     <span class="brand-name">American Brass</span>
   </div>
   <nav class="header-nav">
-    <span class="nav-pill">Pipeline v1.5</span>
+    <span class="nav-pill">Pipeline v1.6</span>
     <span class="nav-item active">Pipeline</span>
     <button class="theme-toggle" id="themeToggle">☾ Dark</button>
   </nav>
@@ -1046,67 +1046,82 @@ OUTPUT: 16:9 widescreen, atmospheric wine-red environment with subtle smoke/haze
   const locations = (va.map_locations || []).join(', ');
   const opLabel = va.map_operation_label || '';
   const arrows = (va.map_arrow_directions || []).join('; ');
-  return `Create a cinematic 16:9 background image — a DENSE WEIGHTY tactical battle map composition with strong glow on the right — for a YouTube thumbnail in BATTLE MAP COMPOSITE style. THIS IS A BACKGROUND ONLY — DO NOT INCLUDE ANY PEOPLE OR FACES.
+  return `Create a cinematic 16:9 background image — a FULL-FRAME tactical battle map that fills the ENTIRE width of the image, with a soft warm red glow zone concentrated on the right side where the general will be composited in Pass 2. THIS IS A BACKGROUND ONLY — DO NOT INCLUDE ANY PEOPLE OR FACES.
 
-LAYOUT (CRITICAL):
-- LEFT 50% of frame: a DENSE detailed tactical battle map filling the entire left half — substantial geographic landmasses, multiple bold sweeping arrows, scattered unit markers, large readable place name labels. The map should look like a real wall-mounted military operations map, NOT a sparse infographic.
-- RIGHT 50% of frame: deep wine-red field with an ATMOSPHERIC WARM GLOW radiating outward from the right-center area where the general will be added in Pass 2. The glow looks like warm red light dispersing through smoky haze — irregular, soft, bleeding outward through the dark wine-red field. NO defined oval shape, NO disc, NO sharp edges. Color brightens through the glow zone (#c8202b to #d92d3a at brightest), fading smoothly and irregularly outward.
-- Soft gradient transition between map (left) and red field (right) — no hard edge
+CORE LAYOUT (CRITICAL — this is a NEW architecture, read carefully):
+- The TACTICAL MAP fills the ENTIRE 16:9 frame edge-to-edge — left edge to right edge, top to bottom. There is NO separate "wine-red field" panel on the right side. The map IS the entire background.
+- The map's color, lighting, and saturation transition gradually as you move LEFT to RIGHT:
+  - LEFT 30-40%: map at its FULL clear visibility — bright saturated colors, all geographic detail visible, sharp readable labels and arrows
+  - CENTER 30%: map still fully visible but with subtle warm red atmospheric tint beginning to overlay
+  - RIGHT 30-40%: the map content is STILL THERE underneath, but a wide soft warm red glow zone overlays the map — the map's geography, arrows, and unit markers remain partially visible THROUGH the red glow, just darker/redder. The right edge of the frame fades into deep wine-red atmospheric haze.
+- The transition from clear-map (left) to red-tinted-map (right) is GRADUAL and SMOOTH — no hard edge, no vertical split, no visible boundary. It looks like a single map illuminated by a warm red light source on the right side.
 
-MAP DENSITY (CRITICAL — DO NOT make a sparse map):
-The map must FILL the entire left 50% of the frame with substantial visual content:
-- Land masses are LARGE bold geographic shapes that span most of the left half — no large empty void areas
-- Multiple regions, coastlines, rivers, terrain features traced in dark lines
-- 4-6 BOLD SWEEPING ARROWS (not 1-2 small ones) — long arrows that traverse significant distance across the map
-- 5-8 unit markers (tank silhouettes, infantry icons) scattered across the territory implying scale and a real operation
-- Border lines, rivers, contour lines as supporting detail
-- The map should feel WEIGHTY — like a poster of a wartime operations briefing, full of information
+THE WARM RED GLOW ZONE (right side):
+- Wide soft glow concentrated in the RIGHT THIRD of the frame, brightest in the upper-right area where the general's head will sit
+- Color: warm crimson (#c8202b at brightest, #b91c1c surrounding) — saturated, atmospheric
+- The glow is rendered as warm light dispersing through atmospheric haze, with the map content visible THROUGH the glow (not replaced by it). Imagine spotlighting a wall map with a warm red light from the right — the map is still there, just tinted and somewhat obscured by the warm light haze.
+- NO defined oval, circle, or disc shape. The glow has irregular soft boundaries that blend smoothly with the map underneath.
+- The glow is SOFT enough that the map's place name labels, arrows, and unit markers in the right side remain at least partially visible through it.
 
-THE BATTLE MAP (LEFT 50%):
-- Period military operations map style, like a 1940s tactical wall map document
-- Map background: very dark navy/near-black (#0a0e1a to #000000) with subtle wine-red tint at outer edges
-- Land masses: solid muted dark gray-navy (#1a1e2a) — fill, NOT outline-only. Land has weight and presence.
-- Water: deeper near-black, occasionally with subtle red glow accents
-- Country borders: thin dotted/dashed white lines
-- Rivers: thin curved lines in slightly lighter tone
-- Coastlines: clean defined edges with subtle depth shadow
+MAP COLOR & SATURATION (CRITICAL — boost saturation, the map should be PUNCHY):
+- Map water/ocean: rich saturated DEEP NAVY BLUE (#1e3a8a to #1e40af) — vibrant blue, NOT muddy gray-navy, NOT dull. The blues should clearly read as deep ocean blue.
+- Map land masses: muted warm beige-gray (#3a3530 to #4a4540) — solid filled landmass shapes with weight, contrasting clearly against the saturated blue water
+- Country borders: clean dotted white lines, clearly visible
+- Rivers and waterways: thin lines in slightly lighter blue tones
+- Topographic detail: subtle contour lines, terrain hints, mountain shading where geographically appropriate
+- The overall map looks like a high-quality 1940s military operations wall map — punchy, readable, well-designed
 
-REAL PLACE NAMES (from script research — render these EXACTLY as LARGE BOLD labels on the map):
+MAP DENSITY (DO NOT make a sparse map):
+- The map fills the entire frame with substantial visual content — no empty void areas
+- Multiple regions, coastlines, rivers, terrain features
+- 4-6 BOLD SWEEPING ARROWS traversing significant distance across the map
+- 5-8 unit markers (tank silhouettes, infantry icons) scattered across the territory
+- The map should feel WEIGHTY — like a real operations briefing, full of information
+
+REAL PLACE NAMES (from script research — render these EXACTLY as labels at appropriate geographic positions):
 ${locations}
-- Cities/atolls/landmarks: ALL CAPS, BOLD serif type at SUBSTANTIAL size (cities should be readable from across a room) — white/cream ink
+- Cities/atolls/landmarks: ALL CAPS, BOLD serif type at substantial readable size, white/cream ink with subtle dark plate behind text for legibility
 - Region/sea labels: italic small caps, slightly smaller, lighter cream
-- Render every label CLEAN and LEGIBLE — no garbled text, no fake-looking words. Spelling MUST be exact.
-- Position labels at appropriate geographic positions, with subtle background glow plate behind label text for readability against the map
+- Spelling MUST be exact — no garbled or fake-looking words
+- Distribute labels across the FULL width of the map — including the right side (some place names should be in the right portion of the map, partially under the warm red glow)
 
-TACTICAL ARROWS (CRITICAL — these are the dramatic visual story):
+TACTICAL ARROWS (CRITICAL — saturated and punchy):
 ${arrows}
-- 4-6 arrows total — SWEEPING and LONG, traversing significant distance across the map
-- Friendly forces (offensive): saturated bright RED arrows (#dc2626 to #c8202b), 14-18 pixels wide at the tail, tapering to bold arrowheads. Curved sweeping paths, not stubby straight ones.
-- Enemy forces (defensive): dark steel-gray (#475569) or dark blue arrows, 10-14 pixels wide, opposing the red arrows
-- Arrows have a slight glow/shadow drop for visual weight
-- Some arrows curve dramatically to imply movement and momentum
+- 4-6 arrows total — SWEEPING, LONG, traversing significant map distance
+- Friendly forces (offensive): saturated bright RED arrows (#ef4444 at brightest, #dc2626 body) — VIBRANT and PUNCHY, 14-18 pixels wide at tail, tapering to bold arrowheads. Curved sweeping paths.
+- Enemy forces (defensive): saturated bright BLUE arrows (#2563eb to #1d4ed8) — vibrant blue, NOT dull steel-gray. 10-14 pixels wide, opposing the red arrows.
+- Both colors should be SATURATED and POP against the map — these are the dramatic visual story
+- Arrows have subtle glow/drop shadow for visual weight
+- Some arrows can curve dramatically to imply movement
 
 UNIT MARKERS:
-- 5-8 small silhouettes scattered across the territory: black tank silhouettes, infantry icons, naval ship icons where appropriate to theater
-- Sized small but clearly visible — implies a real operation with multiple units engaged
+- 5-8 small silhouettes scattered across the territory: black tank silhouettes, infantry icons, naval ship icons where appropriate
+- Sized small but clearly visible
 - Positioned at strategically appropriate points (along arrow paths, at battle points, near contested cities)
 
-OPERATION HEADER (upper-left of map, render exactly):
+OPERATION HEADER (upper-left corner of map, render exactly):
 "${opLabel}"
-- Bold serif type, LARGER size, white/cream ink, on a slightly darker background plate with thin border
+- Bold serif type, substantial size, white/cream ink, on a slightly darker background plate with thin border
 - Spelling MUST be perfect
 
-RIGHT 50% (subject zone — empty but with HALO):
-- Deep wine-red field per palette rules
-- ATMOSPHERIC WARM GLOW in the right-center area where the general will be added in Pass 2 — render as warm crimson light (#c8202b to #d92d3a at brightest) dispersing through smoky atmospheric haze, irregular soft boundaries, NEVER a defined oval/circle/disc shape. The glow is visibly brighter than the surrounding wine-red but rendered atmospherically, not geometrically.
-- Strong dark vignette in upper-right and lower-right corners falling to near-black
-- NO people, NO objects, NO text in this zone — pure atmospheric red with halo, ready for compositing
+CRITICAL — leave the subject zone empty (no people):
+- The right side of the frame, where the general's silhouette will be composited in Pass 2, should contain ONLY the map (with red glow overlay) — NO person, NO figure, NO body
+- The map content underneath the glow zone is fine — the general will be overlaid in Pass 2
 
-${PALETTE_INSTRUCTIONS}
-(Exception: bright red/steel arrows on map are tactical, they stay vivid. The map's dark navy/near-black background sits naturally next to the wine-red field on the right.)
-${NEGATIVE_REQUIREMENTS}
+LIGHTING & MOOD:
+- The map is a flat 2D rendered surface (not a 3D object) — even lighting across the surface, EXCEPT for the warm red glow concentrated on the right
+- Strong dark vignette in all four corners, especially upper-right and lower-right
+- Premium documentary key art quality
 
-OUTPUT: 16:9 widescreen, DENSE detailed tactical map on left with substantial geographic shapes and PROPERLY SPELLED real place names, wine-red field on right with an atmospheric warm glow (irregular, soft, NOT a disc/oval shape) where the general will go in Pass 2. NO PEOPLE.`;
+NEGATIVE REQUIREMENTS:
+- NO people, NO faces, NO figures
+- NO defined oval/circle/disc glow shape
+- NO hard vertical split between "map zone" and "red zone" — they are ONE unified map with red glow overlay on the right
+- NO sparse or empty map — fill the frame with content
+- NO muddy or desaturated colors — both blues and reds should be vibrant
+- NO modern UI elements, watermarks, or borders
+
+OUTPUT: 16:9 widescreen, FULL-FRAME tactical battle map (edge to edge, no panel split) with PROPERLY SPELLED real place names and saturated punchy red/blue arrows, with a wide soft warm red glow overlaying the right side (map still visible underneath), ready for general compositing in Pass 2. NO PEOPLE.`;
 },
 
 'period-archive': (va) => {
@@ -1315,22 +1330,42 @@ OUTPUT: 16:9 widescreen, the provided background with a single dominant general 
   }
 
   if (style === 'battle-map') {
-    return `Take the provided battle map background image and add a ${va.general_name || 'WWII American general'} as the portrait subject in the right half of the frame. Keep the LEFT 50% (the tactical battle map with all its place name labels and arrows) EXACTLY as provided. Only add the general into the right-side subject zone.
+    return `Take the provided full-frame battle map background image and composite a ${va.general_name || 'WWII American general'} as a sharply-outlined portrait subject overlapping the RIGHT side of the map. The map fills the entire frame — the general's silhouette will partially obscure the right portion of the map. The map content underneath the warm red glow zone on the right remains visible AROUND and BEHIND the general (between his arm and frame edge, above his head, etc.) — only the parts directly behind his solid silhouette are covered.
 
-The general's head should fill the upper-right area with 5-10% margin from frame top. Head positioned at approximately 75% from left edge. Body visible from upper chest up.
+GENERAL POSITION & SCALE:
+- Head positioned at approximately 75-78% from left edge of frame
+- Head occupies upper-third of frame with 5-10% margin from frame top
+- Body extends down to approximately 70% of frame height (full upper torso, chest, shoulders all visible)
+- Three-quarter view from slightly low angle for authority
+- The general is LARGE in the frame — clearly the dominant figure, similar scale to a magazine cover portrait
+
+SHARP CLEAN SILHOUETTE (CRITICAL):
+- The general has a SHARP CLEAN OUTLINE against the map background — NO feathering, NO smoke-merge at his edges, NO soft fade into the red glow
+- His silhouette is crisply defined, 3D-rounded, with proper light and shadow modeling
+- The warm red glow surrounds him atmospherically (visible above and to the sides of his silhouette) but does NOT touch or feather into his outline
+- Clean edge separation — the general clearly "stands in front of" the map, sharply defined
 
 ${baseFaceBlock}
 
+CRITICAL — IDENTITY LOCK (DO NOT ALTER FACE):
+- The general's face MUST be a PHOTOGRAPHIC MATCH to the user-uploaded reference photos
+- Do NOT stylize. Do NOT generalize. Do NOT make it look like a CGI character or a 3D render with smooth plastic skin.
+- Do NOT make him look like a different person, do NOT shift age, do NOT change his bone structure
+- Match skin texture, every wrinkle, every line, the exact eye color, exact hair, exact face shape
+- Reference quality: a real photograph of a real general from period archives — film-grain photographic, NOT digital painting, NOT stylized illustration
+- If reference photo shows a 50-year-old man with weathered skin and graying hair, render exactly that — NOT a younger smooth-faced version
+
 PRESERVE THE BACKGROUND:
-- Keep the LEFT 50% battle map EXACTLY — every place name, arrow, unit marker, operation label must remain identical to the input image
-- Keep the wine-red atmospheric field on the right exactly
+- Keep the FULL-FRAME battle map exactly as provided — every place name, arrow, unit marker, operation label, geographic detail must remain identical
+- The map content remains visible in all areas NOT directly covered by the general's solid silhouette — including the right side under the red glow (where map should still be visible underneath the glow)
+- Keep the warm red glow zone on the right exactly as provided — but the general's silhouette overlays it (the glow is now "behind" him atmospherically)
 - Keep the dark vignette and corner falloff exactly
-- Only ADD the general into the right-side subject zone — do not alter or regenerate any other part of the image
+- Do NOT regenerate or alter any part of the map
 
 ${FACE_INSTRUCTIONS}
 ${NEGATIVE_REQUIREMENTS}
 
-OUTPUT: 16:9 widescreen, the provided battle map background with a general portrait composited into the right side, sharp face, all map labels preserved, atmospheric wine-red mood preserved.`;
+OUTPUT: 16:9 widescreen, full-frame battle map with the general sharply outlined and composited into the right side, his silhouette overlapping the map (map still visible around him), photographic identity match to reference photos, NOT cartoon or stylized.`;
   }
 
   if (style === 'period-archive') {
@@ -2577,7 +2612,7 @@ function escapeHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-console.log('American Brass v1.5 — Atmospheric glow (not disc), saturated uniforms, red theme');
+console.log('American Brass v1.6 — Battle Map full-frame architecture + identity lock + sharp silhouette');
 </script>
 </body>
 </html>
