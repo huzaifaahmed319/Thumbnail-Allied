@@ -535,7 +535,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
     <span class="brand-name">American Brass</span>
   </div>
   <nav class="header-nav">
-    <span class="nav-pill">Pipeline v1.7</span>
+    <span class="nav-pill">Pipeline v1.8</span>
     <span class="nav-item active">Pipeline</span>
     <button class="theme-toggle" id="themeToggle">☾ Dark</button>
   </nav>
@@ -1073,123 +1073,69 @@ const STYLE_PROMPTS = {
 // ---------------------------------------------------------------------
 'battle-map': (va, expression, bannerWord, overlayEnabled) => {
   const locations = (va.map_locations || []).join(', ');
-  const opLabel = va.map_operation_label || '';
   const arrows = (va.map_arrow_directions || []).join('; ');
   const expressionText = EXPRESSION_DESCRIPTIONS[expression] || EXPRESSION_DESCRIPTIONS['stern'];
   const generalName = va.general_name || 'WWII American general';
 
-  return `Create a 16:9 YouTube thumbnail in BATTLE MAP COMPOSITE style — a graphic poster design with three flat visual layers: a tactical battle map on the LEFT, a flat solid red panel on the RIGHT, and a chest-up studio portrait of ${generalName} composited on the right panel.
+  return `Create a 16:9 YouTube thumbnail in BATTLE MAP COMPOSITE style.
 
-================================================
-PHILOSOPHY: GRAPHIC POSTER, NOT CINEMATIC SCENE
-================================================
-This is a magazine-cover style graphic design with FLAT LAYERED composition — NOT an atmospheric cinematic scene. Reference: think album cover, sports trading card, or news magazine cover. Three distinct visual layers cleanly stacked: flat map graphic + flat red color panel + sharp photographic portrait on top.
+LAYOUT:
+A tactical battle map fills the entire 16:9 frame as one continuous edge-to-edge image. The map is bright and clearly detailed on the left side, and gradually fades into deep red atmosphere on the right side where the general sits. The fade is smooth and continuous — the map is one unified image transitioning across the frame.
 
-================================================
-LAYOUT (CRITICAL)
-================================================
-The frame is divided into TWO distinct zones:
+A chest-up studio portrait of ${generalName} sits in the right portion of the frame, wrapped in a soft red atmospheric aura that frames his silhouette and merges him into the right-side red atmosphere of the map.
 
-LEFT ZONE (occupies ~50-55% of frame width, from left edge):
-- A tactical battle map design
-- Map content fills this entire left zone
-- The map has its own clean rectangular boundary that ends at the zone's right edge
+THE BATTLE MAP:
+- Style: 1940s wartime operations briefing, flat illustrated graphic — highly detailed and saturated, NOT photorealistic
+- Map base: deep wine-red (#7a1820 to #5a1015) across the entire map, with the right side deepening into darker red atmosphere where the general sits
+- Land masses: solid filled muted gray-tan shapes (#3a3530), clearly defined with weight against the wine-red base
+- Water (only include if the campaign actually involves water — coast, river, ocean. If the campaign is entirely inland, skip water): saturated bright navy blue (#1e3a8a to #1e40af) — vivid, clearly reads as water
+- Country borders: clean dotted white lines
+- Topographic detail: subtle contour lines, terrain hints
 
-RIGHT ZONE (occupies ~45-50% of frame width, on the right side):
-- A FLAT SOLID DEEP RED PANEL — uniform saturated red color (#a01818 to #b91c1c range), NO gradients, NO atmospheric haze, NO smoky texture, NO map content showing through
-- This is a clean flat color block, like a poster's solid color section
-- The general's portrait will sit on top of this red panel
+ARROWS — DENSE CLASHING ARROWS:
+Many small punchy arrows arranged densely across the territory, with red and blue arrows clashing head-on at battle lines and borders to show the clash of forces. Not long sweeping strokes — short tactical arrows in tight engagement clusters.
+- Friendly forces: saturated bright red arrows (#ef4444 to #dc2626), 6-10 pixels wide, short and punchy
+- Enemy forces: saturated bright blue arrows (#2563eb to #1d4ed8), 6-10 pixels wide, short and punchy
+- 8-15 arrows total — dense and active
+- Red and blue arrows meet head-on at battle points, arrowheads colliding to show direct combat engagement
+- Some arrows curve, some advance straight, but the visual story is dense clashing engagement
 
-The TRANSITION between map (left) and red panel (right):
-- Can be a soft 3-5% gradient blend OR a clean hard edge — either reads as a graphic poster
-- NO map bleeding deep into the red zone, NO red bleeding deep into the map zone
-- Two distinct flat zones cleanly side-by-side
+Reference arrow directions from the script: ${arrows}
 
-================================================
-THE BATTLE MAP (LEFT ZONE)
-================================================
-Style: A graphic illustrated tactical battle map, 1940s wartime operations briefing aesthetic, flat illustrated style (NOT photorealistic, NOT 3D).
-
-Map background: A dark navy/near-black slate (#0a1424 to #050a14)
-Land masses: Solid filled muted gray-warm-tan (#3a3530 to #4a4540) — clear distinct landmass shapes with weight, contrasting clearly against the saturated water
-Water/ocean: SATURATED DEEP NAVY BLUE (#1e3a8a to #1e40af) — vivid blue, clearly reads as ocean, NOT muddy gray, NOT desaturated
-Country borders: Clean dotted/dashed white lines, clearly visible
-Rivers: Thin curved lines in lighter blue tones
-Topographic detail: Subtle contour lines, terrain hints where geographically appropriate
-
-REAL PLACE NAMES (render EXACTLY at appropriate geographic positions):
+PLACE NAMES (render exactly, distributed across the map):
 ${locations}
-- Cities/atolls/landmarks: ALL CAPS, BOLD serif type at substantial readable size, white/cream ink (#f5f0e0) with a subtle dark plate behind text for legibility
-- Region/sea labels: italic small caps, slightly smaller, lighter cream
-- Spelling MUST be exact — no garbled text, no fake-looking words
-
-TACTICAL ARROWS (saturated and punchy — these are the visual story):
-${arrows}
-- 4-6 arrows total, sweeping and substantial
-- Friendly forces (offensive): SATURATED bright RED arrows (#ef4444 at brightest, #dc2626 body) — vibrant and punchy, 14-18 pixels wide at tail, tapering to bold arrowheads, curved sweeping paths
-- Enemy forces (defensive): SATURATED bright BLUE arrows (#2563eb to #1d4ed8) — vivid blue, NOT dull steel-gray, 10-14 pixels wide, opposing the red arrows
-- Both colors clearly POP against the dark map
-- Subtle drop shadow under arrows for visual weight
+- ALL CAPS bold serif, white/cream ink, subtle dark plate behind for legibility
+- Spelling MUST be exact
 
 UNIT MARKERS:
-- 5-8 small black silhouettes scattered across the territory: tank silhouettes, infantry icons, naval ships where appropriate
-- Sized small but clearly visible
-- Positioned at strategically appropriate points along arrow paths and at battle locations
+- 5-8 small black tank silhouettes and infantry icons scattered along arrow paths and at battle points
 
-OPERATION HEADER (upper-left of map zone, render EXACTLY):
-"${opLabel}"
-- Bold serif type, substantial size, white/cream ink, on a slightly darker plate with thin border
-- Spelling MUST be perfect
+THE GENERAL — CHEST-UP PORTRAIT IN RED AURA ZONE:
+A photographic chest-up portrait of ${generalName} sits in the right portion of the frame, surrounded by a soft red glowing aura that frames his silhouette and blends him into the right-side red atmosphere.
 
-The map fills its entire left zone densely — no empty void areas, weighty operations-briefing feel.
+- Position: head at ~75% from left edge, fills the upper half of frame
+- Crop: tight at mid-chest — only upper chest, shoulders, collar, top of medal ribbons visible
+- Pose: three-quarter view from slightly low angle for authority
+- Expression: ${expressionText} — the expression (eyes, brow, mouth) reflects this mood while the underlying facial identity stays locked to the reference photos
 
-================================================
-THE RED PANEL (RIGHT ZONE)
-================================================
-- A FLAT SOLID deep red color (#a01818 base, can use very subtle #b91c1c brighter zone behind the general's silhouette area for slight visual depth, but kept SUBTLE — this is essentially a flat panel, not a glow)
-- NO atmospheric haze, NO smoke, NO gradient streaks, NO map content visible through it
-- Uniform flat color across the entire right zone
-- Optional: very subtle paper-grain or canvas texture at low opacity for poster feel (but the impression is FLAT solid color)
+RED AURA AROUND THE GENERAL:
+A soft red glowing aura wraps around the general's silhouette — warm crimson light (#c8202b at brightest, fading through #b91c1c into the surrounding deep red atmosphere). The aura is atmospheric and irregular, like warm red light dispersing through haze around him. It blends his silhouette smoothly into the red atmospheric zone of the map.
 
-================================================
-THE GENERAL (composited on right panel)
-================================================
-The general's chest-up portrait sits cleanly ON TOP of the red panel — like a magazine cover photograph placed on a designed cover. Sharp clean silhouette, no atmospheric merging.
+The aura is RED only — never white, never light-colored, never a hard outline. It is glow, not edge.
 
-POSITION & SCALE:
-- Head positioned at approximately 75% from left edge of frame (centered within the right red zone)
-- Head fills the UPPER HALF of the frame (head occupies upper ~50% of frame height — large and dominant)
-- Top of helmet/cap has 5-10% margin from frame top
-- Crop tight at MID-CHEST — only upper chest, shoulders, collar, top of medal ribbons visible at the bottom edge
-- This is a CHEST-UP magazine portrait crop — face is the dominant element
+STUDIO LIGHTING ON THE GENERAL'S FACE AND UNIFORM:
+The general is lit by a bright clean studio key light from upper-front-left — bright warm white-daylight light independent of the red atmosphere around him. His face and uniform are brightly lit and well-exposed.
 
-EXPRESSION:
-${expressionText}
+UNIFORM — BRIGHT OLIVE:
+US Army officer service uniform in BRIGHT OLIVE — clearly light warm green-tan-olive (#7d8a52 to #8e9a5a), brightly lit and popping forward. Brass buttons polished gold (#d4b164) with specular highlights. "U.S." brass collar pins bright and readable. Rank insignia bright polished metal. Medal ribbons rendered as distinct readable colored stripes (red, blue, gold, white) — clear, not smudgy. Necktie khaki tan, shirt cream-tan.
 
-${POSE_AND_CROP}
+FACE IDENTITY:
+Exact photographic match to reference photos for facial identity — bone structure, age, skin tone, eye color, hair color and style, every wrinkle and line. Expression varies per the EXPRESSION instruction above (eyes, brow, mouth shape) but the underlying face is the same person from the reference photos. Photographic film-grain quality, sharp realistic skin detail. Real photograph, not digital painting, not CGI, not smooth plastic skin.
 
-${STUDIO_LIGHTING}
-
-${FACE_IDENTITY_LOCK}
-
-CLEAN SILHOUETTE (CRITICAL):
-- The general has a SHARP CLEAN OUTLINE against the red panel — crisp edges, NO feathering, NO merging into the red
-- He is clearly a photographic portrait LAYERED ON TOP of the red panel — three distinct visual layers (map, red panel, portrait) with no blending between them
-- Subtle drop shadow under his silhouette is acceptable for graphic poster depth (small, soft, neutral gray drop shadow at low opacity)
-- The red panel remains a flat color around him — NO red rim light wrapping his silhouette, NO atmospheric glow merging him into the panel
-
-================================================
-${GENERAL_NEGATIVE}
-================================================
-
-ADDITIONAL NEGATIVES SPECIFIC TO BATTLE MAP:
-- NO map content showing through the red panel — the red panel is solid
-- NO red bleeding into the map zone — they are distinct adjacent zones
-- NO atmospheric glow blending the general into the red panel
-- NO red ambient bounce light on the general's face — he's lit by his own studio white key light
-
-OUTPUT: A 16:9 YouTube thumbnail with FLAT POSTER COMPOSITION — tactical battle map on left zone with properly spelled real place names and saturated red/blue arrows, flat solid deep red panel on right zone, sharp chest-up studio portrait of the general placed cleanly on top of the red panel with bright lit uniform and photographic identity match. Three distinct flat visual layers.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
+OUTPUT: A 16:9 YouTube thumbnail. Full-frame tactical battle map with wine-red base and bright blue water (if applicable), dense clashing red and blue arrows, fading smoothly into deep red atmosphere on the right. A chest-up portrait of the general sits in the red atmospheric zone surrounded by a soft red aura, with bright olive uniform, sharply photographic face matching the reference identity, expressive but identity-locked.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
 },
+
+
 
 // ---------------------------------------------------------------------
 // PORTRAIT HERO — collapsed two-pass to single-pass (no architectural rewrite yet)
@@ -2432,7 +2378,7 @@ function escapeHtml(str) {
 }
 
 
-console.log('American Brass v1.7 — Single-pass collapse + Battle Map graphic-poster rewrite + chest-up crop + bright lit uniforms');
+console.log('American Brass v1.8 — Battle Map: positive-language, red aura around general, dense clashing arrows, wine-red base');
 </script>
 </body>
 </html>
