@@ -488,6 +488,61 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 }
 .tile-action:hover { background: var(--accent); }
 
+.composite-all-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px; margin-bottom: 14px;
+  background: var(--bg-elevated); border: 1px solid var(--accent);
+}
+.composite-all-info { display: flex; flex-direction: column; gap: 2px; }
+.composite-all-count {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--accent);
+}
+.composite-all-hint {
+  font-size: 10px; color: var(--text-muted); letter-spacing: 0.05em;
+}
+.composite-all-btn {
+  background: var(--accent); color: white; border: none;
+  padding: 10px 16px; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  cursor: pointer; transition: background 0.15s ease;
+}
+.composite-all-btn:hover:not(:disabled) { background: var(--accent-hover); }
+.composite-all-btn:disabled { background: var(--bg-input); color: var(--text-faint); cursor: not-allowed; }
+
+.output-tile.bg-ready {
+  border-color: var(--warning);
+  position: relative;
+}
+.output-tile.bg-ready::before {
+  content: 'BACKGROUND READY · APPROVE TO COMPOSITE';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  background: rgba(255, 152, 0, 0.95);
+  color: #1a1a1a;
+  padding: 6px 10px;
+  font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase;
+  font-weight: 700;
+  z-index: 3;
+  text-align: center;
+}
+.bg-tile-actions {
+  position: absolute; bottom: 8px; left: 8px; right: 8px;
+  display: flex; gap: 6px; justify-content: space-between;
+  z-index: 2;
+}
+.bg-tile-action {
+  background: rgba(10,14,21,0.92); color: white; border: 1px solid var(--text-muted);
+  padding: 8px 12px; font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; cursor: pointer; font-weight: 700;
+  flex: 1; transition: all 0.15s ease;
+}
+.bg-tile-action.greenlight {
+  background: var(--accent); border-color: var(--accent);
+}
+.bg-tile-action.greenlight:hover { background: var(--accent-hover); }
+.bg-tile-action.regenerate:hover { background: var(--bg-hover); border-color: var(--text); }
+
 .seo-block {
   margin-top: 24px; padding: 18px; background: var(--bg-elevated); border: 1px solid var(--border);
 }
@@ -535,7 +590,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
     <span class="brand-name">American Brass</span>
   </div>
   <nav class="header-nav">
-    <span class="nav-pill">Pipeline v1.3</span>
+    <span class="nav-pill">Pipeline v1.4</span>
     <span class="nav-item active">Pipeline</span>
     <button class="theme-toggle" id="themeToggle">☾ Dark</button>
   </nav>
@@ -769,6 +824,13 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
           </div>
           <div class="switch" id="overlayToggle"></div>
         </div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-info-name">Auto-Composite (Skip Approval)</div>
+            <div class="toggle-info-desc">If on, Pass 2 runs automatically. If off, you approve each Pass 1 background before paying for Pass 2.</div>
+          </div>
+          <div class="switch" id="autoCompositeToggle"></div>
+        </div>
       </div>
 
       <div class="step" id="step6">
@@ -785,6 +847,13 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
           <span class="step-num">08</span>
           <span class="step-title">Output</span>
           <span class="step-status">Awaiting</span>
+        </div>
+        <div class="composite-all-bar" id="compositeAllBar" style="display: none;">
+          <div class="composite-all-info">
+            <span class="composite-all-count" id="compositeAllCount">0 backgrounds ready</span>
+            <span class="composite-all-hint">Review backgrounds below, then composite individually or all at once</span>
+          </div>
+          <button class="composite-all-btn" id="compositeAllBtn">Composite All →</button>
         </div>
         <div class="output-grid" id="outputGrid"></div>
         <div class="seo-block" id="seoBlock" style="display: none;">
@@ -828,42 +897,47 @@ const STYLE_NAMES = {
 };
 
 const PALETTE_INSTRUCTIONS = `
-COLOR PALETTE — DEEP ATMOSPHERIC WINE-RED (CRITICAL):
-This thumbnail uses a deep saturated WINE-RED / BURGUNDY background that's atmospheric and cinematic, NOT a stage spotlight, NOT a flat red wall. Match this palette precisely. Think "premium HBO war documentary key art" — deep cinematic wine-red mood, dark theatrical, with a SOFT subtle brightening behind the subject (not a hot spotlight) and dramatic falloff to near-black at the corners.
+COLOR PALETTE — DEEP CINEMATIC WINE-RED WITH SOFT HALO (CRITICAL):
+This thumbnail uses a deep saturated WINE-RED / BURGUNDY background with a SOFT defined halo behind the subject and dramatic dark vignette at the corners. Match this palette precisely. Think "premium HBO war documentary key art" — deep cinematic wine-red mood with a real but controlled glow behind the subject (not a hot stage spotlight, not a flat field).
 
 REFERENCE IMAGE COLOR SUBSTITUTION:
-The provided style reference image shows COMPOSITION, FRAMING, and DRAMATIC INTENSITY you must match. The background should be deep wine-red per the spec below. Do NOT make the palette cool, blue, amber, orange, sepia, or desaturated.
+The provided style reference image shows COMPOSITION, FRAMING, HALO STRUCTURE, and DRAMATIC INTENSITY you must match. The background should be deep wine-red per the spec below. Do NOT make the palette cool, blue, amber, orange, sepia, or desaturated.
 
 BACKGROUND GRADIENT (precise specification — follow exactly):
-- BEHIND THE SUBJECT (the area the head/shoulders sit against): a SOFT slightly brighter zone of deep red (#7f1d1d to #991b1b range) — this is a SUBTLE atmospheric brightening, NOT a bright glow, NOT a halo, NOT a spotlight. The brightening is gentle — perhaps 15-20% brighter than the surrounding mid-frame. It feels like the subject is sitting in a slightly lit zone of an otherwise dark red space.
-- MID-FRAME (around the subject zone): deep wine-red (#5c0f0f to #3a0808) — the dominant background color, dark and saturated
-- OUTER EDGES AND ALL FOUR CORNERS: near-black with red-black tint (#1a0303 to #050000) — corners should be almost PURE BLACK
-- HEAVY hard-falloff dark vignette — the corners must read as black, NOT as dark red
+- HALO ZONE (directly behind the subject's head and shoulders, occupying ~30-35% of the frame's central area): a SOFT BRIGHT GLOW of saturated red — this halo is roughly 35-50% BRIGHTER than the surrounding mid-frame. Color at brightest: vibrant warm crimson (#c8202b to #d92d3a). The halo has a smooth gradient falloff over ~25% of the radial distance to the edges. The halo MUST be clearly visible — the subject sits inside a real lit zone, NOT against a flat field.
+- MID-FRAME (around the halo, extending outward): deep wine-red (#7a1820 to #5a1015) — saturated dark red, the dominant background color
+- OUTER EDGES AND ALL FOUR CORNERS: near-black with red-black tint (#1a0303 to #050000) — corners must be almost PURE BLACK
+- HEAVY hard-falloff dark vignette in all four corners
 
-CRITICAL — NO STAGE SPOTLIGHT EFFECT:
-Do NOT render the area behind the subject as a bright glowing halo, sunburst, or spotlight. The background is an ATMOSPHERIC deep red FIELD with a gentle brightening behind the subject. The drama comes from the dark vignette at the edges pulling the eye in, NOT from a bright glow pushing the subject forward.
-- Do NOT use bright saturated crimson (#dc2626) as a wide visible glow — that's too aggressive
-- Do NOT make the area behind the head obviously brighter — it should be subtly brighter, atmospheric
-- Do NOT render rays, light beams, or radial gradient lines emanating from behind the subject
-- The background should look like a deep red moody photograph, not a poster with a backlight
+THE HALO IS REAL AND VISIBLE (CRITICAL — this is what makes the subject pop):
+- The halo behind the head is NOT a subtle atmospheric brightening — it is a DEFINED visible glow zone, roughly elliptical/oval, soft-edged, clearly brighter than the mid-frame
+- Think of it as a backlight from behind the subject lighting up the wall — soft warm red glow, defined shape, soft edges
+- HOWEVER it is NOT a hot stage spotlight: no rays, no sunburst, no dramatic light beams, no harsh edges. Soft, atmospheric, but DEFINED.
+- The halo color stays warm red — never pink, never orange, never amber
+
+GLOW FALLOFF (the curve from halo to corners):
+- From the bright halo center → mid-frame deep wine-red: smooth ~25% radial gradient
+- From mid-frame → corner near-black: sharper ~20% radial falloff (dramatic vignette)
+- The eye should be naturally pulled to the halo zone where the subject sits
 
 CRITICAL — AVOID THESE FAILURE MODES:
-- DO NOT use bright fire-engine red across the whole background — too pulpy, flat, no depth
-- DO NOT make the background amber, orange, sepia, brown, or tobacco-colored — this is RED, deep wine-red specifically
-- DO NOT make a dramatic spotlight or sunburst behind the subject — it should be atmospheric, not theatrical
-- DO NOT desaturate — this palette only works at high saturation in the red channels
+- DO NOT make the background flat with no halo — the halo must be visibly brighter (~35-50% brighter than mid-frame). A flat dark red wall is WRONG.
+- DO NOT make the halo a hot bright stage spotlight or sunburst — soft and defined, not theatrical
+- DO NOT use bright fire-engine red (#dc2626 across whole frame) — too pulpy, no depth
+- DO NOT make the background amber, orange, sepia, brown, or any non-red warm color
+- DO NOT desaturate — high saturation throughout
 - DO NOT use steel blue, cyan, teal, green, or any cool color in the background
 - DO NOT make the corners dark red — corners must read as near-black
 
-OVERALL MOOD: Premium, cinematic, theatrical, high-stakes investigative documentary key art. Deep saturated atmospheric wine-red with strong dark falloff at the edges. Punchy and eye-catching but with depth and contrast — magazine-cover quality. Like an HBO miniseries poster — moody, deep, controlled. NOT a pulpy paperback cover, NOT a stage with a spotlight.
+OVERALL MOOD: Premium, cinematic, theatrical, high-stakes investigative documentary key art. Deep saturated wine-red with a defined backlight halo behind the subject and dramatic dark falloff at the edges. Punchy, eye-catching, depth — magazine-cover quality. Like an HBO miniseries poster — moody, deep, controlled.
 
 CONTRAST RULES (CRITICAL — this is what makes the subject pop):
-- The subject's face is WARMLY LIT from a hard key light source (front-left at 45°) — this front lighting is what makes the face stand out, NOT a backlight halo
+- Subject is illuminated by a HARD KEY LIGHT from upper-front-left at ~45° — bright warm front lighting on the face
+- Subject also receives a thin WARM RIM LIGHT along the right edge of face/shoulders/helmet from the halo behind — gives 3D edge separation from the background
 - Strong dark shadows under the jaw, helmet brim, and on the side opposite the key light
-- The corners of the frame fall off into NEAR-BLACK so the eye is pulled hard to center
-- VERY HIGH overall contrast between the bright lit face and the dark vignette edges
-- The subject reads as 3D-rounded with proper light/shadow on the face — NOT flat
-- A thin warm rim light along the edges of the face/shoulders (from a KEY light, not from background) gives subtle separation from the red field
+- The face is the BRIGHTEST element in the frame — clearly brighter than the halo behind
+- The face reads as 3D-rounded and dimensional, NOT flat — proper light/shadow modeling on the features
+- The halo behind provides background-to-subject contrast and color separation; the rim light provides edge separation; the key light makes the face pop
 
 The lower-center area can be slightly darker to make banner overlay readable in post.
 `;
@@ -897,65 +971,108 @@ NEGATIVE REQUIREMENTS (DO NOT INCLUDE):
 // general into. visual_assets from the brain are injected at runtime.
 
 const BACKGROUND_PROMPTS = {
-'portrait-hero': (va) => `Create a cinematic 16:9 background image in deep atmospheric wine-red palette — for a YouTube thumbnail in PORTRAIT HERO style. THIS IS A BACKGROUND ONLY — DO NOT INCLUDE ANY PEOPLE OR FACES IN THIS IMAGE.
+'portrait-hero': (va) => `Create a cinematic 16:9 background image in deep wine-red palette WITH ATMOSPHERIC TEXTURE — for a YouTube thumbnail in PORTRAIT HERO style. THIS IS A BACKGROUND ONLY — DO NOT INCLUDE ANY PEOPLE OR FACES IN THIS IMAGE.
 
-The background should be a moody atmospheric wine-red field with strong dark vignette. The right-center area (where a person's head and shoulders would later be placed in a portrait composition) should be a slightly brighter zone of deep red — NOT a glow, NOT a halo, just a subtle atmospheric brightening. The corners must fall off into near-black.
+NOT A FLAT BACKDROP (CRITICAL):
+The background must NOT be a flat empty studio wall. It should be a textured atmospheric environment — the kind of moody backdrop you'd see in a premium war documentary key art. Add subtle textural and atmospheric elements throughout:
 
-The image should look like a backdrop or studio backdrop — entirely empty space, ready for a portrait subject to be added later. NO furniture, NO objects, NO text, NO people. Just the deep red atmospheric field with vignette.
+ATMOSPHERIC TEXTURE (add all of these subtly):
+- Soft volumetric haze and smoke drifting through the upper portion of the frame, faintly visible against the wine-red, suggesting battlefield smoke or atmospheric depth
+- Very subtle distant abstract shapes in the deep shadow areas — vague suggestions of architectural silhouettes, distant landscape, or military equipment, barely perceptible (NOT clear objects, just shadowy hints of form in the deep red darkness)
+- Fine film grain texture across the entire image
+- Subtle dust particles catching light in the halo zone
+- Very slight gradient streaks suggesting atmospheric depth
+- Faint texture variations giving the wall/environment subtle imperfection
 
-CRITICAL: Leave a clear "subject zone" centered slightly right (around 55-60% from left, vertically centered) where the general will be added in Pass 2. This zone should be the slightly brighter atmospheric red area.
+THE HALO (CRITICAL — must be defined and visible):
+- A DEFINED SOFT BRIGHT HALO in the right-center area where the general will be added in Pass 2
+- Halo position: roughly centered on the area where a person's head and upper shoulders would sit (around 55-60% from left, vertically positioned in the upper-mid third)
+- Halo shape: soft elliptical/oval, smooth-edged, occupying ~30-35% of the frame's central-right area
+- Halo brightness: ~35-50% brighter than the surrounding mid-frame
+- Halo color: vibrant warm crimson (#c8202b to #d92d3a at the brightest center)
+- This halo MUST be clearly visible — it's what will give the general atmospheric pop in Pass 2
+- Soft gradient falloff from halo to surrounding deep wine-red (~25% radial distance)
+
+LAYOUT:
+- The halo zone occupies center-right (~55-60% from left)
+- The mid-frame deep wine-red surrounds the halo
+- Strong dark vignette pulls all four corners into near-black
+- Atmospheric texture and smoke throughout
+
+CRITICAL — leave the subject zone empty:
+- Where a portrait subject would later be placed (centered slightly right, head occupying upper-third of the right-center area), leave NO person, NO face, NO defined figure
+- Just the atmospheric red environment with the halo glow
 
 ${PALETTE_INSTRUCTIONS}
 ${NEGATIVE_REQUIREMENTS}
 
-OUTPUT: 16:9 widescreen background image, deep atmospheric wine-red, NO PEOPLE, NO TEXT, ready for subject compositing in Pass 2.`,
+OUTPUT: 16:9 widescreen, atmospheric wine-red environment with subtle smoke/haze/grain texture and a defined visible halo in the right-center subject zone. NO PEOPLE, NO TEXT, ready for subject compositing in Pass 2.`,
 
 'battle-map': (va) => {
   const locations = (va.map_locations || []).join(', ');
   const opLabel = va.map_operation_label || '';
   const arrows = (va.map_arrow_directions || []).join('; ');
-  return `Create a cinematic 16:9 background image — a tactical battle map composition in deep atmospheric wine-red palette — for a YouTube thumbnail in BATTLE MAP COMPOSITE style. THIS IS A BACKGROUND ONLY — DO NOT INCLUDE ANY PEOPLE OR FACES.
+  return `Create a cinematic 16:9 background image — a DENSE WEIGHTY tactical battle map composition with strong glow on the right — for a YouTube thumbnail in BATTLE MAP COMPOSITE style. THIS IS A BACKGROUND ONLY — DO NOT INCLUDE ANY PEOPLE OR FACES.
 
 LAYOUT (CRITICAL):
-- LEFT 50% of frame: detailed tactical battle map with proper geography, place name labels, and bold tactical arrows
-- RIGHT 50% of frame: deep atmospheric wine-red field with dark vignette in corners — this is the "subject zone" where the general will be added in Pass 2 (leave it empty of any subject, just atmospheric red)
-- Soft gradient between map (left) and red field (right) — no hard edge
+- LEFT 50% of frame: a DENSE detailed tactical battle map filling the entire left half — substantial geographic landmasses, multiple bold sweeping arrows, scattered unit markers, large readable place name labels. The map should look like a real wall-mounted military operations map, NOT a sparse infographic.
+- RIGHT 50% of frame: deep wine-red field with a defined SOFT BRIGHT HALO in the right-center area where the general will be added in Pass 2. The halo behind the future subject is roughly 35-50% brighter than the surrounding mid-frame — clearly visible, soft-edged, oval/elliptical shape.
+- Soft gradient transition between map (left) and red field (right) — no hard edge
+
+MAP DENSITY (CRITICAL — DO NOT make a sparse map):
+The map must FILL the entire left 50% of the frame with substantial visual content:
+- Land masses are LARGE bold geographic shapes that span most of the left half — no large empty void areas
+- Multiple regions, coastlines, rivers, terrain features traced in dark lines
+- 4-6 BOLD SWEEPING ARROWS (not 1-2 small ones) — long arrows that traverse significant distance across the map
+- 5-8 unit markers (tank silhouettes, infantry icons) scattered across the territory implying scale and a real operation
+- Border lines, rivers, contour lines as supporting detail
+- The map should feel WEIGHTY — like a poster of a wartime operations briefing, full of information
 
 THE BATTLE MAP (LEFT 50%):
-- Period military operations map style, slightly stylized like a 1940s tactical document
-- Map background: very dark navy / near-black (#0a0e1a to #000000) with subtle wine-red tint at edges
-- Land masses: muted dark gray-navy (#1a1e2a)
-- Water: deeper near-black with subtle red glow at distance
+- Period military operations map style, like a 1940s tactical wall map document
+- Map background: very dark navy/near-black (#0a0e1a to #000000) with subtle wine-red tint at outer edges
+- Land masses: solid muted dark gray-navy (#1a1e2a) — fill, NOT outline-only. Land has weight and presence.
+- Water: deeper near-black, occasionally with subtle red glow accents
+- Country borders: thin dotted/dashed white lines
+- Rivers: thin curved lines in slightly lighter tone
+- Coastlines: clean defined edges with subtle depth shadow
 
-REAL PLACE NAMES (from script research — render these EXACTLY as labels on the map):
+REAL PLACE NAMES (from script research — render these EXACTLY as LARGE BOLD labels on the map):
 ${locations}
-- Cities/atolls/landmarks in ALL CAPS, small bold serif type, white/cream ink
+- Cities/atolls/landmarks: ALL CAPS, BOLD serif type at SUBSTANTIAL size (cities should be readable from across a room) — white/cream ink
+- Region/sea labels: italic small caps, slightly smaller, lighter cream
 - Render every label CLEAN and LEGIBLE — no garbled text, no fake-looking words. Spelling MUST be exact.
-- Position labels at appropriate geographic positions on the map
+- Position labels at appropriate geographic positions, with subtle background glow plate behind label text for readability against the map
 
-TACTICAL ARROWS (render these as the visual story):
+TACTICAL ARROWS (CRITICAL — these are the dramatic visual story):
 ${arrows}
-- Friendly forces: bright saturated red arrows (#dc2626), 12-15 pixels wide, sweeping inward toward objectives
-- Enemy forces: dark steel-gray arrows (#475569), thinner
-- Arrows have proper tapered arrowheads, slight curve for movement
-- Unit markers: black tank/infantry silhouettes at battle points
+- 4-6 arrows total — SWEEPING and LONG, traversing significant distance across the map
+- Friendly forces (offensive): saturated bright RED arrows (#dc2626 to #c8202b), 14-18 pixels wide at the tail, tapering to bold arrowheads. Curved sweeping paths, not stubby straight ones.
+- Enemy forces (defensive): dark steel-gray (#475569) or dark blue arrows, 10-14 pixels wide, opposing the red arrows
+- Arrows have a slight glow/shadow drop for visual weight
+- Some arrows curve dramatically to imply movement and momentum
+
+UNIT MARKERS:
+- 5-8 small silhouettes scattered across the territory: black tank silhouettes, infantry icons, naval ship icons where appropriate to theater
+- Sized small but clearly visible — implies a real operation with multiple units engaged
+- Positioned at strategically appropriate points (along arrow paths, at battle points, near contested cities)
 
 OPERATION HEADER (upper-left of map, render exactly):
 "${opLabel}"
-- Bold serif type, white/cream ink, on a slightly darker background plate
+- Bold serif type, LARGER size, white/cream ink, on a slightly darker background plate with thin border
 - Spelling MUST be perfect
 
-RIGHT 50% (subject zone — leave empty):
-- Deep atmospheric wine-red field per palette rules
-- Subtle brightening in the right-center area where the general will be added in Pass 2
-- Strong dark vignette in upper-right and lower-right corners
-- NO people, NO objects, NO text in this zone — pure atmospheric red, ready for compositing
+RIGHT 50% (subject zone — empty but with HALO):
+- Deep wine-red field per palette rules
+- DEFINED SOFT HALO in the right-center area (where the general will be added in Pass 2) — roughly elliptical, soft-edged, clearly brighter than the surrounding mid-frame, color in the warm crimson range (#c8202b to #d92d3a at the brightest center). The halo MUST be visibly brighter than the rest of the right side — this is what will give the general atmospheric pop in Pass 2.
+- Strong dark vignette in upper-right and lower-right corners falling to near-black
+- NO people, NO objects, NO text in this zone — pure atmospheric red with halo, ready for compositing
 
 ${PALETTE_INSTRUCTIONS}
 (Exception: bright red/steel arrows on map are tactical, they stay vivid. The map's dark navy/near-black background sits naturally next to the wine-red field on the right.)
 ${NEGATIVE_REQUIREMENTS}
 
-OUTPUT: 16:9 widescreen, detailed tactical map on left with PROPERLY SPELLED real place names, atmospheric wine-red empty zone on right, ready for general compositing in Pass 2. NO PEOPLE.`;
+OUTPUT: 16:9 widescreen, DENSE detailed tactical map on left with substantial geographic shapes and PROPERLY SPELLED real place names, wine-red field on right with a defined visible halo where the general will go in Pass 2. NO PEOPLE.`;
 },
 
 'period-archive': (va) => {
@@ -994,11 +1111,12 @@ OFFICIAL DOCUMENTS (1-2 sheets in the stack):
 - Date stamp: "${docCls.date || ''}"
 - Bold ink signature at bottom
 
-RIGHT 40% (subject zone — leave empty):
-- Deep atmospheric wine-red field per palette rules
-- Subtle brightening in the upper-right where the general's head will be added in Pass 2
+RIGHT 40% (subject zone — empty but with HALO):
+- Deep wine-red field per palette rules
+- DEFINED SOFT BRIGHT HALO in the upper-right area (where the general's head will be added in Pass 2) — roughly oval/elliptical, soft-edged, ~35-50% brighter than the surrounding mid-frame, color in the warm crimson range (#c8202b to #d92d3a at the brightest center). The halo MUST be clearly visible — this is what will give the general atmospheric pop in Pass 2.
 - Strong dark vignette in upper-right and lower-right corners
-- NO people, NO objects, NO additional text — pure atmospheric red, ready for compositing
+- Optional: very subtle distant smoke/haze texture in the deep red areas
+- NO people, NO objects, NO additional text — pure atmospheric red with halo, ready for compositing
 
 LIGHTING:
 - Documents lit from upper-left at 45°, casting subtle warm shadows
@@ -1042,11 +1160,11 @@ ${signs || '(none for this theater)'}
 - Period road signs in correct era/region typography
 - Positioned at frame edges, partially visible
 
-CENTER (subject zone — LEAVE EMPTY):
-- Deep atmospheric wine-red field per palette rules
-- Subtle brightening in the center where the general's head and shoulders will be added in Pass 2
-- NO main figure / commanding officer — leave this zone clear
-- NO bright glow or spotlight — atmospheric only
+CENTER (subject zone — empty but with HALO):
+- Deep wine-red field per palette rules behind a clear central area
+- DEFINED SOFT BRIGHT HALO in the center (where the general's head and shoulders will be added in Pass 2) — roughly oval/elliptical, soft-edged, ~35-50% brighter than the surrounding mid-frame, color in the warm crimson range (#c8202b to #d92d3a at the brightest center). The halo sits behind where the general will be, peeking through and around the haze and smoke. The halo MUST be clearly visible — this is what will give the general atmospheric pop in Pass 2.
+- NO main figure / commanding officer in this center zone — leave it clear of any subject
+- The smoke and haze can drift through the halo zone, but the halo brightening is still visible behind/through them
 
 LIGHTING & MOOD:
 - Cinematic atmospheric daylight tinted by the wine-red environment (dusty, smoky, theatrical)
@@ -1079,11 +1197,11 @@ THE CENTER MAP:
 - Map sits floating with slight 3D tilt, slight glow behind it
 - Map background: dark navy/near-black with subtle red tint
 
-LEFT AND RIGHT SUBJECT ZONES (LEAVE EMPTY):
-- Deep atmospheric wine-red field per palette rules
-- Subtle brightening in each zone where a general's head will be added in Pass 2
-- Both zones at the same approximate vertical height for compositional balance
-- Strong dark vignette in outer corners
+LEFT AND RIGHT SUBJECT ZONES (empty but with HALOS):
+- Deep wine-red field per palette rules in each flanking zone
+- DEFINED SOFT BRIGHT HALO in EACH zone (left and right) where each general will be added in Pass 2 — roughly oval/elliptical, soft-edged, ~35-50% brighter than surrounding mid-frame, color in the warm crimson range (#c8202b to #d92d3a at the brightest center). Both halos at the same approximate vertical height and same intensity for compositional balance.
+- The halos MUST be clearly visible — this is what will give both generals atmospheric pop in Pass 2.
+- Strong dark vignette in outer corners (upper-left, lower-left, upper-right, lower-right) falling to near-black
 - NO people, NO objects, NO text in either subject zone
 
 ${PALETTE_INSTRUCTIONS}
@@ -1128,18 +1246,20 @@ ${expressionText}
 
 LIGHTING ON THE GENERAL (CRITICAL — this is what makes him pop from the background):
 - Hard directional KEY LIGHT from upper-front-left at ~45° — this front lighting illuminates the face brightly and warmly
-- The face is the BRIGHTEST element in the frame — clearly brighter than the wine-red background
-- Subtle warm RIM LIGHT along the right side of the face/shoulders/helmet from a hidden warm source — gives 3D separation from the dark red background
-- A very subtle cool red rim from the background environment on the LEFT edge of the silhouette — atmospheric, not bright
-- Strong shadows under the jaw, helmet brim, and on the side opposite the key light
-- The face reads as 3D-rounded and dimensional, NOT flat
+- The face is the BRIGHTEST element in the frame — clearly brighter than the wine-red halo behind him
+- VISIBLE WARM RIM LIGHT along the edges of the face, helmet, and shoulders from the warm halo behind — this rim light is critical for edge separation. Picture warm crimson light wrapping around the silhouette edges where the head and shoulders meet the background. The rim is subtle but clearly present.
+- The general's silhouette catches red ambient bounce light on the shadow-side cheek from the surrounding red environment
+- Strong dark shadows under the jaw, helmet brim, and on the side opposite the key light
+- The face reads as 3D-rounded and dimensional, NOT flat — proper light/shadow modeling on every facial feature
 
-INTEGRATION INTO BACKGROUND:
-- The general should appear to be STANDING IN the background scene, not pasted on top
+INTEGRATION INTO BACKGROUND (CRITICAL — preserve the existing halo):
+- The provided background ALREADY has a soft halo glow behind the subject zone — DO NOT remove it, DO NOT paint over it, DO NOT make it duller. The halo should remain visible AROUND the general's silhouette, glowing through behind his head and shoulders.
+- The general should appear to be STANDING IN the lit halo zone of the background, with the warm halo light visibly emanating from behind him and creating the rim light on his edges
 - Color grading on the general matches the wine-red environment — subtle red ambient bounce on the shadow side of the face
-- The general's silhouette has clean separation from the background — strong contrast between the lit face and dark environment
-- The general should NOT be larger than the subject zone in the background — fit naturally within it
-- The general should NOT cover key elements of the background (map labels, headlines should remain partially visible)
+- The general's silhouette has clean SHARP separation from the background — strong contrast between the lit face and dark environment, with the warm rim light creating a glowing edge
+- The general should NOT be larger than the subject zone — fit naturally within the halo area
+- The general should NOT cover key elements of the background (map labels, headlines, document text must remain visible and readable)
+- The dark vignette in the corners must remain dark — do not brighten the corners
 `;
 
   if (style === 'portrait-hero') {
@@ -1259,6 +1379,8 @@ const state = {
   imageModel: 'nano-banana-pro',
   selectedStyles: new Set(['portrait-hero']),
   overlayEnabled: false,
+  autoComposite: false,
+  pendingBackgrounds: {},
   selectedTitleIdx: null,
   selectedBannerIdx: null,
   customBanner: '',
@@ -1457,6 +1579,11 @@ setupBulkUpload('bulkUploadB', 'referencesB');
 document.getElementById('overlayToggle').addEventListener('click', (e) => {
   e.currentTarget.classList.toggle('on');
   state.overlayEnabled = e.currentTarget.classList.contains('on');
+});
+
+document.getElementById('autoCompositeToggle').addEventListener('click', (e) => {
+  e.currentTarget.classList.toggle('on');
+  state.autoComposite = e.currentTarget.classList.contains('on');
 });
 
 function showError(message) {
@@ -2164,6 +2291,183 @@ async function generateThumbnail(style, refsA, refsB, googleKey, model, bannerWo
   return { backgroundUrl, finalUrl };
 }
 
+// =====================================================================
+// GENERATE HANDLER — with optional manual approval gate between Pass 1 and Pass 2
+// =====================================================================
+
+let _generationContext = null; // shared between generate, regenerate, composite-all
+
+function updateCompositeAllBar() {
+  const bar = document.getElementById('compositeAllBar');
+  const count = document.getElementById('compositeAllCount');
+  const btn = document.getElementById('compositeAllBtn');
+  const ready = Object.keys(state.pendingBackgrounds).length;
+  if (ready === 0) {
+    bar.style.display = 'none';
+    return;
+  }
+  bar.style.display = 'flex';
+  count.textContent = `${ready} background${ready === 1 ? '' : 's'} ready`;
+  btn.disabled = false;
+}
+
+function downloadDataUrl(url, filename) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+}
+
+function setTileDone(tile, style, finalUrl, bgUrl, banner) {
+  tile.classList.remove('loading', 'bg-ready', 'error');
+  tile.innerHTML = `
+    <img src="${finalUrl}" alt="${STYLE_NAMES[style]}">
+    <div class="output-tile-label">${STYLE_NAMES[style]}</div>
+    <div class="output-tile-actions">
+      ${bgUrl ? '<button class="tile-action" data-action="view-bg">View BG</button>' : ''}
+      <button class="tile-action" data-action="download">Download</button>
+      <button class="tile-action" data-action="regenerate">Retry</button>
+    </div>
+  `;
+  tile.querySelector('[data-action="download"]').addEventListener('click', () => {
+    downloadDataUrl(finalUrl, `american-brass-${style}-${banner.toLowerCase().replace(/\s+/g, '-')}.png`);
+  });
+  const viewBgBtn = tile.querySelector('[data-action="view-bg"]');
+  if (viewBgBtn && bgUrl) {
+    viewBgBtn.addEventListener('click', () => window.open(bgUrl, '_blank'));
+  }
+  tile.querySelector('[data-action="regenerate"]').addEventListener('click', async () => {
+    await runFullThumbnail(style, tile);
+  });
+}
+
+function setTileBgReady(tile, style, bgUrl) {
+  tile.classList.remove('loading', 'error');
+  tile.classList.add('bg-ready');
+  tile.innerHTML = `
+    <img src="${bgUrl}" alt="${STYLE_NAMES[style]} background">
+    <div class="output-tile-label">${STYLE_NAMES[style]} · BG</div>
+    <div class="bg-tile-actions">
+      <button class="bg-tile-action regenerate" data-action="regen-bg">↻ Regenerate BG</button>
+      <button class="bg-tile-action greenlight" data-action="composite">✓ Composite</button>
+    </div>
+  `;
+  tile.querySelector('[data-action="composite"]').addEventListener('click', async () => {
+    await runCompositeOnly(style, tile);
+  });
+  tile.querySelector('[data-action="regen-bg"]').addEventListener('click', async () => {
+    await runBackgroundOnly(style, tile);
+  });
+}
+
+function setTileLoading(tile, style, msg) {
+  tile.classList.add('loading');
+  tile.classList.remove('error', 'bg-ready');
+  tile.innerHTML = `<span>${msg}</span>`;
+}
+
+function setTileError(tile, style, errMsg) {
+  tile.classList.remove('loading', 'bg-ready');
+  tile.classList.add('error');
+  tile.innerHTML = `${STYLE_NAMES[style]}<br>Failed: ${escapeHtml(errMsg)}`;
+}
+
+async function runBackgroundOnly(style, tile) {
+  if (!_generationContext) return;
+  const ctx = _generationContext;
+  // Remove previous pending bg if any
+  delete state.pendingBackgrounds[style];
+  updateCompositeAllBar();
+  setTileLoading(tile, style, `Pass 1 · Building ${STYLE_NAMES[style]} background...`);
+  try {
+    const bgUrl = await generateBackgroundPass(style, ctx.va, ctx.googleKey, state.imageModel);
+    state.sessionSpend += ctx.passCost;
+    document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
+
+    if (state.autoComposite) {
+      // Auto-composite: immediately run Pass 2
+      setTileLoading(tile, style, `Pass 2 · Compositing general into ${STYLE_NAMES[style]}...`);
+      try {
+        const finalUrl = await generateCompositePass(style, bgUrl, ctx.refsA, ctx.refsB, ctx.expression, ctx.va, ctx.googleKey, state.imageModel, ctx.banner);
+        state.sessionSpend += ctx.passCost;
+        document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
+        setTileDone(tile, style, finalUrl, bgUrl, ctx.banner);
+      } catch (err) {
+        setTileError(tile, style, err.message);
+        console.error(`${style} composite failed:`, err);
+      }
+    } else {
+      // Manual approval mode: stash and show approval UI
+      state.pendingBackgrounds[style] = bgUrl;
+      updateCompositeAllBar();
+      setTileBgReady(tile, style, bgUrl);
+    }
+  } catch (err) {
+    setTileError(tile, style, err.message);
+    console.error(`${style} background failed:`, err);
+  }
+}
+
+async function runCompositeOnly(style, tile) {
+  if (!_generationContext) return;
+  const ctx = _generationContext;
+  const bgUrl = state.pendingBackgrounds[style];
+  if (!bgUrl) {
+    showError(`No approved background for ${STYLE_NAMES[style]}`);
+    return;
+  }
+  // Remove from pending now that we're using it
+  delete state.pendingBackgrounds[style];
+  updateCompositeAllBar();
+  setTileLoading(tile, style, `Pass 2 · Compositing general into ${STYLE_NAMES[style]}...`);
+  try {
+    const finalUrl = await generateCompositePass(style, bgUrl, ctx.refsA, ctx.refsB, ctx.expression, ctx.va, ctx.googleKey, state.imageModel, ctx.banner);
+    state.sessionSpend += ctx.passCost;
+    document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
+    setTileDone(tile, style, finalUrl, bgUrl, ctx.banner);
+  } catch (err) {
+    setTileError(tile, style, err.message);
+    console.error(`${style} composite failed:`, err);
+  }
+}
+
+async function runFullThumbnail(style, tile) {
+  // Both passes back to back, ignoring pendingBackgrounds (used for retry)
+  if (!_generationContext) return;
+  const ctx = _generationContext;
+  delete state.pendingBackgrounds[style];
+  updateCompositeAllBar();
+  setTileLoading(tile, style, `Pass 1 · Building ${STYLE_NAMES[style]} background...`);
+  try {
+    const bgUrl = await generateBackgroundPass(style, ctx.va, ctx.googleKey, state.imageModel);
+    state.sessionSpend += ctx.passCost;
+    document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
+    setTileLoading(tile, style, `Pass 2 · Compositing general into ${STYLE_NAMES[style]}...`);
+    const finalUrl = await generateCompositePass(style, bgUrl, ctx.refsA, ctx.refsB, ctx.expression, ctx.va, ctx.googleKey, state.imageModel, ctx.banner);
+    state.sessionSpend += ctx.passCost;
+    document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
+    setTileDone(tile, style, finalUrl, bgUrl, ctx.banner);
+  } catch (err) {
+    setTileError(tile, style, err.message);
+    console.error(`${style} retry failed:`, err);
+  }
+}
+
+document.getElementById('compositeAllBtn').addEventListener('click', async () => {
+  const styles = Object.keys(state.pendingBackgrounds);
+  if (styles.length === 0) return;
+  const btn = document.getElementById('compositeAllBtn');
+  btn.disabled = true;
+  btn.textContent = 'Compositing...';
+  const promises = styles.map(async (style) => {
+    const tile = document.getElementById('outputGrid').querySelector(`[data-style="${style}"]`);
+    if (tile) await runCompositeOnly(style, tile);
+  });
+  await Promise.allSettled(promises);
+  btn.textContent = 'Composite All →';
+  updateCompositeAllBar();
+});
+
 document.getElementById('generateBtn').addEventListener('click', async () => {
   clearError();
   const googleKey = document.getElementById('googleKey').value.trim();
@@ -2189,7 +2493,10 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
     return;
   }
 
-  // Build the visual_assets payload + a few helper fields the prompt builder needs
+  // Reset pendingBackgrounds for fresh batch
+  state.pendingBackgrounds = {};
+  updateCompositeAllBar();
+
   const va = Object.assign({}, state.brainResult.visual_assets || {}, {
     general_name: state.brainResult.general?.name || '',
     general_branch: state.brainResult.general?.service_branch || '',
@@ -2197,6 +2504,13 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
   });
 
   const expression = state.selectedExpression || 'stern';
+  const baseCost = parseFloat(document.querySelector(`#imageModels .option-row[data-model="${state.imageModel}"]`).dataset.cost);
+  const passCost = baseCost;
+
+  // Stash context for the runX functions
+  _generationContext = {
+    googleKey, banner, refsA, refsB, expression, va, passCost
+  };
 
   const outputGrid = document.getElementById('outputGrid');
   outputGrid.innerHTML = styles.map(style => `
@@ -2205,93 +2519,23 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
     </div>
   `).join('');
 
-  document.getElementById('stepOutput').querySelector('.step-status').textContent = `Generating ${styles.length}...`;
+  document.getElementById('stepOutput').querySelector('.step-status').textContent =
+    state.autoComposite ? `Generating ${styles.length}...` : `Pass 1: ${styles.length}...`;
+
   const btn = document.getElementById('generateBtn');
   btn.classList.add('loading');
   btn.disabled = true;
 
-  // Two-pass = 2x cost per thumbnail
-  const baseCost = parseFloat(document.querySelector(`#imageModels .option-row[data-model="${state.imageModel}"]`).dataset.cost);
-  const passCost = baseCost; // each pass costs baseCost
-  const totalPerThumbnail = baseCost * 2;
-
-  function setTileState(tile, style, mode, msgOrUrl, bgUrl) {
-    if (mode === 'pass1') {
-      tile.classList.add('loading');
-      tile.classList.remove('error');
-      tile.innerHTML = `<span>Pass 1 · Building ${STYLE_NAMES[style]} background...</span>`;
-    } else if (mode === 'pass2') {
-      tile.classList.add('loading');
-      tile.classList.remove('error');
-      tile.innerHTML = `<span>Pass 2 · Compositing general into ${STYLE_NAMES[style]}...</span>`;
-    } else if (mode === 'done') {
-      tile.classList.remove('loading');
-      tile.classList.remove('error');
-      tile.innerHTML = `
-        <img src="${msgOrUrl}" alt="${STYLE_NAMES[style]}">
-        <div class="output-tile-label">${STYLE_NAMES[style]}</div>
-        <div class="output-tile-actions">
-          ${bgUrl ? '<button class="tile-action" data-action="view-bg">View BG</button>' : ''}
-          <button class="tile-action" data-action="download">Download</button>
-          <button class="tile-action" data-action="regenerate">Retry</button>
-        </div>
-      `;
-      tile.querySelector('[data-action="download"]').addEventListener('click', () => {
-        const a = document.createElement('a');
-        a.href = msgOrUrl;
-        a.download = `american-brass-${style}-${banner.toLowerCase().replace(/\s+/g, '-')}.png`;
-        a.click();
-      });
-      const viewBgBtn = tile.querySelector('[data-action="view-bg"]');
-      if (viewBgBtn && bgUrl) {
-        viewBgBtn.addEventListener('click', () => {
-          window.open(bgUrl, '_blank');
-        });
-      }
-      tile.querySelector('[data-action="regenerate"]').addEventListener('click', async () => {
-        await runOne(style, tile, true);
-      });
-    } else if (mode === 'error') {
-      tile.classList.remove('loading');
-      tile.classList.add('error');
-      tile.innerHTML = `${STYLE_NAMES[style]}<br>Failed: ${escapeHtml(msgOrUrl)}`;
-    }
-  }
-
-  async function runOne(style, tile, isRetry) {
-    try {
-      const result = await generateThumbnail(
-        style, refsA, refsB, googleKey, state.imageModel,
-        banner, expression, va,
-        (stage) => {
-          if (stage === 'background') setTileState(tile, style, 'pass1');
-          else if (stage === 'composite') {
-            // Pass 1 done — bill it
-            state.sessionSpend += passCost;
-            document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
-            setTileState(tile, style, 'pass2');
-          }
-        }
-      );
-      // Pass 2 done — bill it
-      state.sessionSpend += passCost;
-      document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
-      setTileState(tile, style, 'done', result.finalUrl, result.backgroundUrl);
-    } catch (err) {
-      setTileState(tile, style, 'error', err.message);
-      console.error(`${style} generation failed:`, err);
-    }
-  }
-
   const promises = styles.map(async (style) => {
     const tile = outputGrid.querySelector(`[data-style="${style}"]`);
-    await runOne(style, tile, false);
+    await runBackgroundOnly(style, tile);
   });
 
   await Promise.allSettled(promises);
   btn.classList.remove('loading');
   btn.disabled = false;
-  document.getElementById('stepOutput').querySelector('.step-status').textContent = 'Complete';
+  document.getElementById('stepOutput').querySelector('.step-status').textContent =
+    state.autoComposite ? 'Complete' : 'Approve backgrounds';
 });
 
 function escapeHtml(str) {
@@ -2299,7 +2543,7 @@ function escapeHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-console.log('American Brass v1.3 — Two-pass pipeline, brain-generated visual assets, expression selector, atmospheric wine-red palette');
+console.log('American Brass v1.4 — Two-pass with approval gate, halo-aware palette, denser maps, atmospheric portrait backgrounds');
 </script>
 </body>
 </html>
