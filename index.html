@@ -340,23 +340,6 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 @media (max-width: 1280px) { .styles-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 768px) { .styles-grid { grid-template-columns: 1fr; } }
 
-.expression-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-@media (max-width: 1280px) { .expression-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 768px) { .expression-grid { grid-template-columns: repeat(2, 1fr); } }
-.expression-card {
-  background: var(--bg-elevated); border: 1px solid var(--border);
-  padding: 12px 10px; cursor: pointer; transition: all 0.15s ease;
-  display: flex; flex-direction: column; gap: 4px; text-align: center; position: relative;
-}
-.expression-card:hover { border-color: var(--border-strong); background: var(--bg-hover); }
-.expression-card.selected { border-color: var(--accent); background: var(--accent-soft); }
-.expression-card.selected::before {
-  content: '✓'; position: absolute; top: 4px; right: 4px; width: 16px; height: 16px;
-  background: var(--accent); color: white; display: flex; align-items: center;
-  justify-content: center; font-size: 10px; font-weight: 700;
-}
-.expression-name { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
-.expression-desc { font-size: 9px; color: var(--text-muted); letter-spacing: 0.03em; line-height: 1.3; }
 .style-card {
   background: var(--bg-elevated); border: 1px solid var(--border);
   cursor: pointer; transition: all 0.15s ease; overflow: hidden; position: relative;
@@ -383,57 +366,6 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 .style-info { padding: 12px 14px; }
 .style-name { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
 .style-desc { font-size: 10px; color: var(--text-muted); line-height: 1.5; }
-
-.refs-block { margin-bottom: 18px; }
-.refs-block:last-of-type { margin-bottom: 0; }
-.refs-subhead {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 10px;
-}
-.refs-subhead-label {
-  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--text-muted); font-weight: 600;
-}
-.refs-subhead-tag {
-  font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--text-faint);
-}
-.refs-bulk-btn {
-  background: transparent; border: 1px solid var(--accent); color: var(--accent);
-  padding: 5px 10px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
-  cursor: pointer; transition: all 0.15s ease; font-weight: 600;
-}
-.refs-bulk-btn:hover { background: var(--accent-soft); }
-
-.refs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.ref-slot {
-  aspect-ratio: 1; background: var(--bg-input); border: 1px dashed var(--border-strong);
-  cursor: pointer; display: flex; flex-direction: column; align-items: center;
-  justify-content: center; gap: 6px; font-size: 9px; letter-spacing: 0.15em;
-  text-transform: uppercase; color: var(--text-muted); transition: all 0.15s ease;
-  position: relative; overflow: hidden;
-}
-.ref-slot:hover { border-color: var(--accent); color: var(--accent); }
-.ref-slot.has-image { border-style: solid; border-color: var(--success); padding: 0; }
-.ref-slot.has-image img { width: 100%; height: 100%; object-fit: cover; }
-.ref-slot-clear {
-  position: absolute; top: 4px; right: 4px;
-  background: rgba(0,0,0,0.7); color: white;
-  border: none; width: 20px; height: 20px;
-  font-size: 12px; cursor: pointer; opacity: 0;
-  transition: opacity 0.15s ease; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-}
-.ref-slot.has-image:hover .ref-slot-clear { opacity: 1; }
-.ref-icon { font-size: 18px; font-weight: 300; }
-.ref-note {
-  margin-top: 12px; padding: 10px 12px; background: var(--accent-soft);
-  border: 1px solid var(--accent); font-size: 10px; line-height: 1.6; color: var(--text);
-}
-.refs-rivalry-hint {
-  font-size: 10px; color: var(--text-muted); padding: 8px 0;
-  letter-spacing: 0.05em; line-height: 1.5;
-}
 
 .toggle-row {
   display: flex; justify-content: space-between; align-items: center;
@@ -535,7 +467,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
     <span class="brand-name">American Brass</span>
   </div>
   <nav class="header-nav">
-    <span class="nav-pill">Pipeline v1.9</span>
+    <span class="nav-pill">Pipeline v2.0</span>
     <span class="nav-item active">Pipeline</span>
     <button class="theme-toggle" id="themeToggle">☾ Dark</button>
   </nav>
@@ -610,9 +542,8 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
         Paste a script and hit ANALYZE SCRIPT. The brain extracts the central irony,
         generates 3 title options with fresh banners, real map place names, and
         period-accurate newspaper headlines from your script's research. Then
-        Nano Banana generates each thumbnail in a single pass with brain-injected
-        visual assets, in graphic-poster style with deep red palette and black
-        banner overlays.
+        Nano Banana generates the background scene in a single pass — you'll
+        manually composite the general portrait in post-production.
       </p>
     </div>
 
@@ -663,29 +594,9 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
         </div>
       </div>
 
-      <div class="step" id="stepExpression">
-        <div class="step-header">
-          <span class="step-num">04</span>
-          <span class="step-title">Select Expression</span>
-          <span class="step-status">Pending</span>
-        </div>
-        <div class="expression-grid" id="expressionGrid">
-          <div class="expression-card selected" data-expression="stern"><span class="expression-name">Stern</span><span class="expression-desc">Authoritative, jaw set</span></div>
-          <div class="expression-card" data-expression="determined"><span class="expression-name">Determined</span><span class="expression-desc">Hard resolved focus</span></div>
-          <div class="expression-card" data-expression="grim"><span class="expression-name">Grim</span><span class="expression-desc">Weighted, weary command</span></div>
-          <div class="expression-card" data-expression="tense"><span class="expression-name">Tense</span><span class="expression-desc">Alert, under pressure</span></div>
-          <div class="expression-card" data-expression="skeptical"><span class="expression-name">Skeptical</span><span class="expression-desc">Eyebrow raised, doubting</span></div>
-          <div class="expression-card" data-expression="smirking"><span class="expression-name">Smirking</span><span class="expression-desc">Subtle confident</span></div>
-          <div class="expression-card" data-expression="faint-smile"><span class="expression-name">Faint Smile</span><span class="expression-desc">Slight warm dignity</span></div>
-          <div class="expression-card" data-expression="shocked"><span class="expression-name">Shocked</span><span class="expression-desc">Stunned, brows raised</span></div>
-          <div class="expression-card" data-expression="angry"><span class="expression-name">Angry</span><span class="expression-desc">Controlled fury</span></div>
-          <div class="expression-card" data-expression="weary"><span class="expression-name">Weary</span><span class="expression-desc">Exhausted, war-tired</span></div>
-        </div>
-      </div>
-
       <div class="step" id="step4">
         <div class="step-header">
-          <span class="step-num">05</span>
+          <span class="step-num">04</span>
           <span class="step-title">Select Image Styles</span>
           <span class="step-status">Toggle 1-5</span>
         </div>
@@ -694,35 +605,35 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
             <div class="style-preview"><img src="https://raw.githubusercontent.com/huzaifaahmed319/Thumbnail-Allied/main/style-portrait-hero.jpg" alt="Portrait Hero" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=style-preview-text>Portrait Hero<br>Reference</span>';"></div>
             <div class="style-info">
               <div class="style-name">Portrait Hero</div>
-              <div class="style-desc">Single dominant general portrait, magazine-cover quality, dramatic backlight.</div>
+              <div class="style-desc">Deep wine-red background with atmospheric glow — space reserved for general portrait composite.</div>
             </div>
           </div>
           <div class="style-card" data-style="battle-map">
             <div class="style-preview"><img src="https://raw.githubusercontent.com/huzaifaahmed319/Thumbnail-Allied/main/style-battle-map.jpg" alt="Battle Map" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=style-preview-text>Battle Map<br>Reference</span>';"></div>
             <div class="style-info">
               <div class="style-name">Battle Map Composite</div>
-              <div class="style-desc">General + tactical map split with arrows and unit positions.</div>
+              <div class="style-desc">Tactical map with arrows and unit positions — right side reserved for general composite.</div>
             </div>
           </div>
           <div class="style-card" data-style="period-archive">
             <div class="style-preview"><img src="https://raw.githubusercontent.com/huzaifaahmed319/Thumbnail-Allied/main/style-period-archive.jpg" alt="Period Archive" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=style-preview-text>Period Archive<br>Reference</span>';"></div>
             <div class="style-info">
               <div class="style-name">Period Archive</div>
-              <div class="style-desc">General + overlapping period newspapers and documents.</div>
+              <div class="style-desc">Overlapping newspapers and documents — right side reserved for general composite.</div>
             </div>
           </div>
           <div class="style-card" data-style="battlefield-command">
             <div class="style-preview"><img src="https://raw.githubusercontent.com/huzaifaahmed319/Thumbnail-Allied/main/style-battlefield-command.jpg" alt="Battlefield Command" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=style-preview-text>Battlefield Command<br>Reference</span>';"></div>
             <div class="style-info">
               <div class="style-name">Battlefield Command</div>
-              <div class="style-desc">General at the front with combat vehicles in atmospheric haze.</div>
+              <div class="style-desc">Combat vehicles in atmospheric haze — center reserved for general composite.</div>
             </div>
           </div>
           <div class="style-card" data-style="rivalry">
             <div class="style-preview"><img src="https://raw.githubusercontent.com/huzaifaahmed319/Thumbnail-Allied/main/style-rivalry.jpg" alt="Rivalry" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=style-preview-text>Rivalry<br>Reference</span>';"></div>
             <div class="style-info">
               <div class="style-name">Rivalry / Multi-Subject</div>
-              <div class="style-desc">Two opposing commanders with tactical element between them. Requires General B.</div>
+              <div class="style-desc">Tactical map center element — left and right sides reserved for two general composites.</div>
             </div>
           </div>
         </div>
@@ -730,40 +641,11 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 
       <div class="step" id="step5">
         <div class="step-header">
-          <span class="step-num">06</span>
-          <span class="step-title">Upload Reference Photos</span>
-          <span class="step-status">1-3 each</span>
+          <span class="step-num">05</span>
+          <span class="step-title">Banner Options</span>
+          <span class="step-status">Configure</span>
         </div>
-
-        <div class="refs-block">
-          <div class="refs-subhead">
-            <span class="refs-subhead-label">General A (Primary)</span>
-            <button class="refs-bulk-btn" id="bulkUploadA">+ Pick Multiple</button>
-          </div>
-          <div class="refs-grid" id="refsGridA">
-            <div class="ref-slot" data-slot="0" data-set="A"><span class="ref-icon">+</span><span>Reference 1</span></div>
-            <div class="ref-slot" data-slot="1" data-set="A"><span class="ref-icon">+</span><span>Reference 2</span></div>
-            <div class="ref-slot" data-slot="2" data-set="A"><span class="ref-icon">+</span><span>Reference 3</span></div>
-          </div>
-        </div>
-
-        <div class="refs-block">
-          <div class="refs-subhead">
-            <span class="refs-subhead-label">General B (Rivalry only)</span>
-            <button class="refs-bulk-btn" id="bulkUploadB">+ Pick Multiple</button>
-          </div>
-          <div class="refs-rivalry-hint">Only used when Rivalry style is selected. Upload the second commander's reference photos.</div>
-          <div class="refs-grid" id="refsGridB">
-            <div class="ref-slot" data-slot="0" data-set="B"><span class="ref-icon">+</span><span>Reference 1</span></div>
-            <div class="ref-slot" data-slot="1" data-set="B"><span class="ref-icon">+</span><span>Reference 2</span></div>
-            <div class="ref-slot" data-slot="2" data-set="B"><span class="ref-icon">+</span><span>Reference 3</span></div>
-          </div>
-        </div>
-
-        <div class="ref-note">
-          Upload portrait photos for face/uniform likeness. Best sources: Wikipedia Commons, archives.gov, Library of Congress. Tip: click "Pick Multiple" to select up to 3 photos at once.
-        </div>
-        <div class="toggle-row">
+        <div class="toggle-row" style="margin-top: 0; border-top: none;">
           <div>
             <div class="toggle-info-name">Auto-Generate Banner</div>
             <div class="toggle-info-desc">AI bakes black banner with selected word into thumbnail (~50-70% success rate)</div>
@@ -774,7 +656,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 
       <div class="step" id="step6">
         <div class="step-header">
-          <span class="step-num">07</span>
+          <span class="step-num">06</span>
           <span class="step-title">Generate Thumbnails</span>
           <span class="step-status">Ready</span>
         </div>
@@ -783,7 +665,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 
       <div class="step" id="stepOutput">
         <div class="step-header">
-          <span class="step-num">08</span>
+          <span class="step-num">07</span>
           <span class="step-title">Output</span>
           <span class="step-status">Awaiting</span>
         </div>
@@ -828,382 +710,138 @@ const STYLE_NAMES = {
   'rivalry':             'Rivalry'
 };
 
-const PALETTE_INSTRUCTIONS = `
-COLOR PALETTE — DEEP CINEMATIC WINE-RED WITH ATMOSPHERIC GLOW (CRITICAL):
-This thumbnail uses a deep saturated WINE-RED / BURGUNDY background with a SOFT ATMOSPHERIC RED GLOW behind the subject — like warm light dispersing through smoky haze, NOT a defined geometric shape, NOT a stage spotlight, NOT a flat field. Match this palette precisely. Think "premium HBO war documentary key art" — cinematic wine-red mood with light radiating outward irregularly through atmospheric haze behind the subject, fading smoothly to dark vignette corners.
-
-REFERENCE IMAGE COLOR SUBSTITUTION:
-The provided style reference image shows COMPOSITION, FRAMING, GLOW STRUCTURE, and DRAMATIC INTENSITY you must match. The background should be deep wine-red per the spec below. Do NOT make the palette cool, blue, amber, orange, sepia, or desaturated.
-
-THE GLOW (CRITICAL — atmospheric, NOT a shape):
-Picture a warm crimson light source positioned behind the subject's head, shining outward through smoky atmospheric haze. The light DISPERSES through the haze — it doesn't form a clean oval or circle. The brightness radiates outward irregularly, with smoky soft tendrils, fading smoothly through deep red mid-tones into near-black corners. NO HARD EDGES. NO VISIBLE OVAL OR DISC SHAPE. NO RAYS OR SUNBURST.
-
-How to render the glow correctly:
-- Imagine a smoky theater backdrop with a hidden warm red light behind it — the light bleeds through the smoke unevenly, creating a soft warm zone of brightness with no defined boundary
-- The brightness fades GRADUALLY through the wine-red mid-frame, losing intensity smoothly without a visible edge
-- Subtle smoky/hazy texture variations break up any potential ring or disc artifact
-- Color at brightest point: warm crimson (#c8202b to #d92d3a)
-- The glow zone is roughly behind where the subject sits, but its boundaries are SOFT and IRREGULAR — like fog lit from within, not a painted circle
-
-BACKGROUND GRADIENT (precise specification — follow exactly):
-- BRIGHTEST GLOW REGION (directly behind the subject): warm crimson (#c8202b to #d92d3a), soft and irregular boundaries, atmospheric haze texture
-- MID-FRAME (extending outward from glow): deep wine-red (#7a1820 to #5a1015) — saturated dark red with subtle haze texture
-- OUTER EDGES AND ALL FOUR CORNERS: near-black with red-black tint (#1a0303 to #050000) — corners must be almost PURE BLACK
-- HEAVY hard-falloff dark vignette in all four corners
-- Subtle film grain and atmospheric texture throughout (no flat color zones)
-
-CRITICAL — AVOID THESE FAILURE MODES:
-- DO NOT render the glow as a defined oval, circle, disc, or any geometric shape — it must be atmospheric and irregular
-- DO NOT make the glow's edges sharp or visible — soft gradient dispersion only
-- DO NOT add rays, light beams, sunburst patterns, or radiating lines from the subject
-- DO NOT make the background flat with no glow at all — the warm glow must be visibly present, just rendered atmospherically
-- DO NOT use bright fire-engine red across the whole background — too pulpy, no depth
-- DO NOT make the background amber, orange, sepia, brown, or any non-red warm color
-- DO NOT desaturate — high saturation throughout
-- DO NOT use steel blue, cyan, teal, green, or any cool color in the background
-- DO NOT make the corners dark red — corners must read as near-black
-
-OVERALL MOOD: Premium, cinematic, theatrical, high-stakes investigative documentary key art. Deep saturated wine-red with atmospheric warm glow behind the subject and dramatic dark falloff at the edges. Punchy, eye-catching, depth — magazine-cover quality. Like an HBO miniseries poster — moody, deep, controlled.
-
-CONTRAST RULES (CRITICAL — this is what makes the subject pop):
-- Subject is illuminated by a HARD KEY LIGHT from upper-front-left at ~45° — bright warm front lighting on the face AND uniform
-- Subject also receives a thin WARM RIM LIGHT along the right edge of face/shoulders/helmet from the atmospheric glow behind — gives 3D edge separation from the background
-- Strong dark shadows under the jaw, helmet brim, and on the side opposite the key light
-- The face is the BRIGHTEST element in the frame
-- Uniform colors and metallic insignia are also clearly lit — full saturation, sharp detail, NOT washed out or muddy
-- The face reads as 3D-rounded and dimensional, NOT flat — proper light/shadow modeling on the features
-
-The lower-center area can be slightly darker to make banner overlay readable in post.
-`;
-
-const FACE_INSTRUCTIONS = `
-FACE & LIKENESS (CRITICAL):
-- Use the user-uploaded reference photos of the general as the EXACT facial likeness
-- Match skin tone, face shape, jawline, eyes, hair, and uniform details PRECISELY
-- Do NOT invent a different face
-- The general's face is the BRIGHTEST, SHARPEST, most in-focus element in the frame
-- Eyes catch sharp warm key light, skin texture visible, every wrinkle and pore rendered with cinematic film-stock quality
-- Cinematic film-stock quality on the face, lit warmly with hard key light from upper-front-left
-
-UNIFORM (CRITICAL — must be vibrant and saturated, NOT muddy or dull):
-The uniform must be rendered with full color saturation, sharp metallic detail, and clear material rendering. Reference: a crisp documentary photograph or magazine cover, where every uniform element reads clearly.
-
-US ARMY OFFICER UNIFORMS (most common):
-- Wool service tunic in OLIVE DRAB — true warm olive green-brown (#5d6643 to #6e7549 range), NOT muddy brown, NOT khaki, NOT sage. Visible wool weave texture.
-- Necktie: medium khaki tan (#a08c64), darker than the shirt
-- Shirt collar: lighter tan (#b09870)
-- Brass buttons: bright warm gold (#c9a55a to #e8c879), distinctly metallic with visible specular highlights catching the key light
-- Shoulder boards / sleeve insignia: rank pins/stars in bright polished silver (#d4d4d8) with sharp delineation, OR gold leaves for officers
-- "U.S." brass collar pins: bright polished gold/brass, sharp readable letterforms, catching highlight on the lit side
-- Branch insignia (crossed rifles, etc.): bright brass/silver with detail
-- Medal ribbons (rectangular bars on left chest): rendered as DISTINCT READABLE COLORED STRIPES — each ribbon a recognizable colored bar (red, blue, gold, etc., specific to actual decorations). NOT smudgy, NOT blurred. Each ribbon clearly delineated from neighbors.
-- Combat infantry badge or unit patch: visible if appropriate, rendered with detail
-
-USMC OFFICER UNIFORMS:
-- Service "A" uniform: forest green wool tunic (#3a4a2e) with khaki shirt and tie
-- Field uniform: faded sage / olive utility (#7a7a5d) with weathering
-- Brass eagle/globe/anchor on collar — bright polished brass
-- All metallic insignia bright with specular highlights
-
-USAAF UNIFORMS (when appropriate):
-- Olive drab "Ike" jacket or service tunic
-- Officer's pink-and-greens for some periods
-- Wings insignia in bright silver, prominently displayed
-
-GENERAL UNIFORM RENDERING RULES:
-- Every metallic element (buttons, pins, stars, insignia, eagle, oak leaves, brass buckles) reads as METAL — bright, polished, with clear specular highlights catching the key light
-- Wool fabric has visible weave texture, NOT smooth plastic
-- Color saturation is HIGH — no muddy, washed-out, or desaturated tones
-- Slight combat weathering acceptable (light dust, slight wear) but uniform is intact and dignified
-- The lit side of the uniform (front-left, facing key light) is bright and clear — every detail readable
-- The shadow side falls into deep shadow but the silhouette stays defined
-- Cinematic warm key light reveals all uniform colors and metallic details — the uniform should look as cinematic as the face
-`;
-
-const NEGATIVE_REQUIREMENTS = `
-NEGATIVE REQUIREMENTS (DO NOT INCLUDE):
-- NO modern banner text overlays unless explicitly instructed
-- NO title cards, NO captions, NO watermarks, NO play buttons, NO YouTube UI elements
-- NO borders or frames around the image
-- NO bright fire-engine red flat backgrounds (we use deep atmospheric wine-red with dark falloff)
-- NO bright stage spotlight or sunburst effect behind the subject (atmospheric brightening only)
-- NO steel blue, cyan, teal, or cool desaturated palettes
-- Period-appropriate map labels, newspaper headlines, document text are ALLOWED and required
-- Leave lower-center area uncluttered for banner overlay in post-production
-`;
-
 // =====================================================================
-// SINGLE-PASS PROMPTS — generates the complete thumbnail in one Gemini call
-// =====================================================================
-// Each style is a function that takes (va, expression, bannerWord, overlayEnabled)
-// and returns a complete prompt for one Gemini call that includes:
-// - Background design
-// - General(s) composited as flat photographic layer
-// - Optional banner overlay if enabled
-//
-// PHILOSOPHY: GRAPHIC POSTER, NOT CINEMATIC SCENE
-// We want flat layered magazine-cover composition, not atmospheric film stills.
-// The general is a clean studio portrait sitting ON TOP of the background,
-// not a person standing INSIDE a scene.
+// SHARED INSTRUCTION: GENERAL PLACEMENT ZONE
+// Instead of rendering the general, we reserve empty space for manual composite
 // =====================================================================
 
-const EXPRESSION_DESCRIPTIONS = {
-  'stern':       'Stern serious expression — jaw set, mouth firm and closed, eyes focused and direct at camera, gravitas. Default authoritative military bearing.',
-  'determined':  'Determined resolute expression — slight forward lean of focus, tight jaw, eyes hard and fixed, mouth firm. The look of a man about to make a hard decision.',
-  'grim':        'Grim weighted expression — heavy brows, downturned mouth corners, tired eyes that have seen combat, weight of command on his face.',
-  'tense':       'Tense alert expression — slight tightness around the eyes and mouth, alertness in the posture, the look of a man under pressure.',
-  'skeptical':   'Skeptical sidelong expression — one eyebrow slightly raised, head tilted slightly, mouth in a tight line, the look of a man who isn\'t buying it.',
-  'smirking':    'Subtle confident smirk — one corner of mouth slightly raised, knowing look in the eyes, slight head tilt. Quiet confidence, not arrogant.',
-  'faint-smile': 'Faint warm smile — slight upturn of mouth corners, eyes warmed slightly, dignified and genuine. NOT a grin or laugh.',
-  'shocked':     'Shocked or stunned expression — eyebrows raised, eyes slightly wider than normal, mouth slightly open or jaw slack, the look of receiving bad news.',
-  'angry':       'Controlled anger — jaw clenched, brow furrowed, eyes hard and direct, mouth tight. Suppressed fury, not yelling.',
-  'weary':       'Weary exhausted expression — heavy under-eye shadows, tired eyes, slight slump, the look of a man who has been at war too long.'
-};
+const GENERAL_PLACEMENT_ZONE = `
+GENERAL PLACEMENT ZONE (CRITICAL — DO NOT RENDER ANY PERSON):
+This thumbnail background is designed for a general's portrait to be composited manually in post-production. You must NOT render any human figure, face, silhouette, or person anywhere in the image.
 
-// =====================================================================
-// SHARED INSTRUCTION BLOCKS — used across multiple styles
-// =====================================================================
+Instead, RESERVE A CLEAR ZONE where the general will be placed:
+- The reserved zone should have a smooth, uncluttered area suitable for overlaying a chest-up portrait
+- The zone should have good contrast — slightly darker or with a subtle atmospheric glow so a bright portrait will pop against it
+- Do NOT place any text, map labels, arrows, vehicles, or busy details in the reserved zone
+- The reserved zone should occupy roughly 35-45% of the frame width and the upper 60-70% of the frame height
+- Keep the background elements (maps, documents, vehicles, atmospheric effects) flowing around and behind the reserved zone, framing it naturally
 
-const POSTER_PHILOSOPHY = `
-RENDERING PHILOSOPHY (CRITICAL — this is a GRAPHIC POSTER, not a cinematic film still):
-This is a flat layered magazine-cover style design — NOT an atmospheric cinematic scene. Three distinct visual layers:
-1. BACKGROUND LAYER (back) — flat or near-flat color zones, design elements, NOT atmospheric haze
-2. ACCENT LAYER (middle) — the bright red zone or background design accent
-3. GENERAL LAYER (front) — a sharp studio-quality photographic portrait sitting ON TOP, like a magazine cover photo placed on a designed background
-
-The general MUST read as a clean photographic CUTOUT placed on top of the background — NOT a person standing INSIDE the scene. He has his own studio lighting independent of the background. There is NO atmospheric integration, NO environmental rim light from background, NO ambient color bounce, NO smoky merging at his edges.
-
-Reference comparison:
-- Like a magazine cover where the subject is a sharp photograph placed on a designed cover — NOT a film still where a person stands in a lit scene.
-- Like an album cover where the artist photo sits on top of designed art — NOT an environmental photograph.
-- Like a sports trading card — clean cutout on top of designed background, hard edge, separate visual layers.
-`;
-
-const STUDIO_LIGHTING = `
-STUDIO PORTRAIT LIGHTING ON THE GENERAL (CRITICAL — independent of background):
-The general is lit as if photographed in a professional studio with his own lighting setup. His lighting does NOT come from the background.
-- Bright HARD KEY LIGHT from upper-front-left at ~45° — bright warm white-daylight light (NOT red, NOT colored)
-- This studio light brightly illuminates his FACE and UNIFORM — both should appear bright, clear, well-exposed
-- Strong but soft fill on the right side of the face to keep shadows from going too dark
-- A subtle hair light from above-behind to give edge separation against the background
-- Crucially: NO red rim light from the background. NO ambient color bounce. NO atmospheric haze on him. NO environmental light wrap.
-- The lighting is BRIGHT and CLEAR — like a portrait taken for a magazine cover or military headshot — NOT moody, NOT cinematic, NOT underexposed
-- The face has photographic film-grain quality, sharp detail, every wrinkle and pore visible, eyes catching the bright key light
-- Skin tones read warm and natural — NOT muddy, NOT red-tinted, NOT desaturated
-
-UNIFORM BRIGHTNESS (CRITICAL — must be LIGHT and POPPING, not dark and muddy):
-The uniform must read as a CLEAR LIGHT color, brightly lit and popping forward. This is the most common failure mode — uniforms going dark and muddy. AVOID THAT.
-
-US Army officer service uniform:
-- Wool tunic in LIGHT WARM OLIVE DRAB (#7d8a52 to #8e9a5a range) — clearly LIGHT, warm green-tan-olive, NOT dark green, NOT muddy brown, NOT khaki
-- The bright studio key light makes the tunic surface CLEAR and LIGHT — about 30-40% brighter than what an underexposed photo would show
-- Necktie: medium khaki tan (#a08c64), warm and clear
-- Shirt collar: lighter cream-tan (#b09870)
-- Brass buttons: BRIGHT polished gold (#d4b164 to #e8c879) with clear specular highlights catching the key light
-- "U.S." brass collar pins: bright polished gold/brass, sharp readable letterforms catching highlight on the lit side
-- Rank insignia (silver stars / gold leaves on shoulders): BRIGHT polished metal with clear specular highlights
-- Branch insignia (crossed rifles, etc.): bright brass, clearly visible
-- Medal ribbons (rectangular bars on left chest): rendered as DISTINCT READABLE COLORED STRIPES — each ribbon a clearly recognizable colored bar (red, blue, gold, white stripes etc.) — NOT smudgy, NOT blurred together
-- Combat infantry badge or unit patch: visible if appropriate, bright and detailed
-
-USMC officer:
-- Service "A" uniform: forest green wool (#4a5a3a — darker than Army OD but still LIGHT enough to read clearly under bright studio light), with khaki shirt and tie
-- Bright polished brass eagle/globe/anchor insignia
-- All metallic insignia bright with strong specular highlights
-
-USAAF when appropriate:
-- Olive drab service tunic (same brightness rules as Army)
-- Wings insignia in BRIGHT polished silver, prominently displayed
-
-GENERAL UNIFORM RULES:
-- Every metallic element reads as METAL — bright, polished, clear specular highlights catching the white key light
-- Wool fabric has subtle visible weave texture
-- Color saturation is HIGH — clear, clean, magazine-cover quality
-- The uniform appears 30-40% BRIGHTER than the surrounding background — clearly POPPING FORWARD
-- Slight combat weathering acceptable but uniform is intact and dignified
-- The lit side of the uniform (front-left, facing key light) is bright and clear — every detail readable
-- NEVER dark, NEVER muddy, NEVER underexposed
-`;
-
-const FACE_IDENTITY_LOCK = `
-FACE & IDENTITY LOCK (CRITICAL):
-- Use the user-uploaded reference photos as the EXACT photographic facial likeness
-- This is a PHOTOGRAPHIC MATCH — NOT a stylized illustration, NOT a 3D CGI render, NOT a smooth-skinned digital painting
-- Match every facial feature: skin tone, face shape, jawline, eye shape and color, hair color and style, ears, nose, mouth, every wrinkle and line
-- Do NOT shift the apparent age — if reference shows a 50-year-old with weathered skin and graying hair, render exactly that
-- Do NOT smooth, idealize, or beautify the face — keep all the real character of the reference photo
-- Skin texture: real photographic film-grain quality with visible pores, fine lines, every wrinkle, stubble, hair detail
-- Eyes: catch the bright studio key light as small specular highlights, iris color matches reference exactly
-- Reference quality: a real military headshot or magazine cover portrait photograph — NOT a CGI character, NOT digital art, NOT a stylized poster illustration
-`;
-
-const POSE_AND_CROP = `
-POSE & CROP (CRITICAL — chest-up magazine portrait crop):
-- Three-quarter view from slightly low angle for authority
-- HEAD DOMINATES the upper portion of the frame — head fills approximately upper HALF of frame height (NOT just upper-third)
-- Top of helmet/cap has 5-10% margin from frame top
-- Crop tight at MID-CHEST — only the upper chest/shoulders/collar visible at the bottom edge of the frame, NOT full torso, NOT belly
-- This is a CHEST-UP magazine portrait crop, similar to a military officer headshot or magazine cover. The face is large and dominant.
-- The body is just enough to show the uniform — collar, top of medal ribbons, top of insignia — and then the crop ends
-- Period-accurate uniform: helmet OR service cap (depending on script context — combat = helmet, command = service cap)
-- Sharp, clean, crisp silhouette outline
+ABSOLUTELY NO PEOPLE — no generals, no soldiers, no human figures, no silhouettes, no faces. The image is BACKGROUND ONLY.
 `;
 
 const GENERAL_NEGATIVE = `
 NEGATIVE REQUIREMENTS:
+- NO human figures, faces, silhouettes, or people of ANY kind — this is a background-only image
 - NO modern banner text overlays unless explicitly instructed
 - NO title cards, NO captions, NO watermarks, NO play buttons, NO YouTube UI elements
 - NO borders or frames around the image
-- NO atmospheric haze on the general — keep him as a clean photographic layer
-- NO red ambient bounce on the general's face — his lighting is from a clean white studio key light
-- NO smoke or environmental effects merging into the general's silhouette
 - NO cool color palette anywhere (no steel blue, cyan, teal, green backgrounds)
-- NO cartoon, NO CGI, NO digital painting style — photographic realism only
-- NO underexposed dark muddy uniform — keep it bright and clear
 `;
 
 // =====================================================================
-// STYLE PROMPTS
+// STYLE PROMPTS — generates background scene only, no general
 // =====================================================================
 
 const STYLE_PROMPTS = {
 
-// ---------------------------------------------------------------------
-// BATTLE MAP — Full graphic-poster rewrite (v1.7)
-// ---------------------------------------------------------------------
-'battle-map': (va, expression, bannerWord, overlayEnabled) => {
+'battle-map': (va, bannerWord, overlayEnabled) => {
   const locations = (va.map_locations || []).join(', ');
   const arrows = (va.map_arrow_directions || []).join('; ');
-  const expressionText = EXPRESSION_DESCRIPTIONS[expression] || EXPRESSION_DESCRIPTIONS['stern'];
   const generalName = va.general_name || 'WWII American general';
 
-  return `Create a 16:9 viral YouTube thumbnail in BATTLE MAP COMPOSITE style.
+  return `Create a 16:9 YouTube thumbnail BACKGROUND in BATTLE MAP COMPOSITE style. This is a background-only image — DO NOT render any human figures. A general's portrait will be composited manually in post-production.
 
 LAYOUT:
-A tactical battle map fills the entire 16:9 frame edge to edge, including the right side behind the general. The map content — landmasses, arrows, place names, unit silhouettes — flows continuously across the entire frame. The map is illuminated by a cool dark light from the left and a warm deep red atmosphere from the right, creating a gradient color zone across the same continuous map.
+A tactical battle map fills the entire 16:9 frame edge to edge. The map content — landmasses, arrows, place names, unit silhouettes — flows continuously across the frame. The map is illuminated by a cool dark light from the left and a warm deep red atmosphere from the right, creating a gradient color zone across the same continuous map.
 
-A chest-up studio portrait of ${generalName} sits in the right portion of the frame, surrounded by a soft red glowing aura that frames his silhouette and merges him into the red zone of the map.
+The RIGHT SIDE (~35-45% width, upper 60-70% height) must be kept RELATIVELY CLEAR of busy map details — this is the GENERAL PLACEMENT ZONE where a portrait will be composited later. The red atmospheric glow should be strongest in this zone, providing a warm backdrop for the portrait overlay.
+
+${GENERAL_PLACEMENT_ZONE}
 
 THE BATTLE MAP — DUAL ZONE COLOR SCHEME:
 - LEFT side base color: dark navy / near-black slate (#0a1424 to #050a14) — landmasses on this side are dark cool tones
 - RIGHT side base color: deep red atmosphere (#7a1820 to #5a1015) — the same map content continues here but tinted into deep red, like the map is bathed in red light
 - The transition between navy and red is a smooth gradient across the middle of the frame — there is no panel split, no clean edge, no rectangle. One continuous map with a color gradient flowing left to right.
-- The map content (landmasses, arrows, place names, units) flows ACROSS this color gradient — landmass shapes continue from the navy zone into the red zone, arrows can cross from one color zone into the other, place names exist in both zones.
+- The map content (landmasses, arrows, place names, units) flows ACROSS this color gradient — but the RIGHT SIDE general placement zone should have LESS clutter
 
 MAP STYLE:
 - 1940s wartime operations briefing aesthetic, flat illustrated graphic
 - Land masses: solid filled muted gray-tan shapes (#3a3530), clearly defined with weight against the navy/red base
-- Water (only include if the campaign actually involves water — coast, river, ocean. If the campaign is entirely inland, skip water): saturated bright navy blue (#1e40af), vivid and clearly reads as water
+- Water (only include if the campaign actually involves water): saturated bright navy blue (#1e40af)
 - Country borders: clean dotted white lines
 
-ARROWS — DENSE CLASHING:
-Many small punchy arrows arranged densely across the territory, with red and blue arrows clashing head-on at battle lines to show the clash of forces. Short tactical arrows in tight engagement clusters.
+ARROWS — DENSE CLASHING (concentrated on LEFT and CENTER, sparse in right placement zone):
+Many small punchy arrows arranged densely, with red and blue arrows clashing head-on at battle lines.
 - Friendly forces: saturated bright red arrows (#ef4444), 6-10 pixels wide, short and punchy
 - Enemy forces: saturated bright blue arrows (#2563eb), 6-10 pixels wide, short and punchy
-- 8-15 arrows total — dense and active
-- Red and blue arrowheads collide head-on at battle points to show direct combat
-- Arrows flow naturally across both the navy left zone and the red right zone
+- 8-15 arrows total — dense and active, but AVOID placing arrows in the right general placement zone
+- Red and blue arrowheads collide head-on at battle points
 
 Reference arrow directions from script research: ${arrows}
 
-PLACE NAMES (render exactly, distributed across the full map including the right red zone):
+PLACE NAMES (render exactly — keep most labels on the LEFT and CENTER, minimal in right zone):
 ${locations}
 - ALL CAPS bold serif, white/cream ink, subtle dark plate behind for legibility
 - Spelling MUST be exact
 
 UNIT MARKERS:
-- 5-8 small black tank silhouettes and infantry icons scattered across the territory along arrow paths and at battle points
+- 5-8 small black tank silhouettes and infantry icons scattered across the territory along arrow paths — mostly on LEFT/CENTER
 
-THE GENERAL:
-A photographic chest-up portrait of ${generalName} composited on the right side of the frame in the red zone, surrounded by a soft red glowing aura.
-
-- Position: head at ~75% from left edge, fills the upper half of frame
-- Crop: tight at mid-chest — only upper chest, shoulders, collar, top of medal ribbons visible
-- Pose: three-quarter view from slightly low angle for authority
-- Expression: ${expressionText} — the expression (eyes, brow, mouth) reflects this mood while the underlying facial identity stays locked to the reference photos
-
-RED AURA AROUND THE GENERAL:
-A soft red glowing aura wraps around the general's silhouette — warm crimson light at brightest fading into the surrounding deep red zone. The aura is atmospheric and irregular, like warm red light dispersing through haze around him. It frames his silhouette and blends him smoothly into the red right side of the map.
-
-The aura is RED only — never white, never light-colored, never a hard outline. It is glow, not edge.
-
-STUDIO LIGHTING ON THE GENERAL:
-The general is lit by a bright clean studio key light from upper-front-left — bright warm white-daylight light independent of the red atmosphere around him. His face and uniform are brightly lit and well-exposed, popping forward against the red zone.
-
-UNIFORM — BRIGHT OLIVE:
-US Army officer service uniform in BRIGHT OLIVE — clearly light warm green-tan-olive (#7d8a52 to #8e9a5a), brightly lit and popping forward. Brass buttons polished gold with specular highlights. "U.S." brass collar pins bright and readable. Rank insignia bright polished metal. Medal ribbons rendered as distinct readable colored stripes (red, blue, gold, white) — clear, not smudgy. Necktie khaki tan, shirt cream-tan.
-
-FACE IDENTITY:
-Exact photographic match to reference photos for facial identity — bone structure, age, skin tone, eye color, hair color and style, every wrinkle and line. Expression varies per the EXPRESSION instruction above (eyes, brow, mouth shape) but the underlying face is the same person from the reference photos. Photographic film-grain quality, sharp realistic skin detail. Real photograph, not digital painting, not CGI, not smooth plastic skin.
-
-OUTPUT: A 16:9 viral YouTube thumbnail. Full-frame tactical battle map with dark navy on the left fading smoothly into deep red on the right, dense clashing red and blue arrows flowing across both color zones, place names distributed across the full width including the red zone. A chest-up portrait of the general sits in the red zone surrounded by a soft red glowing aura, with bright olive uniform, sharply photographic face matching the reference identity, expressive but identity-locked.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
-},
-
-
-
-
-
-// ---------------------------------------------------------------------
-// PORTRAIT HERO — collapsed two-pass to single-pass (no architectural rewrite yet)
-// ---------------------------------------------------------------------
-'portrait-hero': (va, expression, bannerWord, overlayEnabled) => {
-  const expressionText = EXPRESSION_DESCRIPTIONS[expression] || EXPRESSION_DESCRIPTIONS['stern'];
-  const generalName = va.general_name || 'WWII American general';
-
-  return `Create a 16:9 YouTube thumbnail in PORTRAIT HERO style — a chest-up studio portrait of ${generalName} dominating the frame against a deep cinematic wine-red atmospheric background.
-
-PHILOSOPHY: Premium magazine cover key art — moody, dramatic, with the general as a sharp photographic portrait against a deep red background.
-
-BACKGROUND:
-- Deep saturated wine-red field, atmospheric and moody
-- Subtle warm crimson glow zone behind the general's head (rendered as light dispersing through atmospheric haze, NOT a defined oval/circle/disc shape)
-- Strong dark vignette in all four corners falling to near-black
-- Subtle smoke/grain/atmospheric texture throughout (no flat color zones)
-- Color range: brightest crimson (#c8202b) behind head fading through deep wine-red (#7a1820 to #5a1015) to near-black corners (#1a0303 to #050000)
-- NO bright fire-engine red flat fill, NO amber, NO blue, NO desaturated tones
-
-THE GENERAL:
-- Three-quarter view from slightly low angle for authority
-- Head positioned slightly right of center (~55-58% from left)
-- Head fills upper HALF of frame (large and dominant)
-- Crop tight at MID-CHEST
-- Sharp clean silhouette outline
-
-EXPRESSION:
-${expressionText}
-
-${POSE_AND_CROP}
-
-${STUDIO_LIGHTING}
-
-${FACE_IDENTITY_LOCK}
+RED ATMOSPHERIC GLOW IN PLACEMENT ZONE:
+The right side should have a soft atmospheric red glow — warm crimson light dispersing through haze, providing a warm backdrop. This glow zone is where the general portrait will be placed, so it should be smooth, atmospheric, and free of busy details.
 
 ${GENERAL_NEGATIVE}
 
-OUTPUT: 16:9 widescreen, dominant chest-up portrait of the general in atmospheric wine-red environment with subtle smoke/haze texture, bright lit uniform, sharp photographic face, magazine-cover quality.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
+OUTPUT: A 16:9 background thumbnail — full-frame tactical battle map with dark navy left fading to deep red right, dense clashing arrows on left/center, place names distributed mostly left/center, with a clear atmospheric red zone on the right reserved for manual general portrait compositing. NO PEOPLE.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
 },
 
-// ---------------------------------------------------------------------
-// PERIOD ARCHIVE — collapsed to single-pass
-// ---------------------------------------------------------------------
-'period-archive': (va, expression, bannerWord, overlayEnabled) => {
+'portrait-hero': (va, bannerWord, overlayEnabled) => {
+  const generalName = va.general_name || 'WWII American general';
+
+  return `Create a 16:9 YouTube thumbnail BACKGROUND in PORTRAIT HERO style — a deep cinematic wine-red atmospheric background designed for a general's portrait to be composited manually in post-production. DO NOT render any human figures.
+
+PHILOSOPHY: Premium magazine cover key art background — moody, dramatic, with space reserved for a sharp photographic portrait overlay.
+
+BACKGROUND:
+- Deep saturated wine-red field, atmospheric and moody
+- Subtle warm crimson glow zone in the upper-center-right area (where a head/shoulders portrait will be placed) — rendered as light dispersing through atmospheric haze, NOT a defined oval/circle/disc shape
+- Strong dark vignette in all four corners falling to near-black
+- Subtle smoke/grain/atmospheric texture throughout (no flat color zones)
+- Color range: brightest crimson (#c8202b) in the glow zone fading through deep wine-red (#7a1820 to #5a1015) to near-black corners (#1a0303 to #050000)
+- NO bright fire-engine red flat fill, NO amber, NO blue, NO desaturated tones
+
+${GENERAL_PLACEMENT_ZONE}
+
+The placement zone should be slightly right of center (~55-58% from left), occupying the upper portion of the frame. The atmospheric glow should be centered on this zone to create a natural "halo" effect for the portrait that will be composited later.
+
+The lower-center area should be slightly darker to make banner overlay readable in post.
+
+${GENERAL_NEGATIVE}
+
+OUTPUT: 16:9 widescreen, deep atmospheric wine-red background with subtle smoke/haze texture, warm glow in the portrait placement zone, dramatic dark falloff at edges, magazine-cover quality. NO PEOPLE — background only for manual compositing.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
+},
+
+'period-archive': (va, bannerWord, overlayEnabled) => {
   const headlines = (va.newspaper_headlines || []).map(h => `"${h}"`).join(', ');
   const mastheads = (va.newspaper_mastheads || []).map(m => `"${m}"`).join(', ');
   const docCls = va.document_classification || {};
-  const expressionText = EXPRESSION_DESCRIPTIONS[expression] || EXPRESSION_DESCRIPTIONS['stern'];
   const generalName = va.general_name || 'WWII American general';
 
-  return `Create a 16:9 YouTube thumbnail in PERIOD ARCHIVE style — a magazine-cover composition with overlapping period newspapers and documents on the left, a deep wine-red atmospheric zone on the right, and a chest-up studio portrait of ${generalName} composited on the right.
+  return `Create a 16:9 YouTube thumbnail BACKGROUND in PERIOD ARCHIVE style — overlapping period newspapers and documents on the left, a deep wine-red atmospheric zone on the right. DO NOT render any human figures — a general's portrait will be composited manually in post-production.
 
 LAYOUT:
 - LEFT 55-60%: Overlapping period newspapers, magazines, and documents tiled at slight angles
-- RIGHT 40-45%: Deep wine-red atmospheric field with subtle warm glow behind the general's head zone
+- RIGHT 40-45%: Deep wine-red atmospheric field with subtle warm glow — this is the GENERAL PLACEMENT ZONE
 - Documents may slightly overlap into the lower portion of the right zone, no hard edge
+
+${GENERAL_PLACEMENT_ZONE}
+
+The placement zone is the RIGHT 40-45% of the frame. Keep this area relatively clear of newspaper clutter — it should be a smooth deep wine-red atmospheric zone with a subtle warm glow, ready for a portrait overlay. Some document edges can peek into the lower part of this zone for natural framing.
 
 THE ARCHIVE STACK (left):
 - 4-6 overlapping period newspapers at slight angles (5-15° rotation)
 - Aged warm yellow-cream paper texture with realistic fold marks, torn edges, subtle aging stains
-- The cream papers POP against the deep wine-red — warm-on-cool contrast is the visual signature
+- The cream papers POP against the deep wine-red
 
 NEWSPAPER MASTHEADS (render EXACTLY at top of newspapers — period typography):
 ${mastheads}
@@ -1214,7 +852,7 @@ HEADLINES (render EXACTLY as huge bold uppercase serif headlines on the newspape
 ${headlines}
 - Each headline takes up most of one newspaper's front page
 - Bold uppercase serif type, dramatic size
-- Spelling MUST be perfect — no garbled text
+- Spelling MUST be perfect
 - Subheadlines below in smaller bold type, column-text texture below as gray illegible filler
 
 OFFICIAL DOCUMENTS (1-2 sheets in the stack):
@@ -1224,56 +862,37 @@ OFFICIAL DOCUMENTS (1-2 sheets in the stack):
 - Date: "${docCls.date || ''}"
 - Bold ink signature at bottom
 
-THE WINE-RED ZONE (right):
-- Deep wine-red atmospheric field, with a soft warm glow behind the general's head area (not a defined disc — atmospheric)
+THE WINE-RED ZONE (right — general placement zone):
+- Deep wine-red atmospheric field with a soft warm glow in the upper area (not a defined disc — atmospheric)
 - Strong dark vignette in upper-right and lower-right corners
-- Sets up the area where the general will be placed
-
-THE GENERAL (right side):
-- Three-quarter view from slightly low angle
-- Head positioned at approximately 75% from left edge
-- Head fills upper HALF of frame
-- Crop tight at MID-CHEST
-- Sharp clean silhouette
-- Appears to "emerge" from behind the lower edge of the document stack — bottom of shoulders may be slightly overlapped by documents at the lower-right boundary
-
-EXPRESSION:
-${expressionText}
-
-${POSE_AND_CROP}
-
-${STUDIO_LIGHTING}
-
-${FACE_IDENTITY_LOCK}
+- Keep this zone UNCLUTTERED — smooth atmospheric background suitable for portrait overlay
 
 LIGHTING ON DOCUMENTS:
 - Documents lit from upper-left at 45°, casting subtle warm shadows
-- Cream papers and aged textures pick up subtle warm light
 - Strong dark vignette around the entire image
 
 ${GENERAL_NEGATIVE}
 
-OUTPUT: 16:9 widescreen, overlapping period archive on left with PROPERLY SPELLED real headlines and mastheads, deep wine-red atmospheric zone on right with the general's chest-up portrait composited cleanly with bright lit uniform and photographic identity match.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
+OUTPUT: 16:9 widescreen, overlapping period archive on left with PROPERLY SPELLED real headlines and mastheads, deep wine-red atmospheric zone on right reserved for manual general portrait compositing. NO PEOPLE — background only.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
 },
 
-// ---------------------------------------------------------------------
-// BATTLEFIELD COMMAND — collapsed to single-pass
-// ---------------------------------------------------------------------
-'battlefield-command': (va, expression, bannerWord, overlayEnabled) => {
+'battlefield-command': (va, bannerWord, overlayEnabled) => {
   const setting = va.battlefield_setting || {};
   const vehicles = (setting.vehicles || []).join(', ');
   const signs = (setting.road_signs || []).map(s => `"${s}"`).join(', ');
-  const expressionText = EXPRESSION_DESCRIPTIONS[expression] || EXPRESSION_DESCRIPTIONS['stern'];
   const generalName = va.general_name || 'WWII American general';
 
-  return `Create a 16:9 YouTube thumbnail in BATTLEFIELD COMMAND style — ${generalName} center-frame in a chest-up studio portrait, with combat vehicles flanking him in atmospheric haze on either side.
+  return `Create a 16:9 YouTube thumbnail BACKGROUND in BATTLEFIELD COMMAND style — combat vehicles and battlefield atmosphere flanking a central empty zone. DO NOT render any human figures — a general's portrait will be composited manually in post-production.
 
 LAYOUT:
-- CENTER (occupies main visual focus): Chest-up studio portrait of the general
+- CENTER (~35-45% width, upper 60-70% height): GENERAL PLACEMENT ZONE — clear atmospheric space reserved for portrait overlay
 - LEFT THIRD: 1-2 combat vehicles at three-quarter angle, slightly receding into atmospheric haze
 - RIGHT THIRD: 1-2 different combat vehicles at three-quarter angle, slightly receding into haze
-- Vehicles and environment fade into red-tinted atmospheric haze as they recede
-- Strong dark vignette in corners
+- Vehicles and environment fade into red-tinted atmospheric haze as they recede toward center
+
+${GENERAL_PLACEMENT_ZONE}
+
+The center placement zone should have a warm atmospheric red glow — smooth and uncluttered, providing contrast for a bright portrait overlay. Vehicles frame this zone from left and right but do NOT enter it.
 
 THEATER & SETTING (specific to this script):
 - Theater: ${setting.theater || 'WWII battlefield'}
@@ -1283,9 +902,9 @@ THEATER & SETTING (specific to this script):
 VEHICLES (era-accurate, NOT generic):
 ${vehicles || 'period-appropriate WWII combat vehicles'}
 - Photorealistic with weathering: dust, mud splatter, paint wear
-- Soldiers visible inside/on vehicles as small distant background figures (NOT the main subject)
 - Era-accurate markings: white US Army stars, unit numbers, division insignia
-- Vehicles caught in warm atmospheric light — they belong to the scene, not lit independently
+- Vehicles caught in warm atmospheric light
+- Position vehicles on LEFT and RIGHT thirds, flanking the central placement zone
 
 ROAD SIGNS (render these EXACT texts if any are listed):
 ${signs || '(none for this theater)'}
@@ -1296,44 +915,32 @@ ENVIRONMENTAL ATMOSPHERE:
 - Cinematic atmospheric daylight tinted by deep red environment (dusty, smoky, theatrical)
 - Atmospheric red-tinted haze unifies the scene
 - Strong dark vignette in corners
-
-THE GENERAL (center):
-- Three-quarter view from slightly low angle
-- Head dead-center horizontally, in upper portion of frame
-- Head fills upper HALF of frame
-- Crop tight at MID-CHEST — only upper chest, shoulders, collar visible at bottom edge
-- Sharp clean silhouette — clearly distinct from the atmospheric scene behind him
-
-EXPRESSION:
-${expressionText}
-
-${POSE_AND_CROP}
-
-${STUDIO_LIGHTING}
-
-${FACE_IDENTITY_LOCK}
+- Central zone has the warmest, smoothest atmospheric glow
 
 ${GENERAL_NEGATIVE}
 
-OUTPUT: 16:9 widescreen, dominant chest-up portrait of the general in the center with theater-specific battlefield vehicles and atmosphere flanking him, bright lit uniform standing out against the atmospheric scene, photographic identity match.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
+OUTPUT: 16:9 widescreen, theater-specific battlefield vehicles flanking a clear central atmospheric zone reserved for manual general portrait compositing, dramatic red-tinted haze environment. NO PEOPLE — background only.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
 },
 
-// ---------------------------------------------------------------------
-// RIVALRY — collapsed to single-pass, two generals
-// ---------------------------------------------------------------------
-'rivalry': (va, expression, bannerWord, overlayEnabled) => {
+'rivalry': (va, bannerWord, overlayEnabled) => {
   const locations = (va.map_locations || []).slice(0, 6).join(', ');
   const opLabel = va.map_operation_label || '';
-  const expressionText = EXPRESSION_DESCRIPTIONS[expression] || EXPRESSION_DESCRIPTIONS['stern'];
 
-  return `Create a 16:9 YouTube thumbnail in RIVALRY style — TWO different generals as chest-up studio portraits flanking a tactical battle map element in the center, with deep wine-red atmospheric zones in the corners.
+  return `Create a 16:9 YouTube thumbnail BACKGROUND in RIVALRY style — a tactical battle map center element with deep wine-red atmospheric zones on left and right. DO NOT render any human figures — two general portraits will be composited manually in post-production.
 
 LAYOUT:
-- LEFT THIRD: General A (use FIRST set of reference photos) — chest-up portrait, three-quarter view facing slightly inward toward center
+- LEFT THIRD: GENERAL A PLACEMENT ZONE — deep wine-red atmospheric zone, clear and uncluttered
 - CENTER (~25-30% width, ~50% height): Tactical battle map element floating with slight 3D tilt
-- RIGHT THIRD: General B (use SECOND set of reference photos) — chest-up portrait, three-quarter view facing slightly inward toward center
+- RIGHT THIRD: GENERAL B PLACEMENT ZONE — deep wine-red atmospheric zone, clear and uncluttered
 - Background: deep wine-red atmospheric field with strong dark vignette in corners
-- Both generals at the same vertical height for compositional balance
+
+GENERAL PLACEMENT ZONES (CRITICAL — DO NOT RENDER ANY PERSON):
+This thumbnail has TWO placement zones for two different general portraits to be composited manually:
+- LEFT ZONE (~15-35% from left edge, upper 60-70% height): Clear atmospheric wine-red space for General A portrait
+- RIGHT ZONE (~65-85% from left edge, upper 60-70% height): Clear atmospheric wine-red space for General B portrait
+- Both zones should have smooth atmospheric glow suitable for bright portrait overlays
+- Do NOT place any map elements, text, arrows, or busy details in these zones
+- NO human figures, faces, silhouettes, or people of ANY kind anywhere in the image
 
 THE CENTER MAP:
 - Period military operations map showing the campaign of conflict
@@ -1342,35 +949,62 @@ THE CENTER MAP:
 - Date/operation header: "${opLabel}"
 - Map sits floating with slight 3D tilt, slight glow behind it
 - Map background: dark navy/near-black with subtle red tint
+- Map is CONTAINED in the center — does NOT extend into left/right placement zones
 
-THE TWO GENERALS:
-- LEFT GENERAL — first set of reference photos: head positioned at ~18-22% from left edge, three-quarter view facing slightly right
-- RIGHT GENERAL — second set of reference photos: head positioned at ~78-82% from left edge, three-quarter view facing slightly left
-- Both heads at the same vertical position
-- Both crops chest-up — head fills upper half, body cropped at mid-chest
-- Both with sharp clean silhouettes, distinct from background
-
-EXPRESSIONS (both generals):
-${expressionText}
-
-POSE & CROP applies to BOTH generals:
-${POSE_AND_CROP}
-
-LIGHTING — applies to BOTH generals:
-${STUDIO_LIGHTING}
-
-FACE IDENTITY LOCK — applies to BOTH generals:
-${FACE_IDENTITY_LOCK}
-(CRITICAL: Apply identity match to BOTH generals separately. First reference set = General A on LEFT. Second reference set = General B on RIGHT. Match BOTH faces precisely to their respective references.)
-
-MOOD: "Showdown" — two professionals in opposition. Both faces equally sharp and detailed (neither is "the loser"). Documentary-cinematic tone.
+MOOD: "Showdown" — documentary-cinematic tone, tension between two sides.
 
 ${GENERAL_NEGATIVE}
 
-OUTPUT: 16:9 widescreen, two chest-up general portraits flanking a tactical map center element, both with bright lit uniforms and photographic identity match to their respective reference photos, deep wine-red atmospheric background.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
+OUTPUT: 16:9 widescreen, tactical map center element flanked by two clear atmospheric wine-red zones reserved for manual general portrait compositing, deep wine-red background. NO PEOPLE — background only.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
 }
 
 };
+
+// =====================================================================
+// BANNER OVERLAY TEMPLATE (unchanged)
+// =====================================================================
+
+const BANNER_INSTRUCTION_TEMPLATE = (bannerWord) => `
+
+============================================
+BANNER OVERLAY (REQUIRED — RENDER INTO IMAGE):
+============================================
+
+Add a bold BLACK banner box at the BOTTOM of the frame, slightly tilted (3-7° rotation) with rough/torn paper edges. Banner sits in the lower 25-30% of the frame, centered or slightly left.
+
+BANNER BOX:
+- Background: Pure deep BLACK (#0a0a0a / near-pure black) — solid, opaque
+- Shape: Rectangular block with slightly rough/torn edges (NOT clean rounded corners — should look hand-painted or brush-stroke, like a torn paper strip)
+- Width: Sized to fit text snugly (banner takes 35-50% of frame width)
+- Slight 3-7° rotation for visual energy
+
+BANNER TEXT:
+- Word to render: "${bannerWord}"
+- Color: Pure white (#ffffff)
+- Font: Bold sans-serif similar to Anton or Bebas Neue (heavy, condensed, modern, geometric)
+- Case: ALL UPPERCASE
+- Letter spacing: Slightly tight
+- Padding: tight on all sides
+- Text must be CRISP, SHARP, perfectly legible against the black background
+
+CRITICAL — SUBTLE CREAM-WHITE GLOW BEHIND BANNER:
+- Soft warm cream-white drop shadow extending OUTSIDE the black banner box
+- Glow color: warm cream-white (#fef3c7 to #fde68a at low opacity, ~30-40%)
+- Glow size: ~15-20 pixels of soft spread
+- Glow offset: very slight downward (2-3 pixels)
+- Soft and DIFFUSED, NOT a hard outline
+
+CRITICAL TEXT ACCURACY:
+- Banner text must read EXACTLY: "${bannerWord}"
+- Spell every letter correctly — non-negotiable
+- Do not abbreviate, modify, or stylize the word
+- Clean readable letterforms — no decorative effects, no 3D extrusion
+
+The banner should look like a torn black poster strip with bold white text floating at the bottom of the thumbnail with a subtle cream-white halo for separation.`;
+
+// =====================================================================
+// STATE & UI LOGIC
+// =====================================================================
 
 const state = {
   claudeModel: 'opus',
@@ -1380,12 +1014,9 @@ const state = {
   selectedTitleIdx: null,
   selectedBannerIdx: null,
   customBanner: '',
-  selectedExpression: 'stern',
   scriptText: '',
   scriptPdfBase64: null,
   scriptSource: 'text',
-  referencesA: [null, null, null],
-  referencesB: [null, null, null],
   sessionSpend: 0,
   brainResult: null
 };
@@ -1459,119 +1090,6 @@ document.querySelectorAll('.style-card').forEach(card => {
   });
 });
 
-// Expression handling — single-select
-document.querySelectorAll('.expression-card').forEach(card => {
-  card.addEventListener('click', () => {
-    document.querySelectorAll('.expression-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    state.selectedExpression = card.dataset.expression;
-  });
-});
-
-// Reference photo handling — supports both per-slot click AND multi-select bulk upload
-function readFileAsDataURL(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (ev) => resolve(ev.target.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-function refreshRefSlot(slot, dataUrl) {
-  if (dataUrl) {
-    slot.classList.add('has-image');
-    slot.innerHTML = `<img src="${dataUrl}" alt="Reference"><button class="ref-slot-clear" title="Remove">×</button>`;
-    slot.querySelector('.ref-slot-clear').addEventListener('click', (e) => {
-      e.stopPropagation();
-      const setKey = slot.dataset.set === 'A' ? 'referencesA' : 'referencesB';
-      const idx = parseInt(slot.dataset.slot);
-      state[setKey][idx] = null;
-      slot.classList.remove('has-image');
-      slot.innerHTML = `<span class="ref-icon">+</span><span>Reference ${idx + 1}</span>`;
-      attachSlotListener(slot);
-    });
-  } else {
-    const idx = parseInt(slot.dataset.slot);
-    slot.classList.remove('has-image');
-    slot.innerHTML = `<span class="ref-icon">+</span><span>Reference ${idx + 1}</span>`;
-  }
-}
-
-async function handleFilesForSet(setKey, startSlotIdx, files) {
-  const stateArr = state[setKey];
-  const setLetter = setKey === 'referencesA' ? 'A' : 'B';
-  const grid = document.getElementById(setKey === 'referencesA' ? 'refsGridA' : 'refsGridB');
-
-  // Determine target slots: start at startSlotIdx, fill up to 3 total slots
-  const slotsToFill = [];
-  let cursor = startSlotIdx;
-  for (let i = 0; i < files.length && slotsToFill.length < 3; i++) {
-    if (cursor >= 3) break;
-    slotsToFill.push(cursor);
-    cursor++;
-  }
-
-  // If user picked more than fits from start, just truncate (don't wrap)
-  for (let i = 0; i < slotsToFill.length; i++) {
-    const file = files[i];
-    if (!file || !file.type.startsWith('image/')) continue;
-    try {
-      const dataUrl = await readFileAsDataURL(file);
-      const slotIdx = slotsToFill[i];
-      stateArr[slotIdx] = dataUrl;
-      const slotEl = grid.querySelector(`.ref-slot[data-slot="${slotIdx}"]`);
-      refreshRefSlot(slotEl, dataUrl);
-    } catch (err) {
-      showError(`Failed to read image: ${file.name}`);
-    }
-  }
-}
-
-function attachSlotListener(slot) {
-  // Remove old listeners by cloning
-  const newSlot = slot.cloneNode(true);
-  slot.parentNode.replaceChild(newSlot, slot);
-  newSlot.addEventListener('click', () => {
-    if (newSlot.classList.contains('has-image')) return; // clear button handles this
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.multiple = true; // allow multi-select even when starting from a single slot
-    input.onchange = async (e) => {
-      const files = Array.from(e.target.files || []);
-      if (!files.length) return;
-      const setKey = newSlot.dataset.set === 'A' ? 'referencesA' : 'referencesB';
-      const startSlotIdx = parseInt(newSlot.dataset.slot);
-      await handleFilesForSet(setKey, startSlotIdx, files);
-    };
-    input.click();
-  });
-}
-
-document.querySelectorAll('.ref-slot').forEach(attachSlotListener);
-
-function setupBulkUpload(buttonId, setKey) {
-  document.getElementById(buttonId).addEventListener('click', () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.multiple = true;
-    input.onchange = async (e) => {
-      const files = Array.from(e.target.files || []);
-      if (!files.length) return;
-      // Find first empty slot, or start at 0 if all full (overwrite from start)
-      const stateArr = state[setKey];
-      let startIdx = stateArr.findIndex(v => v === null);
-      if (startIdx === -1) startIdx = 0;
-      await handleFilesForSet(setKey, startIdx, files);
-    };
-    input.click();
-  });
-}
-setupBulkUpload('bulkUploadA', 'referencesA');
-setupBulkUpload('bulkUploadB', 'referencesB');
-
 document.getElementById('overlayToggle').addEventListener('click', (e) => {
   e.currentTarget.classList.toggle('on');
   state.overlayEnabled = e.currentTarget.classList.contains('on');
@@ -1586,6 +1104,15 @@ function showError(message) {
     </div>`;
 }
 function clearError() { document.getElementById('errorContainer').innerHTML = ''; }
+
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// =====================================================================
+// PATTERN LIBRARY (Claude brain prompt) — unchanged
+// =====================================================================
 
 const PATTERN_LIBRARY = `# YOU ARE THE AMERICAN BRASS THUMBNAIL & TITLE BRAIN
 
@@ -1714,51 +1241,41 @@ Required SEO keywords:
 - Faction keywords: US Marines, US Army, American, Allied
 - Niche keywords: military history, generals, command, commanders, American Brass
 
-## VISUAL ASSETS — BACKGROUND CONTENT GENERATION (CRITICAL — NEW)
+## VISUAL ASSETS — BACKGROUND CONTENT GENERATION (CRITICAL)
 
-You also generate concrete visual content that will be RENDERED INTO THE THUMBNAIL BACKGROUND. The thumbnail uses a two-pass image pipeline: Pass 1 builds the background scene with this content baked in (real maps, real headlines, real documents), Pass 2 composites the general into it. Therefore your visual_assets must be SPECIFIC, ACCURATE, and STORY-RELEVANT.
+You generate concrete visual content that will be RENDERED INTO THE THUMBNAIL BACKGROUND. The thumbnail pipeline generates a background scene with this content baked in (real maps, real headlines, real documents). A general's portrait will be composited manually in post-production — the AI does NOT render people.
 
-These assets are SHARED across all 3 title options (the underlying facts don't change). Use the script's actual research — real place names from the script's campaigns, real publications from the era, dates and details mentioned in the script.
+These assets are SHARED across all 3 title options (the underlying facts don't change). Use the script's actual research.
 
 ### map_locations (4-8 entries)
 Real geographic locations from the script's campaigns, in proper format for a tactical map.
 - Use ALL CAPS for cities/atolls/landmarks
 - Use Initial Caps for countries/regions/seas
-- Spelling MUST be exact and historically accurate (e.g., "MAKIN ATOLL", "BUTARITARI", "TARAWA", "GUADALCANAL", "BATAAN", "GIVRY", "ST-LÔ", "BASTOGNE", "SCHMIDT")
-- These will be rendered as labels on the actual battle map
+- Spelling MUST be exact and historically accurate
 
 ### map_operation_label
 Single-line header for the map's upper-left corner. Format: "[DATE] — [OPERATION NAME]"
-Examples: "AUG 17, 1942 — MAKIN RAID", "JUL 25, 1944 — OPERATION COBRA", "DEC 1944 — BATTLE OF THE BULGE"
 
 ### map_arrow_directions (2-4 entries)
-Brief descriptions of where bold tactical arrows should point on the map. These are the visual story of the operation.
-Examples: "from south to Makin atoll", "from beachhead inland to St-Lô", "encircling Bastogne from north and south"
+Brief descriptions of where bold tactical arrows should point on the map.
 
 ### newspaper_headlines (4-6 entries)
-Real-feeling period newspaper/magazine headlines about the general. THESE ARE THE VISUAL STORY of the Period Archive style.
-Mix tones to create the "investigation board" feel:
-- 50% myth-supporting / heroic ("BRADLEY'S TRIUMPH", "GI'S GENERAL", "HERO OF NORMANDY")
-- 50% skeptical / critical ("WAR HERO QUESTIONED", "SECRET FILES REVEAL TRUTH", "GENERAL'S CONTROVERSIAL TACTICS", "MARSHALL'S DECISION DEBATED")
-- ALL CAPS, 2-5 words each, period-appropriate phrasing
-- Spelling MUST be perfect — these are rendered as readable headlines
+Real-feeling period newspaper/magazine headlines about the general.
+Mix tones: 50% heroic, 50% skeptical/critical. ALL CAPS, 2-5 words each. Spelling MUST be perfect.
 
 ### newspaper_mastheads (3-5 entries)
-Real period publications appropriate to the era. Pick 3-5 that fit the general's theater and era:
-US options: "STARS AND STRIPES", "THE NEW YORK TIMES", "LIFE", "TIME", "THE WASHINGTON POST", "YANK", "COLLIER'S", "SATURDAY EVENING POST", "LOOK", "NEWSWEEK"
-Use exact period publication names with correct typography style.
+Real period publications appropriate to the era: "STARS AND STRIPES", "THE NEW YORK TIMES", "LIFE", "TIME", etc.
 
 ### document_classification
-For Period Archive style, the official documents shown. What classification stamp appears? What date?
 Format: { "stamp": "CLASSIFIED" | "CONFIDENTIAL" | "SECRET" | "TOP SECRET" | "EYES ONLY", "letterhead": "WAR DEPARTMENT" | "OFFICE OF STRATEGIC SERVICES" | etc, "date": "specific date from script" }
 
 ### battlefield_setting
 Theater-specific environmental details for Battlefield Command style.
-- theater: "Pacific tropical" | "European hedgerows" | "European urban ruins" | "North African desert" | "Korean mountains" | etc
-- vehicles: List 2-4 era-accurate vehicles for this theater (e.g., "Sherman M4A3 tank, M3 halftrack, Willys MB jeep" for Europe ~1944; "LVT-2 amphtrac, M4A2 Sherman, Marine LVT" for Pacific Marine ops)
-- terrain: 1-2 sentences describing the ground/environment
-- atmosphere: e.g., "smoke and dust haze, golden afternoon light", "muddy hedgerow morning fog", "tropical haze, palm silhouettes"
-- road_signs: List 2-3 era/region appropriate sign texts. For European: French/German town names. For Pacific: leave empty array.
+- theater: "Pacific tropical" | "European hedgerows" | etc
+- vehicles: List 2-4 era-accurate vehicles
+- terrain: 1-2 sentences describing ground/environment
+- atmosphere: e.g., "smoke and dust haze, golden afternoon light"
+- road_signs: List 2-3 era/region appropriate sign texts
 
 ## OUTPUT FORMAT — STRICT JSON
 
@@ -1828,16 +1345,15 @@ Return STRICTLY VALID JSON. NO markdown fences, NO preamble.
 5. ✓ Used proper quoted-adjective format where applicable
 6. ✓ NO question marks at end (except Structure C)
 7. ✓ SEO description is 300-400 words with general's name x3-5
-8. ✓ visual_assets fully populated with REAL place names, REAL headlines, REAL publications from the script's era and theater
-9. ✓ All map_locations and newspaper_headlines spelled correctly (no garbled text)
+8. ✓ visual_assets fully populated with REAL place names, REAL headlines, REAL publications
+9. ✓ All map_locations and newspaper_headlines spelled correctly
 10. ✓ JSON is valid (no trailing commas, no markdown fences)
 
-If any title is outside 75-90 char range, REWRITE before outputting.
-If any banner is on forbidden list, INVENT new one before outputting.
-If any title has filler words, REWRITE without them.
-If visual_assets are generic/placeholder, REWRITE with real script-specific content.
-
 Return ONLY the JSON object — no preamble, no commentary.`;
+
+// =====================================================================
+// CLAUDE API CALL
+// =====================================================================
 
 const MODEL_MAP = {
   haiku: 'claude-haiku-4-5-20251001',
@@ -1900,6 +1416,10 @@ async function callClaude(scriptContent, scriptType, model, apiKey) {
   return { result, usage: data.usage };
 }
 
+// =====================================================================
+// ANALYSIS UI STAGES
+// =====================================================================
+
 const STAGES = ['reading', 'extracting', 'matching', 'generating', 'seo'];
 function setStage(currentStage) {
   STAGES.forEach(stage => {
@@ -1925,6 +1445,10 @@ function advanceStages() {
     } else { setStage(STAGES[idx]); }
   }, 1000);
 }
+
+// =====================================================================
+// ANALYZE BUTTON HANDLER
+// =====================================================================
 
 document.getElementById('analyzeBtn').addEventListener('click', async () => {
   clearError();
@@ -1988,11 +1512,14 @@ document.getElementById('analyzeBtn').addEventListener('click', async () => {
   }
 });
 
+// =====================================================================
+// RENDER BRAIN OUTPUT
+// =====================================================================
+
 function renderBrainOutput(result) {
   const triggers = result.analysis.emotional_triggers
     .map(t => `<span class="trigger-chip">${t.replace(/_/g, ' ')}</span>`).join('');
 
-  // Build visual_assets display row(s) if present
   let visualAssetsHtml = '';
   if (result.visual_assets) {
     const va = result.visual_assets;
@@ -2059,7 +1586,6 @@ function renderBrainOutput(result) {
     });
   });
 
-  document.getElementById('stepExpression').classList.add('active');
   document.getElementById('step4').classList.add('active');
   document.getElementById('step5').classList.add('active');
   document.getElementById('step6').classList.add('active');
@@ -2137,6 +1663,10 @@ document.querySelectorAll('.copy-btn').forEach(btn => {
   });
 });
 
+// =====================================================================
+// GEMINI IMAGE GENERATION — background only, no reference photos
+// =====================================================================
+
 const GEMINI_MODEL_MAP = {
   'nano-banana': 'gemini-2.5-flash-image-preview',
   'nano-banana-pro': 'gemini-3-pro-image-preview'
@@ -2156,57 +1686,6 @@ async function urlToInlineData(url) {
     reader.readAsDataURL(blob);
   });
 }
-
-function dataUrlToInlineData(dataUrl) {
-  const [meta, base64] = dataUrl.split(',');
-  const mimeMatch = meta.match(/data:([^;]+);/);
-  const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
-  return { inline_data: { mime_type: mimeType, data: base64 } };
-}
-
-const BANNER_INSTRUCTION_TEMPLATE = (bannerWord) => `
-
-============================================
-BANNER OVERLAY (REQUIRED — RENDER INTO IMAGE):
-============================================
-
-Add a bold BLACK banner box at the BOTTOM of the frame, slightly tilted (3-7° rotation) with rough/torn paper edges. Banner sits in the lower 25-30% of the frame, centered or slightly left.
-
-BANNER BOX:
-- Background: Pure deep BLACK (#0a0a0a / near-pure black) — solid, opaque
-- Shape: Rectangular block with slightly rough/torn edges (NOT clean rounded corners — should look hand-painted or brush-stroke, like a torn paper strip)
-- Width: Sized to fit text snugly (banner takes 35-50% of frame width)
-- Slight 3-7° rotation for visual energy
-
-BANNER TEXT:
-- Word to render: "${bannerWord}"
-- Color: Pure white (#ffffff)
-- Font: Bold sans-serif similar to Anton or Bebas Neue (heavy, condensed, modern, geometric)
-- Case: ALL UPPERCASE
-- Letter spacing: Slightly tight
-- Padding: tight on all sides
-- Text must be CRISP, SHARP, perfectly legible against the black background
-
-CRITICAL — SUBTLE CREAM-WHITE GLOW BEHIND BANNER:
-- Soft warm cream-white drop shadow extending OUTSIDE the black banner box
-- Glow color: warm cream-white (#fef3c7 to #fde68a at low opacity, ~30-40%) — this provides separation from the dark wine-red background without color clash
-- Glow size: ~15-20 pixels of soft spread
-- Glow offset: very slight downward (2-3 pixels)
-- Soft and DIFFUSED, NOT a hard outline
-- This soft cream-white glow lifts the black banner cleanly off the dark wine-red background
-
-CRITICAL TEXT ACCURACY:
-- Banner text must read EXACTLY: "${bannerWord}"
-- Spell every letter correctly — non-negotiable
-- Do not abbreviate, modify, or stylize the word
-- Clean readable letterforms — no decorative effects, no 3D extrusion
-
-The banner should look like a torn black poster strip with bold white text floating at the bottom of the thumbnail with a subtle cream-white halo for separation. Premium HBO-documentary aesthetic — distinct from competitors' red-banner military history channels. Black box + white text + cream halo on deep wine-red background = our signature look.`;
-
-// =====================================================================
-// SINGLE-PASS IMAGE GENERATION
-// One Gemini call generates the complete thumbnail (background + general)
-// =====================================================================
 
 async function callGeminiImage(parts, googleKey, model) {
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL_MAP[model]}:generateContent?key=${googleKey}`;
@@ -2233,35 +1712,29 @@ async function callGeminiImage(parts, googleKey, model) {
   return `data:${inline.mime_type || inline.mimeType};base64,${inline.data}`;
 }
 
-async function generateThumbnail(style, refsA, refsB, googleKey, model, bannerWord, expression, va) {
+async function generateThumbnail(style, googleKey, model, bannerWord, va) {
   const styleRefUrls = STYLE_REFS[style] || [];
   const promptFn = STYLE_PROMPTS[style];
   if (!promptFn) throw new Error(`No prompt for style: ${style}`);
 
-  let prompt = promptFn(va, expression, bannerWord, state.overlayEnabled);
+  let prompt = promptFn(va, bannerWord, state.overlayEnabled);
   if (state.overlayEnabled && bannerWord) {
     prompt = prompt + BANNER_INSTRUCTION_TEMPLATE(bannerWord);
   }
 
   const parts = [];
-  // Style reference image as composition guide
+  // Style reference image as composition guide (NO general reference photos)
   for (const url of styleRefUrls) parts.push(await urlToInlineData(url));
-  // General A reference photos
-  for (const ref of refsA) if (ref) parts.push(dataUrlToInlineData(ref));
-  // General B reference photos (only for rivalry)
-  if (style === 'rivalry') {
-    for (const ref of refsB) if (ref) parts.push(dataUrlToInlineData(ref));
-  }
   parts.push({ text: prompt });
 
   return await callGeminiImage(parts, googleKey, model);
 }
 
 // =====================================================================
-// GENERATE HANDLER — single-pass, no approval gate
+// GENERATE HANDLER
 // =====================================================================
 
-let _generationContext = null; // shared between generate and per-tile retry
+let _generationContext = null;
 
 function downloadDataUrl(url, filename) {
   const a = document.createElement('a');
@@ -2306,8 +1779,8 @@ async function runOneTile(style, tile) {
   setTileLoading(tile, style, `Generating ${STYLE_NAMES[style]}...`);
   try {
     const finalUrl = await generateThumbnail(
-      style, ctx.refsA, ctx.refsB, ctx.googleKey, state.imageModel,
-      ctx.banner, ctx.expression, ctx.va
+      style, ctx.googleKey, state.imageModel,
+      ctx.banner, ctx.va
     );
     state.sessionSpend += ctx.cost;
     document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
@@ -2326,17 +1799,8 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
   const banner = getCurrentBanner();
   if (!banner) { showError('Select or type a banner word first'); return; }
 
-  const refsA = state.referencesA.filter(r => r);
-  const refsB = state.referencesB.filter(r => r);
-  if (refsA.length === 0) { showError('Upload at least one General A reference photo'); return; }
-
   const styles = [...state.selectedStyles];
   if (styles.length === 0) { showError('Select at least one image style'); return; }
-
-  if (styles.includes('rivalry') && refsB.length === 0) {
-    showError('Rivalry style requires at least one General B reference photo');
-    return;
-  }
 
   if (!state.brainResult) {
     showError('Run script analysis first');
@@ -2349,10 +1813,9 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
     general_era: state.brainResult.general?.era || ''
   });
 
-  const expression = state.selectedExpression || 'stern';
   const cost = parseFloat(document.querySelector(`#imageModels .option-row[data-model="${state.imageModel}"]`).dataset.cost);
 
-  _generationContext = { googleKey, banner, refsA, refsB, expression, va, cost };
+  _generationContext = { googleKey, banner, va, cost };
 
   const outputGrid = document.getElementById('outputGrid');
   outputGrid.innerHTML = styles.map(style => `
@@ -2378,13 +1841,7 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
   document.getElementById('stepOutput').querySelector('.step-status').textContent = 'Complete';
 });
 
-function escapeHtml(str) {
-  if (str === null || str === undefined) return '';
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
-
-
-console.log('American Brass v1.9 — Battle Map: dual-zone navy left + red right, map flows continuously, red aura');
+console.log('American Brass v2.0 — Background-only generation, manual general compositing');
 </script>
 </body>
 </html>
