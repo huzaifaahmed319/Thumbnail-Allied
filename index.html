@@ -449,6 +449,50 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
 ::-webkit-scrollbar-thumb { background: var(--border-strong); }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
+.prompt-preview-container { display: flex; flex-direction: column; gap: 14px; }
+.prompt-preview-tab-bar {
+  display: flex; gap: 4px; border-bottom: 1px solid var(--border); padding-bottom: 0;
+}
+.prompt-tab {
+  background: transparent; border: 1px solid var(--border); border-bottom: none;
+  color: var(--text-muted); padding: 8px 14px; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
+  transition: all 0.15s ease; position: relative; top: 1px;
+}
+.prompt-tab:hover { color: var(--text); background: var(--bg-hover); }
+.prompt-tab.active {
+  color: var(--accent); background: var(--bg-elevated); border-color: var(--border-strong);
+  border-bottom: 1px solid var(--bg-elevated);
+}
+.prompt-panel {
+  display: none; flex-direction: column; gap: 10px;
+}
+.prompt-panel.active { display: flex; }
+.prompt-textarea {
+  width: 100%; background: var(--bg-input); border: 1px solid var(--border);
+  color: var(--text); padding: 14px; font-size: 11px; font-family: 'JetBrains Mono', 'IBM Plex Mono', 'Courier New', monospace;
+  resize: vertical; min-height: 300px; max-height: 600px; outline: none;
+  line-height: 1.6; letter-spacing: 0.01em; transition: border-color 0.15s ease;
+}
+.prompt-textarea:focus { border-color: var(--accent); }
+.prompt-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted);
+}
+.prompt-char-count { color: var(--text-faint); }
+.prompt-actions { display: flex; gap: 8px; }
+.btn-secondary {
+  background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+  padding: 10px 16px; font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
+  text-transform: uppercase; cursor: pointer; transition: all 0.15s ease;
+}
+.btn-secondary:hover { border-color: var(--text-muted); color: var(--text); }
+.prompt-dirty-badge {
+  display: inline-block; background: var(--warning); color: #000;
+  padding: 1px 6px; font-size: 8px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; margin-left: 6px; vertical-align: middle;
+}
+
 @media (max-width: 1024px) {
   .app { grid-template-columns: 1fr; }
   .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
@@ -467,7 +511,7 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
     <span class="brand-name">American Brass</span>
   </div>
   <nav class="header-nav">
-    <span class="nav-pill">Pipeline v2.0</span>
+    <span class="nav-pill">Pipeline v2.1</span>
     <span class="nav-item active">Pipeline</span>
     <button class="theme-toggle" id="themeToggle">☾ Dark</button>
   </nav>
@@ -657,10 +701,18 @@ button, input, textarea { font-family: inherit; letter-spacing: inherit; }
       <div class="step" id="step6">
         <div class="step-header">
           <span class="step-num">06</span>
-          <span class="step-title">Generate Thumbnails</span>
+          <span class="step-title">Preview & Edit Prompts</span>
           <span class="step-status">Ready</span>
         </div>
-        <button class="btn-primary" id="generateBtn">Generate Thumbnails</button>
+        <button class="btn-primary" id="generateBtn">Build Prompts</button>
+        <div class="prompt-preview-container" id="promptPreviewContainer" style="display: none; margin-top: 14px;">
+          <div class="prompt-preview-tab-bar" id="promptTabBar"></div>
+          <div id="promptPanels"></div>
+          <div class="prompt-actions">
+            <button class="btn-secondary" id="resetPromptsBtn">Reset to Default</button>
+            <button class="btn-primary" id="sendPromptsBtn" style="flex: 1;">Send to Nano Banana</button>
+          </div>
+        </div>
       </div>
 
       <div class="step" id="stepOutput">
@@ -1754,26 +1806,100 @@ async function callGeminiImage(parts, googleKey, model) {
   return `data:${inline.mime_type || inline.mimeType};base64,${inline.data}`;
 }
 
-async function generateThumbnail(style, googleKey, model, bannerWord, va) {
+// generateThumbnail now accepts an optional custom prompt override
+async function generateThumbnail(style, googleKey, model, customPrompt) {
   const styleRefUrls = STYLE_REFS[style] || [];
-  const promptFn = STYLE_PROMPTS[style];
-  if (!promptFn) throw new Error(`No prompt for style: ${style}`);
-
-  let prompt = promptFn(va, bannerWord, state.overlayEnabled);
-  if (state.overlayEnabled && bannerWord) {
-    prompt = prompt + BANNER_INSTRUCTION_TEMPLATE(bannerWord);
-  }
 
   const parts = [];
   // Style reference image as composition guide (NO general reference photos)
   for (const url of styleRefUrls) parts.push(await urlToInlineData(url));
-  parts.push({ text: prompt });
+  parts.push({ text: customPrompt });
 
   return await callGeminiImage(parts, googleKey, model);
 }
 
+// Build the default prompt for a style (used to populate the preview textarea)
+function buildDefaultPrompt(style, va, bannerWord) {
+  const promptFn = STYLE_PROMPTS[style];
+  if (!promptFn) return '';
+  let prompt = promptFn(va, bannerWord, state.overlayEnabled);
+  if (state.overlayEnabled && bannerWord) {
+    prompt = prompt + BANNER_INSTRUCTION_TEMPLATE(bannerWord);
+  }
+  return prompt;
+}
+
 // =====================================================================
-// GENERATE HANDLER
+// PROMPT PREVIEW STATE
+// =====================================================================
+
+// Stores { style: { default: string, current: string } } for each active style
+let _promptEdits = {};
+let _activePromptTab = null;
+
+function renderPromptPreview(styles, va, banner) {
+  const container = document.getElementById('promptPreviewContainer');
+  const tabBar = document.getElementById('promptTabBar');
+  const panels = document.getElementById('promptPanels');
+
+  _promptEdits = {};
+  styles.forEach(style => {
+    const defaultPrompt = buildDefaultPrompt(style, va, banner);
+    _promptEdits[style] = { default: defaultPrompt, current: defaultPrompt };
+  });
+
+  // Render tabs
+  tabBar.innerHTML = styles.map((style, idx) =>
+    `<button class="prompt-tab${idx === 0 ? ' active' : ''}" data-style="${style}">${STYLE_NAMES[style]}</button>`
+  ).join('');
+
+  // Render panels
+  panels.innerHTML = styles.map((style, idx) => {
+    const prompt = _promptEdits[style].current;
+    return `<div class="prompt-panel${idx === 0 ? ' active' : ''}" data-style="${style}">
+      <div class="prompt-meta">
+        <span>Style: ${STYLE_NAMES[style]} <span class="prompt-dirty-badge" id="dirty-${style}" style="display:none;">EDITED</span></span>
+        <span class="prompt-char-count" id="charcount-${style}">${prompt.length} chars</span>
+      </div>
+      <textarea class="prompt-textarea" id="prompt-${style}" spellcheck="false">${escapeHtml(prompt)}</textarea>
+    </div>`;
+  }).join('');
+
+  _activePromptTab = styles[0];
+
+  // Tab switching
+  tabBar.querySelectorAll('.prompt-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabBar.querySelectorAll('.prompt-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      panels.querySelectorAll('.prompt-panel').forEach(p => p.classList.remove('active'));
+      const style = tab.dataset.style;
+      panels.querySelector(`.prompt-panel[data-style="${style}"]`).classList.add('active');
+      _activePromptTab = style;
+    });
+  });
+
+  // Textarea change tracking
+  styles.forEach(style => {
+    const textarea = document.getElementById(`prompt-${style}`);
+    const dirtyBadge = document.getElementById(`dirty-${style}`);
+    const charCount = document.getElementById(`charcount-${style}`);
+    textarea.addEventListener('input', () => {
+      _promptEdits[style].current = textarea.value;
+      charCount.textContent = `${textarea.value.length} chars`;
+      if (textarea.value !== _promptEdits[style].default) {
+        dirtyBadge.style.display = 'inline-block';
+      } else {
+        dirtyBadge.style.display = 'none';
+      }
+    });
+  });
+
+  container.style.display = 'flex';
+}
+
+// =====================================================================
+// GENERATE HANDLER — now two-phase: Build Prompts → Send
 // =====================================================================
 
 let _generationContext = null;
@@ -1818,11 +1944,11 @@ function setTileError(tile, style, errMsg) {
 async function runOneTile(style, tile) {
   if (!_generationContext) return;
   const ctx = _generationContext;
+  const customPrompt = _promptEdits[style]?.current || '';
   setTileLoading(tile, style, `Generating ${STYLE_NAMES[style]}...`);
   try {
     const finalUrl = await generateThumbnail(
-      style, ctx.googleKey, state.imageModel,
-      ctx.banner, ctx.va
+      style, ctx.googleKey, state.imageModel, customPrompt
     );
     state.sessionSpend += ctx.cost;
     document.getElementById('sessionSpend').textContent = `$${state.sessionSpend.toFixed(3)}`;
@@ -1833,7 +1959,8 @@ async function runOneTile(style, tile) {
   }
 }
 
-document.getElementById('generateBtn').addEventListener('click', async () => {
+// Phase 1: "Build Prompts" button — assembles prompts and shows preview
+document.getElementById('generateBtn').addEventListener('click', () => {
   clearError();
   const googleKey = document.getElementById('googleKey').value.trim();
   if (!googleKey) { showError('Google AI Studio key required'); return; }
@@ -1856,8 +1983,36 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
   });
 
   const cost = parseFloat(document.querySelector(`#imageModels .option-row[data-model="${state.imageModel}"]`).dataset.cost);
-
   _generationContext = { googleKey, banner, va, cost };
+
+  // Build and show prompt preview
+  renderPromptPreview(styles, va, banner);
+  document.getElementById('step6').querySelector('.step-status').textContent = 'Review Prompts';
+  document.getElementById('generateBtn').textContent = 'Rebuild Prompts';
+});
+
+// Reset button — restores default prompts
+document.getElementById('resetPromptsBtn').addEventListener('click', () => {
+  if (!_generationContext) return;
+  const styles = Object.keys(_promptEdits);
+  styles.forEach(style => {
+    _promptEdits[style].current = _promptEdits[style].default;
+    const textarea = document.getElementById(`prompt-${style}`);
+    if (textarea) {
+      textarea.value = _promptEdits[style].default;
+      document.getElementById(`dirty-${style}`).style.display = 'none';
+      document.getElementById(`charcount-${style}`).textContent = `${_promptEdits[style].default.length} chars`;
+    }
+  });
+});
+
+// Phase 2: "Send to Nano Banana" button — sends the (possibly edited) prompts
+document.getElementById('sendPromptsBtn').addEventListener('click', async () => {
+  clearError();
+  if (!_generationContext) { showError('Build prompts first'); return; }
+
+  const styles = Object.keys(_promptEdits);
+  if (styles.length === 0) { showError('No prompts to send'); return; }
 
   const outputGrid = document.getElementById('outputGrid');
   outputGrid.innerHTML = styles.map(style => `
@@ -1868,7 +2023,7 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
 
   document.getElementById('stepOutput').querySelector('.step-status').textContent = `Generating ${styles.length}...`;
 
-  const btn = document.getElementById('generateBtn');
+  const btn = document.getElementById('sendPromptsBtn');
   btn.classList.add('loading');
   btn.disabled = true;
 
@@ -1881,9 +2036,10 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
   btn.classList.remove('loading');
   btn.disabled = false;
   document.getElementById('stepOutput').querySelector('.step-status').textContent = 'Complete';
+  document.getElementById('step6').querySelector('.step-status').textContent = 'Sent';
 });
 
-console.log('American Brass v2.0 — Background-only generation, manual general compositing');
+console.log('American Brass v2.1 — Background-only generation, prompt preview/edit, manual general compositing');
 </script>
 </body>
 </html>
