@@ -926,36 +926,78 @@ OUTPUT: 16:9 widescreen, theater-specific battlefield vehicles flanking a clear 
   const locations = (va.map_locations || []).slice(0, 6).join(', ');
   const opLabel = va.map_operation_label || '';
 
-  return `Create a 16:9 YouTube thumbnail BACKGROUND in RIVALRY style — a tactical battle map center element with deep wine-red atmospheric zones on left and right. DO NOT render any human figures — two general portraits will be composited manually in post-production.
+  return `Create a 16:9 YouTube thumbnail BACKGROUND in RIVALRY style — a BRIGHT LIGHT-COLORED tactical battle map in the center with DARK near-black zones on left and right where general portraits will be composited. DO NOT render any human figures.
+
+CRITICAL DESIGN PRINCIPLE — LIGHT CENTER, DARK SIDES:
+The generals who will be composited onto the left and right sides are DARK-TONED (dark uniforms, moody lighting, deep shadows). Therefore:
+- The LEFT and RIGHT zones (where generals go) must be VERY DARK — near-black (#0a0a0a to #1a0808) so the dark general portraits blend seamlessly
+- The CENTER MAP must be BRIGHT and LIGHT-COLORED — cream/tan/warm white landmasses on a light background — creating HIGH CONTRAST against the dark sides
+- This light-center / dark-sides split is what makes the composition pop. The bright map draws the eye to the center while the dark generals frame it dramatically from the sides.
+- Reference: think of the contrast in a YouTube rivalry thumbnail where two dark figures flank a bright tactical map — the map is the visual anchor.
 
 LAYOUT:
-- LEFT THIRD: GENERAL A PLACEMENT ZONE — deep wine-red atmospheric zone, clear and uncluttered
-- CENTER (~25-30% width, ~50% height): Tactical battle map element floating with slight 3D tilt
-- RIGHT THIRD: GENERAL B PLACEMENT ZONE — deep wine-red atmospheric zone, clear and uncluttered
-- Background: deep wine-red atmospheric field with strong dark vignette in corners
+- LEFT THIRD (~0-30%): GENERAL A PLACEMENT ZONE — very dark, near-black, smooth and uncluttered
+- CENTER (~30-70% width, ~40-75% height): Bright light-colored tactical battle map, floating with slight 3D perspective tilt
+- RIGHT THIRD (~70-100%): GENERAL B PLACEMENT ZONE — very dark, near-black, smooth and uncluttered
+- Background behind the map: deep near-black (#0a0a0a) with very subtle dark red tint, fading to pure black in the corners
 
 GENERAL PLACEMENT ZONES (CRITICAL — DO NOT RENDER ANY PERSON):
-This thumbnail has TWO placement zones for two different general portraits to be composited manually:
-- LEFT ZONE (~15-35% from left edge, upper 60-70% height): Clear atmospheric wine-red space for General A portrait
-- RIGHT ZONE (~65-85% from left edge, upper 60-70% height): Clear atmospheric wine-red space for General B portrait
-- Both zones should have smooth atmospheric glow suitable for bright portrait overlays
-- Do NOT place any map elements, text, arrows, or busy details in these zones
+This thumbnail has TWO placement zones for general portraits to be composited manually:
+- LEFT ZONE (~5-30% from left, full height): Near-black smooth zone. Must be VERY DARK and UNCLUTTERED — no map elements, no text, no arrows, no decorative elements. Just dark atmospheric space.
+- RIGHT ZONE (~70-95% from left, full height): Same as left — near-black, smooth, uncluttered.
+- Both zones need a subtle warm dark-red atmospheric tint (NOT bright red — think #1a0808 to #0a0505) so the dark portraits will sit naturally
+- A very subtle warm rim-light glow at the edges where the dark zones meet the bright map can help with depth
 - NO human figures, faces, silhouettes, or people of ANY kind anywhere in the image
 
-THE CENTER MAP:
-- Period military operations map showing the campaign of conflict
-- Bold tactical arrows: red for one side, dark steel for the other
-- Place names rendered EXACTLY (perfect spelling): ${locations}
-- Date/operation header: "${opLabel}"
-- Map sits floating with slight 3D tilt, slight glow behind it
-- Map background: dark navy/near-black with subtle red tint
-- Map is CONTAINED in the center — does NOT extend into left/right placement zones
+THE CENTER MAP (CRITICAL — must be BRIGHT and LIGHT-COLORED):
+This is the visual centerpiece. It must be CLEARLY LIGHTER than the surrounding dark zones.
 
-MOOD: "Showdown" — documentary-cinematic tone, tension between two sides.
+MAP COLOR PALETTE (light, warm, period-appropriate):
+- Map background/ocean: warm cream-white (#f5f0e0 to #e8e0cc) OR light warm tan (#e0d5b8)
+- Landmasses: warm tan/sandy (#c4b48a to #d4c49a) with subtle terrain texture
+- Coastlines: thin dark brown lines (#4a3520)
+- Country/state borders: thin dotted dark lines
+- Water/ocean areas: light warm blue-gray (#b8c8d8 to #a0b4c4) — NOT dark navy, keep it LIGHT
+- Overall the map should read as a bright warm period document — like a 1940s War Department briefing map printed on cream paper
 
-${GENERAL_NEGATIVE}
+MAP CONTENT:
+- Bold tactical arrows showing troop movements and clashing forces:
+  * One side's arrows: saturated RED (#dc2626), thick and bold, 8-12px
+  * Other side's arrows: saturated BLUE (#2563eb), thick and bold, 8-12px
+  * Arrows should clash and collide at key battle points — showing direct conflict
+- Small black tank silhouettes (4-6) scattered along arrow paths at battle points
+- Dashed red lines for frontlines or defense perimeters
 
-OUTPUT: 16:9 widescreen, tactical map center element flanked by two clear atmospheric wine-red zones reserved for manual general portrait compositing, deep wine-red background. NO PEOPLE — background only.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
+PLACE NAMES (render EXACTLY — perfect spelling, distributed across the map):
+${locations}
+- Bold serif font, dark brown/black ink on the light map
+- ALL CAPS for cities and landmarks
+- Each label clearly readable against the light map background
+
+DATE/OPERATION HEADER:
+"${opLabel}"
+- Positioned at the top of the map element
+- Bold serif, dark text on light background
+- Clear and prominent
+
+MAP PRESENTATION:
+- The map floats in the center with a slight 3D perspective tilt (5-10°) — angled slightly as if pinned to a briefing board
+- Subtle drop shadow behind the map to lift it off the dark background
+- Thin dark border/frame around the map edge
+- The map should occupy roughly 35-40% of the frame width and 50-65% of the frame height
+- Map should NOT extend into the left/right general placement zones
+
+MOOD: "Showdown briefing" — two opposing forces about to clash. The bright tactical map between the dark zones creates dramatic tension. Documentary-cinematic quality.
+
+NEGATIVE REQUIREMENTS:
+- NO human figures, faces, silhouettes, or people of ANY kind — background only
+- NO modern text overlays unless explicitly instructed
+- NO title cards, NO watermarks, NO play buttons, NO YouTube UI
+- NO borders or frames around the entire image (only around the map element itself)
+- NO dark/navy map colors — the map must be BRIGHT and LIGHT, clearly contrasting the dark sides
+- The left and right zones must be DARK and EMPTY — no decorative elements, no bright areas
+
+OUTPUT: 16:9 widescreen, BRIGHT light-colored tactical battle map floating in the center with bold red/blue clashing arrows and tank silhouettes, flanked by DARK near-black smooth zones on left and right reserved for manual general portrait compositing. High contrast between light center and dark sides. NO PEOPLE — background only.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
 }
 
 };
