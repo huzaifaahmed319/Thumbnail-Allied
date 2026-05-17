@@ -848,29 +848,67 @@ OUTPUT: A 16:9 background thumbnail — full-frame tactical battle map with dark
 },
 
 'portrait-hero': (va, bannerWord, overlayEnabled) => {
+  const headlines = (va.newspaper_headlines || []).map(h => `"${h}"`).join(', ');
+  const mastheads = (va.newspaper_mastheads || []).map(m => `"${m}"`).join(', ');
+  const docCls = va.document_classification || {};
   const generalName = va.general_name || 'WWII American general';
 
-  return `Create a 16:9 YouTube thumbnail BACKGROUND in PORTRAIT HERO style — a deep cinematic wine-red atmospheric background designed for a general's portrait to be composited manually in post-production. DO NOT render any human figures.
+  return `Create a 16:9 YouTube thumbnail BACKGROUND in PORTRAIT HERO style — overlapping period newspapers and official military documents filling the frame, with a deep wine-red atmospheric zone reserved for a general's portrait to be composited manually in post-production. DO NOT render any human figures.
 
-PHILOSOPHY: Premium magazine cover key art background — moody, dramatic, with space reserved for a sharp photographic portrait overlay.
+PHILOSOPHY: Dense archival newspaper collage — period newspapers and military documents layered edge to edge with dramatic wine-red color grading. Think premium documentary key art, not a plain background.
 
-BACKGROUND:
-- Deep saturated wine-red field, atmospheric and moody
-- Subtle warm crimson glow zone in the upper-center-right area (where a head/shoulders portrait will be placed) — rendered as light dispersing through atmospheric haze, NOT a defined oval/circle/disc shape
-- Strong dark vignette in all four corners falling to near-black
-- Subtle smoke/grain/atmospheric texture throughout (no flat color zones)
-- Color range: brightest crimson (#c8202b) in the glow zone fading through deep wine-red (#7a1820 to #5a1015) to near-black corners (#1a0303 to #050000)
-- NO bright fire-engine red flat fill, NO amber, NO blue, NO desaturated tones
+LAYOUT:
+- FULL FRAME: Overlapping period newspapers, military orders, and official documents tiled at slight angles, filling the ENTIRE 16:9 frame edge to edge
+- The RIGHT-CENTER area (~40-45% width, upper 60-70% height) should be SLIGHTLY LESS CLUTTERED than the rest — this is the GENERAL PLACEMENT ZONE where a portrait will be composited later
+- Documents and newspaper edges can frame and partially overlap the lower edges of the placement zone for natural depth
+- Deep wine-red and warm sepia color grading applied over the ENTIRE collage — the red tone comes from the color grading, NOT from empty red space
 
 ${GENERAL_PLACEMENT_ZONE}
 
-The placement zone should be slightly right of center (~55-58% from left), occupying the upper portion of the frame. The atmospheric glow should be centered on this zone to create a natural "halo" effect for the portrait that will be composited later.
+The placement zone should be slightly right of center (~55-58% from left), occupying the upper portion of the frame. A subtle warm atmospheric glow behind the documents in this zone creates a natural halo effect for the portrait that will be composited later. The zone should still have document texture visible but less dense than the surrounding areas.
 
-The lower-center area should be slightly darker to make banner overlay readable in post.
+THE NEWSPAPER COLLAGE (fills entire frame):
+- 5-7 overlapping period newspapers at slight angles (5-15 degree rotation)
+- Aged warm yellow-cream paper texture with realistic fold marks and subtle aging
+- The cream papers create contrast against the deep wine-red color grading
+
+NEWSPAPER MASTHEADS (render EXACTLY — period-accurate heavy serif typefaces):
+${mastheads || '"STARS AND STRIPES", "THE NEW YORK TIMES", "THE WASHINGTON POST"'}
+- Bold period-accurate serif mastheads at the top of each newspaper
+- Spelling MUST be perfect
+
+HEADLINES (render EXACTLY as large bold uppercase serif headlines on the newspapers):
+${headlines || '"GENERAL HALTED", "ARMY REACHES OBJECTIVE", "COMMANDER DENIED"'}
+- Each headline dominates its newspaper front page
+- Bold uppercase serif type, dramatic size
+- Spelling MUST be perfect
+- Smaller subheadline text below in bold type, column-text texture as gray filler beneath
+
+OFFICIAL DOCUMENTS (1-2 sheets visible in the collage stack):
+- Letterhead: "${docCls.letterhead || 'WAR DEPARTMENT'}"
+- Classification stamp: "${docCls.stamp || 'SECRET'}" in red ink, slightly tilted, rubber-stamped look
+- Date: "${docCls.date || ''}"
+- Typewritten body text texture (gray, not readable at thumbnail scale)
+- Bold ink signature at bottom
+
+COLOR GRADING (applied over the entire collage):
+- Deep saturated wine-red and warm sepia tone over everything
+- Color range: warm crimson highlights (#c8202b) in the glow zone fading through deep wine-red (#7a1820 to #5a1015) to near-black corners (#1a0303 to #050000)
+- Strong dark vignette in all four corners falling to near-black
+- The newspapers and documents should be tinted by this color grading — warm amber-cream papers against the deep red atmosphere
+- NO bright fire-engine red, NO cool blue tones
+
+LIGHTING:
+- Documents lit from upper-left at 45 degrees, casting subtle warm shadows between layers
+- Atmospheric dust particles and subtle film grain throughout
+- The placement zone area has a slightly warmer, brighter glow behind the documents
+
+LOWER-CENTER AREA:
+- Slightly darker to make banner text overlay readable in post-production
 
 ${GENERAL_NEGATIVE}
 
-OUTPUT: 16:9 widescreen, deep atmospheric wine-red background with subtle smoke/haze texture, warm glow in the portrait placement zone, dramatic dark falloff at edges, magazine-cover quality. NO PEOPLE — background only for manual compositing.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
+OUTPUT: 16:9 widescreen, dense period newspaper and document collage filling the entire frame with deep wine-red color grading, properly spelled headlines and mastheads, atmospheric glow in the right-center portrait placement zone, dramatic dark vignette at edges. NO PEOPLE — background only for manual compositing.${overlayEnabled && bannerWord ? '\n\n[BANNER OVERLAY INSTRUCTIONS BELOW]' : ''}`;
 },
 
 'period-archive': (va, bannerWord, overlayEnabled) => {
